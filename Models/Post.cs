@@ -5,6 +5,11 @@ namespace WebAPIDemo.Models
     [Table("posts")]
     public class Post
     {
+        public Post()
+        {
+            Comments = new List<Comment>();
+        }
+
         [Column("post_id")]
         public int PostId { get; set; }
 
@@ -17,11 +22,18 @@ namespace WebAPIDemo.Models
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 
-        [Column("author")]
+        [Column("author_id")]
+        public int AuthorId { get; set; }
+
+        [ForeignKey("AuthorId")]
         public User Author { get; set; }
+
         public List<Comment> Comments { get; set; }
-        public Reservation Reservation { get; set; }
+
+        // One-to-one relationship with Reservation
+        public int? ReservationId { get; set; }
+        
+        [ForeignKey("ReservationId")]
+        public Reservation? Reservation { get; set; }
     }
-
-
 }

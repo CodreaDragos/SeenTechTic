@@ -4,6 +4,11 @@ namespace WebAPIDemo.Models
 {
     public class Field
     {
+        public Field()
+        {
+            Reservations = new List<Reservation>();
+        }
+
         [Column("field_id")]
         public int FieldId { get; set; }
 
