@@ -9,11 +9,20 @@ namespace WebAPIDemo.Models
 
         [Column("comment_content")]
         public string CommentContent { get; set; } = string.Empty;
-        [Column("createdAt")]
+
+        [Column("created_at")]
         public DateTime CreatedAt { get; set; }
-        [Column("Post")]
+
+        [Column("post_id")]
+        public int PostId { get; set; }
+
+        [Column("author_id")]
+        public int AuthorId { get; set; }
+
+        [ForeignKey("PostId")]
         public Post Post { get; set; }
-        [Column("User")]
-        public User User { get; set; }
+
+        [ForeignKey("AuthorId")]
+        public User Author { get; set; }
     }
 }
