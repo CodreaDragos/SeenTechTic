@@ -14,14 +14,12 @@ namespace WebAPIDemo.Services
 
         public User create(User User)
         {
-            return _repository.create(User);
+            return _repository.create(User) ?? throw new Exception("Failed to create user");
         }
 
         public User getOne(int UserId)
         {
-            if (UserId == null)
-                throw new Exception("User id cannot be null");
-            return _repository.getOne(UserId);
+            return _repository.getOne(UserId) ?? throw new Exception("User not found");
         }
 
         public List<User> getAll()
@@ -35,10 +33,9 @@ namespace WebAPIDemo.Services
                 throw new Exception("User object cannot be null");
             return _repository.update(User);
         }
+        
         public int delete(int UserId)
         {
-            if (UserId == null)
-                throw new Exception("User id cannot be null");
             return _repository.delete(UserId);
         }
     }
