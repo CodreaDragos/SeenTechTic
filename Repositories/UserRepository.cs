@@ -13,7 +13,7 @@ namespace WebAPIDemo.Repositories
             _dataContext = dataContext;
         }
 
-        public User create(User user)
+        public User? create(User user)
         {
             _dataContext.Users.Add(user);
             _dataContext.SaveChanges();
@@ -28,7 +28,7 @@ namespace WebAPIDemo.Repositories
                 .ToList();
         }
 
-        public User getOne(int UserId)
+        public User? getOne(int UserId)
         {
             return _dataContext.Users
                 .Include(t => t.AuthoredReservations)
@@ -38,21 +38,24 @@ namespace WebAPIDemo.Repositories
 
         public User update(User newUser)
         {
-            User dbUser = _dataContext.Users.Find(newUser.UserId);
-            if (dbUser == null)
-                throw new Exception("No user with id " + newUser.UserId);
+            var dbUser = _dataContext.Users.Find(newUser.UserId) 
+                ?? throw new Exception("No user with id " + newUser.UserId);
+                
             dbUser.Username = newUser.Username;
             dbUser.Email = newUser.Email;
             dbUser.AuthoredReservations = newUser.AuthoredReservations;
             dbUser.ParticipatingReservations = newUser.ParticipatingReservations;
             _dataContext.SaveChanges();
-            return getOne(dbUser.UserId);
+            
+            return dbUser;
         }
 
         public int delete(int UserId)
         {
-            User User = _dataContext.Users.Find(UserId);
-            _dataContext.Users.Remove(User);
+            var user = _dataContext.Users.Find(UserId) 
+                ?? throw new Exception("No user with id " + UserId);
+                
+            _dataContext.Users.Remove(user);
             _dataContext.SaveChanges();
             return UserId;
         }
