@@ -4,6 +4,11 @@ namespace WebAPIDemo.Models
 {
     public class Reservation
     {
+        public Reservation()
+        {
+            Participants = new List<User>();
+        }
+
         [Column("reservation_id")]
         public int ReservationId { get; set; }
 
@@ -20,14 +25,14 @@ namespace WebAPIDemo.Models
         public int FieldId { get; set; }
 
         [ForeignKey("AuthorId")]
-        public User Author { get; set; }
+        public User? Author { get; set; }
 
         [ForeignKey("FieldId")]
-        public Field Field { get; set; }
+        public Field? Field { get; set; }
 
         public List<User> Participants { get; set; }
 
         // One-to-one relationship with Post
-        public Post Post { get; set; }
+        public Post? Post { get; set; }
     }
 }
