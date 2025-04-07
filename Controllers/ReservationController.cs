@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebAPIDemo.Models;
-using WebAPIDemo.Models.DTOs;
 using WebAPIDemo.Services;
+using WebAPIDemo.DTOs.Reservation;
 
 namespace WebAPIDemo.Controllers
 {
@@ -68,14 +68,24 @@ namespace WebAPIDemo.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateReservation(int id, [FromBody] Reservation reservation)
+        public IActionResult UpdateReservation(int id, [FromBody] UpdateReservationDto reservationDto)
         {
             try
             {
-                if (id != reservation.ReservationId)
+                if (id != reservationDto.ReservationId)
                 {
                     return BadRequest("Reservation ID mismatch");
                 }
+
+                var reservation = new Reservation
+                {
+                    ReservationId = reservationDto.ReservationId,
+                    StartTime = reservationDto.StartTime,
+                    EndTime = reservationDto.EndTime,
+                    FieldId = reservationDto.FieldId,
+                    AuthorId = reservationDto.AuthorId,
+                    Participants = new List<User>() // Will be populated by the service
+                };
 
                 var updatedReservation = _reservationService.update(reservation);
                 return Ok(updatedReservation);

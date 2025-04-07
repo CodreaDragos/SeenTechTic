@@ -19,14 +19,11 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 // Register repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
-builder.Services.AddScoped<IFieldRepository, FieldRepository>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
