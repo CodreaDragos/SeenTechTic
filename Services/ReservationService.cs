@@ -87,7 +87,6 @@ namespace WebAPIDemo.Services
 
         public Reservation update(Reservation reservation)
         {
-            // Get the existing reservation with all its relationships
             var existingReservation = _reservationRepository.getOne(reservation.ReservationId);
             if (existingReservation == null)
             {
@@ -102,44 +101,7 @@ namespace WebAPIDemo.Services
                 throw new Exception("Start time must be before end time");
             }
 
-            // Update only the properties that can change
-            existingReservation.StartTime = reservation.StartTime;
-            existingReservation.EndTime = reservation.EndTime;
-            existingReservation.FieldId = reservation.FieldId;
-            existingReservation.AuthorId = reservation.AuthorId;
-
-            // Load the new field if it changed
-            if (existingReservation.FieldId != reservation.FieldId)
-            {
-                var newField = _fieldRepository.getOne(reservation.FieldId);
-                if (newField == null)
-                {
-                    _loggerService.LogError($"Field with id {reservation.FieldId} not found");
-                    throw new Exception($"Field with id {reservation.FieldId} not found");
-                }
-                existingReservation.Field = newField;
-            }
-
-            // Load the new author if it changed
-            if (existingReservation.AuthorId != reservation.AuthorId)
-            {
-                var newAuthor = _userRepository.getOne(reservation.AuthorId);
-                if (newAuthor == null)
-                {
-                    _loggerService.LogError($"User with id {reservation.AuthorId} not found");
-                    throw new Exception($"User with id {reservation.AuthorId} not found");
-                }
-                existingReservation.Author = newAuthor;
-            }
-
-            // Check if field is available for the new time slot
-            if (!isFieldAvailable(existingReservation.FieldId, existingReservation.StartTime, existingReservation.EndTime))
-            {
-                _loggerService.LogError($"Field {existingReservation.Field?.FieldName} is not available for the specified time period");
-                throw new Exception($"Field {existingReservation.Field?.FieldName} is not available for the specified time period");
-            }
-
-            var updatedReservation = _reservationRepository.update(existingReservation);
+            var updatedReservation = _reservationRepository.update(reservation);
             if (updatedReservation == null)
             {
                 _loggerService.LogError("Failed to update reservation");
