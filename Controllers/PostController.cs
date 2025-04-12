@@ -49,7 +49,7 @@ namespace WebAPIDemo.Controllers
             var createdPost = _postService.CreatePost(post);
             if (createdPost == null)
             {
-                return BadRequest();
+                return BadRequest("Failed to create post");
             }
 
             return CreatedAtAction(nameof(GetPost), new { postId = createdPost.PostId }, createdPost);
@@ -60,7 +60,7 @@ namespace WebAPIDemo.Controllers
         {
             if (postId != postDto.PostId)
             {
-                return BadRequest();
+                return BadRequest("Post ID mismatch");
             }
 
             var post = new Post
