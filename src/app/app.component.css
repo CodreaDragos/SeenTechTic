@@ -1,0 +1,9 @@
+h1 {
+  font-size: 3.125rem; /* Dimensiune font mare */
+  color: var(--gray-900); /* Folosește variabila CSS pentru culoare */
+  font-weight: 500; /* Grosimea fontului */
+  line-height: 100%; /* Înălțimea liniei */
+  letter-spacing: -0.125rem; /* Distanța între litere */
+  margin: 0; /* Elimină marginea */
+  font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* Setează fontul */
+}
