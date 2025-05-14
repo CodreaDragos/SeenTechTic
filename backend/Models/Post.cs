@@ -26,7 +26,7 @@ namespace WebAPIDemo.Models
         public int AuthorId { get; set; }
 
         [ForeignKey("AuthorId")]
-        public User Author { get; set; }
+        public User? Author { get; set; }
 
         public List<Comment> Comments { get; set; }
 

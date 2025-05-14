@@ -4,6 +4,10 @@ using WebAPIDemo.DTOs;
 using WebAPIDemo.DTOs.Auth;
 using WebAPIDemo.Models;
 using WebAPIDemo.Repositories;
+using Microsoft.Extensions.Configuration;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace WebAPIDemo.Services
 {
@@ -11,11 +15,13 @@ namespace WebAPIDemo.Services
     {
         private readonly IAuthRepository _authRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IAuthRepository authRepository, IUserRepository userRepository)
+        public AuthService(IAuthRepository authRepository, IUserRepository userRepository, IConfiguration configuration)
         {
             _authRepository = authRepository;
             _userRepository = userRepository;
+            _configuration = configuration;
         }
 
         public async Task<AuthResponseDto> Login(LoginDto loginDto)
@@ -40,10 +46,13 @@ namespace WebAPIDemo.Services
                 };
             }
 
+            var token = GenerateJwtToken(user);
+
             return new AuthResponseDto
             {
                 Success = true,
                 Message = "Login successful",
+                Token = token,
                 User = new UserDto
                 {
                     UserId = user.UserId,
@@ -120,5 +129,32 @@ namespace WebAPIDemo.Services
         {
             return HashPassword(password) == hashedPassword;
         }
+
+        private string GenerateJwtToken(User user)
+        {
+            var secretKey = _configuration.GetValue<string>("JwtSettings:SecretKey");
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                throw new ArgumentNullException("JWT Secret Key is not configured.");
+            }
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim("id", user.UserId.ToString()),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: null,
+                audience: null,
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
-} 
+}

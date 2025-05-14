@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
+import { CommonModule, DatePipe } from '@angular/common';
 
 // Material Imports
 import { MatCardModule } from '@angular/material/card';
@@ -13,14 +14,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 
 import { routes } from './app.routes';
-import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    // AppComponent removed because it is standalone
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     RouterModule.forRoot(routes),
     HttpClientModule,
     ReactiveFormsModule,
@@ -31,7 +32,7 @@ import { AppComponent } from './app.component';
     MatFormFieldModule,
     MatIconModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [DatePipe],
+  bootstrap: [] // No bootstrap array because AppComponent is standalone
 })
-export class AppModule { } 
+export class AppModule { }

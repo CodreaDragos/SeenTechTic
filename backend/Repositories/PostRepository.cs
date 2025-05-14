@@ -1,4 +1,4 @@
-﻿using WebAPIDemo.Models;
+using WebAPIDemo.Models;
 using WebAPIDemo.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,11 +22,22 @@ namespace WebAPIDemo.Repositories
 
         public List<Post> getAll()
         {
-            return _context.Posts
+            var posts = _context.Posts
                 .Include(p => p.Author)
                 .Include(p => p.Comments)
+                    .ThenInclude(c => c.Author)
                 .Include(p => p.Reservation)
                 .ToList();
+
+            foreach (var post in posts)
+            {
+                if (post.Author == null)
+                {
+                    Console.WriteLine($"Post {post.PostId} has null Author. AuthorId: {post.AuthorId}");
+                }
+            }
+
+            return posts;
         }
 
         public Post? getOne(int postId)

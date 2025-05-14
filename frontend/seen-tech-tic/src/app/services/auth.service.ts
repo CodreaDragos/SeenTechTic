@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
@@ -27,13 +27,38 @@ export interface AuthResponse {
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) { }
+  private currentUserIdSubject = new BehaviorSubject<number | null>(null);
+  currentUserId$ = this.currentUserIdSubject.asObservable();
+
+  constructor(private http: HttpClient) {
+    this.loadUserIdFromToken();
+  }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
         catchError(this.handleError)
       );
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    this.currentUserIdSubject.next(null);
+  }
+
+  updateUserIdFromToken() {
+    const token = localStorage.getItem('token');
+    console.log('updateUserIdFromToken called, token:', token);
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      console.log('Token payload:', payload);
+      const userId = payload?.id ? parseInt(payload.id, 10) : null;
+      this.currentUserIdSubject.next(userId);
+      console.log('Updated currentUserIdSubject with:', userId);
+    } else {
+      this.currentUserIdSubject.next(null);
+      console.log('No token found, set currentUserIdSubject to null');
+    }
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
@@ -46,12 +71,25 @@ export class AuthService {
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An error occurred';
     if (error.error instanceof ErrorEvent) {
-      // Client-side error
       errorMessage = error.error.message;
     } else {
-      // Server-side error
       errorMessage = error.error?.message || `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     return throwError(() => new Error(errorMessage));
   }
-} 
+
+  private loadUserIdFromToken() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const userId = payload?.id ? parseInt(payload.id, 10) : null;
+      this.currentUserIdSubject.next(userId);
+    } else {
+      this.currentUserIdSubject.next(null);
+    }
+  }
+
+  getCurrentUserId(): number | null {
+    return this.currentUserIdSubject.value;
+  }
+}

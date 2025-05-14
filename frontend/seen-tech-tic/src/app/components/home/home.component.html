@@ -1,0 +1,32 @@
+<div class="home-container">
+  <img
+    src="{{ profileIcon }}"
+    alt="Profile"
+    class="profile-icon"
+    (click)="goToProfile()"
+    title="Go to Profile"
+  />
+  <button (click)="addPost()" class="add-post-button">Add Post</button>
+
+  <div class="posts">
+    <div *ngFor="let post of posts" class="post">
+      <h3>{{ post.postTitle }}</h3>
+      <p>by {{ post.author?.username || 'Unknown' }}</p>
+      <p>{{ post.postDescription }}</p>
+      <div *ngIf="post.reservation">
+        <p>Start: {{ post.reservation.StartTime | date:'short' }}</p>
+        <p>End: {{ post.reservation.EndTime | date:'short' }}</p>
+        <p>Field ID: {{ post.reservation.FieldId }}</p>
+      </div>
+      <div *ngIf="post.comments && post.comments.length > 0">
+        <h4>Comments:</h4>
+        <ul>
+          <li *ngFor="let comment of post.comments">
+            {{ comment.commentContent }} - by {{ comment.author?.username || 'Unknown' }}
+          </li>
+        </ul>
+      </div>
+      <button (click)="addComment(post)">Add Comment</button>
+    </div>
+  </div>
+</div>

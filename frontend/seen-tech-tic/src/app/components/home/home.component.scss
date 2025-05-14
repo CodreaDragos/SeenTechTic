@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #fdfbfb, #ebedee);
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+.home-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.profile-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  border: 2px solid #6a11cb;
+  background-color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(106, 17, 203, 0.3);
+}
+
+.add-post-button {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.add-post-button:hover {
+  background: linear-gradient(to right, #2575fc, #6a11cb);
+  transform: scale(1.05);
+}
+
+.posts {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.post {
+  background: linear-gradient(to bottom right, #ffffff, #f0f4ff);
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid #cfd8dc;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.post h3 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #3949ab;
+}
+
+.post p {
+  margin: 8px 0;
+  line-height: 1.5;
+  color: #455a64;
+}
+
+.post > div {
+  margin-top: 12px;
+}
+
+.post h4 {
+  margin-top: 16px;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.post ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.post li {
+  margin-bottom: 6px;
+  color: #37474f;
+}
+
+.post button {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background: #42a5f5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.post button:hover {
+  background: #1e88e5;
+}

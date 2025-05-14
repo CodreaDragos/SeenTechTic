@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using WebAPIDemo.Models;
 using WebAPIDemo.Services;
 using WebAPIDemo.DTOs.Comment;
@@ -45,7 +45,7 @@ namespace WebAPIDemo.Controllers
             {
                 return BadRequest("Failed to create comment");
             }
-            return CreatedAtAction(nameof(GetCommentById), new { id = createdComment.CommentId }, createdComment);
+            return CreatedAtAction(nameof(GetCommentById), new { commentId = createdComment.CommentId }, createdComment);
         }
         [HttpPut("{commentId}")]
         public ActionResult<Comment> UpdateComment(int commentId, UpdateCommentDto commentDto)
