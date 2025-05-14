@@ -1,0 +1,76 @@
+
+<div class="register-container">
+  <mat-card class="register-card">
+
+    <mat-card-header>
+      <mat-card-title>Înregistrare</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <!-- Progress Bar -->
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary" class="mb-16"></mat-progress-bar>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+        <!-- Username -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" placeholder="Nume utilizator">
+          <mat-error *ngIf="registerForm.get('username')?.hasError('required')">
+            Username este obligatoriu
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="exemplu@email.com">
+          <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+            Email-ul este obligatoriu
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+            Format email invalid
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Parolă</mat-label>
+          <input matInput formControlName="password" type="password" placeholder="Parolă">
+          <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+            Parola este obligatorie
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Confirm Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirmă Parola</mat-label>
+          <input matInput formControlName="confirmPassword" type="password" placeholder="Confirmă parola">
+          <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')">
+            Confirmarea parolei este obligatorie
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Message Feedback -->
+        <div class="response-message" [ngClass]="{ 'error': isError, 'success': !isError }" *ngIf="responseMessage">
+          {{ responseMessage }}
+        </div>
+
+        <!-- Submit -->
+        <button mat-raised-button color="primary" class="full-width mt-16" type="submit" [disabled]="!registerForm.valid || isLoading">
+          <mat-icon *ngIf="isLoading" class="loading-icon">autorenew</mat-icon>
+          <span *ngIf="!isLoading">Înregistrează-te</span>
+          <span *ngIf="isLoading">Se înregistrează...</span>
+        </button>
+      </form>
+
+      <!-- Navigation -->
+      <div class="login-link">
+        Ai deja cont?
+        <a (click)="goToLogin()">Autentifică-te</a>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
