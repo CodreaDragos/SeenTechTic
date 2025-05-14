@@ -1,47 +1,44 @@
-<div class="home-container">
-  <img src="{{ profileIcon }}"
-       alt="Profile"
-       class="profile-icon"
-       (click)="goToProfile()"
-       title="Go to Profile" />
-  <div style="display: flex; gap: 15px; margin-bottom: 30px;">
-    <button class="add-post-button" (click)="addPost()">Add Post</button>
-    <button class="add-post-button" (click)="addReservation()">Add Reservation</button>
-  </div>
+<div class="container">
+  <h1>Dashboard</h1>
 
-  <div class="posts">
-    <div *ngFor="let post of posts" class="post">
-      <h3>{{ post.postTitle }}</h3>
-      <p>by {{ post.author?.username || 'Unknown' }}</p>
-      <p>{{ post.postDescription }}</p>
-      <div *ngIf="post.reservation">
-        <p>Start: {{ post.reservation.StartTime | date:'short' }}</p>
-        <p>End: {{ post.reservation.EndTime | date:'short' }}</p>
-        <p>Field ID: {{ post.reservation.FieldId }}</p>
-      </div>
-      <div *ngIf="post.comments && post.comments.length > 0">
-        <h4>Comments:</h4>
-        <ul>
-          <li *ngFor="let comment of post.comments">
-            {{ comment.commentContent }} - by {{ comment.author?.username || 'Unknown' }}
-          </li>
-        </ul>
-      </div>
-      <button (click)="addComment(post)">Add Comment</button>
-    </div>
-
-
-
-  </div>
-  <div class="reservations">
-    <div *ngFor="let reservation of reservations" class="reservation">
-      <h3>Rezervare</h3>
-      <p>Autor: {{ reservation.authorId || 'Necunoscut' }}</p>
-      <p>Start: {{ reservation.startTime | date:'short' }}</p>
-      <p>End: {{ reservation.endTime | date:'short' }}</p>
-      <p>Field ID: {{ reservation.fieldId }}</p>
-
-      
-    </div>
-  </div>
+  <section class="info-section">
+    <p>Contactați-ne pentru mai multe informații.</p>
+    <button routerLink="/posts" class="nav-button">Vezi Postările</button>
+    <button routerLink="/reservations" class="nav-button">Vezi Rezervările</button>
+  </section>
 </div>
+
+<style>
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
+    border-radius: 10px;
+    text-align: center;
+  }
+  h1 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+  }
+  .info-section p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #34495e;
+  }
+  .nav-button {
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 25px;
+    margin: 0 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .nav-button:hover {
+    background-color: #1c5980;
+  }
+</style>

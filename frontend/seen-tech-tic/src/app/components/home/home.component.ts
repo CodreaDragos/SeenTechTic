@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe, NgForOf } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
@@ -9,7 +9,7 @@ import { ReservationService, Reservation } from '../../services/reservation.serv
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NgForOf],
+  imports: [CommonModule, NgForOf, RouterModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   providers: [DatePipe]
@@ -126,42 +126,47 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  addReservation() {
-    if (!this.currentUserId) {
-      alert('You must be logged in to make a reservation.');
-      return;
-    }
-
-    const startTime = prompt('Enter start time (ISO format, e.g., 2025-05-14T10:00):');
-    const endTime = prompt('Enter end time (ISO format, e.g., 2025-05-14T11:00):');
-    const fieldId = Number(prompt('Enter field ID:'));
-    const participantIds = prompt('Enter participant IDs (comma-separated):')?.split(',').map(id => Number(id.trim())) || [];
-   
-
-    if (startTime && endTime && fieldId) {
-      const reservation: Reservation = {
-        startTime,
-        endTime,
-        authorId: this.currentUserId,
-        fieldId,
-        participantIds: []  // 👈 Add this line
-      };
-
-      this.reservationService.addReservation(reservation).subscribe({
-        next: (res) => {
-          alert('Rezervare salvată cu succes!');
-          console.log('Rezervare:', res);
-          // Dacă vrei, poți reîncărca postările aici cu `this.loadPosts();`
-        },
-        error: (err) => {
-          console.error('Eroare la salvare rezervare:', err);
-          alert('A apărut o eroare: ' + (err?.message || JSON.stringify(err)));
+    addReservation() {
+        if (!this.currentUserId) {
+          alert('You must be logged in to make a reservation.');
+          return;
         }
-
-      });
-    } else {
-      alert('Datele introduse nu sunt valide.');
-    }
-  }
+    
+        const startTimeStr = prompt('Enter start time (ISO format, e.g., 2025-05-14T10:00):');
+        const endTimeStr = prompt('Enter end time (ISO format, e.g., 2025-05-14T11:00):');
+        const fieldId = Number(prompt('Enter field ID:'));
+        const participantIds = prompt('Enter participant IDs (comma-separated):')?.split(',').map(id => Number(id.trim())) || [];
+       
+        if (startTimeStr && endTimeStr && fieldId) {
+          const startTime = new Date(startTimeStr);
+          const endTime = new Date(endTimeStr);
+          if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+            alert('Invalid date format for start or end time.');
+            return;
+          }
+          const reservation: Reservation = {
+            startTime: startTime.toISOString(),
+            endTime: endTime.toISOString(),
+            authorId: this.currentUserId,
+            fieldId,
+            participantIds: participantIds  // Assign parsed participantIds here
+          };
+  
+          this.reservationService.addReservation(reservation).subscribe({
+            next: (res) => {
+              alert('Rezervare salvată cu succes!');
+              console.log('Rezervare:', res);
+              // Dacă vrei, poți reîncărca postările aici cu `this.loadPosts();`
+            },
+            error: (err) => {
+              console.error('Eroare la salvare rezervare:', err);
+              alert('A apărut o eroare: ' + (err?.message || JSON.stringify(err)));
+            }
+  
+          });
+        } else {
+          alert('Datele introduse nu sunt valide.');
+        }
+      }
 
 }

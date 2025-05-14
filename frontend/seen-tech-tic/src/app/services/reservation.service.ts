@@ -20,7 +20,7 @@ export class ReservationService {
 
   constructor(private http: HttpClient) { }
 
-  addReservation(reservation: Reservation): Observable<Reservation> {
+  addReservation(reservation: any): Observable<Reservation> {
     return this.http.post<Reservation>(this.apiUrl, reservation);
   }
   getAllReservations(): Observable<Reservation[]> {
