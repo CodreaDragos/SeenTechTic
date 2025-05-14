@@ -26,7 +26,12 @@
           <span *ngIf="!isLoading">Login</span>
           <span *ngIf="isLoading">Logging in...</span>
         </button>
+
+        <!-- Register Button -->
+        <button mat-button color="accent" type="button" (click)="navigateToRegister()" class="register-button">
+          Register
+        </button>
       </form>
     </mat-card-content>
   </mat-card>
-</div> 
+</div>
