@@ -1,12 +1,13 @@
 <div class="home-container">
-  <img
-    src="{{ profileIcon }}"
-    alt="Profile"
-    class="profile-icon"
-    (click)="goToProfile()"
-    title="Go to Profile"
-  />
-  <button (click)="addPost()" class="add-post-button">Add Post</button>
+  <img src="{{ profileIcon }}"
+       alt="Profile"
+       class="profile-icon"
+       (click)="goToProfile()"
+       title="Go to Profile" />
+  <div style="display: flex; gap: 15px; margin-bottom: 30px;">
+    <button class="add-post-button" (click)="addPost()">Add Post</button>
+    <button class="add-post-button" (click)="addReservation()">Add Reservation</button>
+  </div>
 
   <div class="posts">
     <div *ngFor="let post of posts" class="post">
@@ -27,6 +28,20 @@
         </ul>
       </div>
       <button (click)="addComment(post)">Add Comment</button>
+    </div>
+
+
+
+  </div>
+  <div class="reservations">
+    <div *ngFor="let reservation of reservations" class="reservation">
+      <h3>Rezervare</h3>
+      <p>Autor: {{ reservation.authorId || 'Necunoscut' }}</p>
+      <p>Start: {{ reservation.startTime | date:'short' }}</p>
+      <p>End: {{ reservation.endTime | date:'short' }}</p>
+      <p>Field ID: {{ reservation.fieldId }}</p>
+
+      
     </div>
   </div>
 </div>

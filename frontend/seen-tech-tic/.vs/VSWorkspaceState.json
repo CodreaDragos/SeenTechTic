@@ -4,10 +4,13 @@
     "\\src",
     "\\src\\app",
     "\\src\\app\\components",
-    "\\src\\app\\components\\login",
+    "\\src\\app\\components\\home",
+    "\\src\\app\\components\\profile",
     "\\src\\app\\components\\register",
-    "\\src\\app\\services"
+    "\\src\\app\\components\\reservations",
+    "\\src\\app\\services",
+    "\\src\\assets"
   ],
-  "SelectedNode": "\\src\\app\\app.routes.ts",
+  "SelectedNode": "\\src\\app\\services\\reservation.service.ts",
   "PreviewInSolutionExplorer": false
 }

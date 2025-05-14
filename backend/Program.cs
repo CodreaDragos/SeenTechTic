@@ -25,6 +25,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IFieldRepository, FieldRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+
+
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -32,6 +36,9 @@ builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+
+
 
 // CORS pentru Angular (ADĂUGAT AICI)
 builder.Services.AddCors(options =>

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
+import { ReservationService, Reservation } from '../../services/reservation.service';
 
 @Component({
   selector: 'app-home',
@@ -18,12 +19,14 @@ export class HomeComponent implements OnInit {
 
   posts: Post[] = [];
   currentUserId: number | null = null;
+  reservations: Reservation[] = [];
 
   constructor(
     private router: Router,
     private postService: PostService,
     private authService: AuthService,
-    private commentService: CommentService
+    private commentService: CommentService,
+    private reservationService: ReservationService 
   ) {}
 
   ngOnInit() {
@@ -32,10 +35,27 @@ export class HomeComponent implements OnInit {
       console.log('Current User ID:', this.currentUserId);
     });
     this.loadPosts();
+    this.loadReservations();
   }
 
   goToProfile() {
     this.router.navigate(['/profile']);
+  }
+  loadReservations() {
+    this.reservationService.getAllReservations().subscribe({
+      next: (data: any) => {
+        console.log('Reservations loaded:', JSON.stringify(data, null, 2));
+        if (data && data.$values && Array.isArray(data.$values)) {
+          this.reservations = data.$values;
+        } else if (Array.isArray(data)) {
+          this.reservations = data;
+        } else {
+          console.error('Unexpected reservations data format', data);
+          this.reservations = [];
+        }
+      },
+      error: (err: any) => console.error('Failed to load reservations', err)
+    });
   }
 
   loadPosts() {
@@ -105,4 +125,43 @@ export class HomeComponent implements OnInit {
       });
     }
   }
+
+  addReservation() {
+    if (!this.currentUserId) {
+      alert('You must be logged in to make a reservation.');
+      return;
+    }
+
+    const startTime = prompt('Enter start time (ISO format, e.g., 2025-05-14T10:00):');
+    const endTime = prompt('Enter end time (ISO format, e.g., 2025-05-14T11:00):');
+    const fieldId = Number(prompt('Enter field ID:'));
+    const participantIds = prompt('Enter participant IDs (comma-separated):')?.split(',').map(id => Number(id.trim())) || [];
+   
+
+    if (startTime && endTime && fieldId) {
+      const reservation: Reservation = {
+        startTime,
+        endTime,
+        authorId: this.currentUserId,
+        fieldId,
+        participantIds: []  // 👈 Add this line
+      };
+
+      this.reservationService.addReservation(reservation).subscribe({
+        next: (res) => {
+          alert('Rezervare salvată cu succes!');
+          console.log('Rezervare:', res);
+          // Dacă vrei, poți reîncărca postările aici cu `this.loadPosts();`
+        },
+        error: (err) => {
+          console.error('Eroare la salvare rezervare:', err);
+          alert('A apărut o eroare: ' + (err?.message || JSON.stringify(err)));
+        }
+
+      });
+    } else {
+      alert('Datele introduse nu sunt valide.');
+    }
+  }
+
 }
