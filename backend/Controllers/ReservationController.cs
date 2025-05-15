@@ -77,17 +77,7 @@ namespace WebAPIDemo.Controllers
                     return BadRequest("Reservation ID mismatch");
                 }
 
-                var reservation = new Reservation
-                {
-                    ReservationId = reservationDto.ReservationId,
-                    StartTime = reservationDto.StartTime,
-                    EndTime = reservationDto.EndTime,
-                    FieldId = reservationDto.FieldId,
-                    AuthorId = reservationDto.AuthorId,
-                    Participants = new List<User>() // Will be populated by the service
-                };
-
-                var updatedReservation = _reservationService.update(reservation);
+                var updatedReservation = _reservationService.update(reservationDto);
                 return Ok(updatedReservation);
             }
             catch (Exception ex)

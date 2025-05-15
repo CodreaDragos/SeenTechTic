@@ -6,6 +6,8 @@
     <p><strong>End:</strong> {{ reservation.endTime | date:'short' }}</p>
     <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
     <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
+    <button (click)="deleteReservation(reservation)">Șterge</button>
+    <button (click)="editReservation(reservation)">Modifică</button>
   </div>
 </div>
 

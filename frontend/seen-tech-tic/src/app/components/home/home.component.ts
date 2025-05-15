@@ -167,6 +167,72 @@ export class HomeComponent implements OnInit {
         } else {
           alert('Datele introduse nu sunt valide.');
         }
+  }
+  deleteReservation(reservation: Reservation) {
+    if (!reservation.reservationId) {
+      alert('Reservation ID missing!');
+      return;
+    }
+    if (confirm('Ești sigur că vrei să ștergi această rezervare?')) {
+      this.reservationService.deleteReservation(reservation.reservationId).subscribe({
+        next: () => {
+          this.reservations = this.reservations.filter(r => r.reservationId !== reservation.reservationId);
+          alert('Rezervarea a fost ștearsă.');
+        },
+        error: (err) => {
+          console.error('Eroare la ștergere rezervare:', err);
+          alert('A apărut o eroare la ștergere.');
+        }
+      });
+    }
+  }
+  editReservation(reservation: Reservation) {
+    if (!reservation.reservationId) {
+      alert('Reservation ID missing!');
+      return;
+    }
+
+    const startTimeStr = prompt('Enter new start time (ISO format):', reservation.startTime);
+    const endTimeStr = prompt('Enter new end time (ISO format):', reservation.endTime);
+    const fieldIdStr = prompt('Enter new field ID:', reservation.fieldId.toString());
+    const participantIdsStr = prompt(
+      'Enter new participant IDs (comma-separated):',
+      reservation.participantIds.join(',')
+    );
+
+    if (startTimeStr && endTimeStr && fieldIdStr && participantIdsStr) {
+      const startTime = new Date(startTimeStr);
+      const endTime = new Date(endTimeStr);
+      const fieldId = Number(fieldIdStr);
+      const participantIds = participantIdsStr.split(',').map(id => Number(id.trim()));
+
+      if (isNaN(startTime.getTime()) || isNaN(endTime.getTime()) || isNaN(fieldId)) {
+        alert('Invalid input.');
+        return;
       }
 
+      // Trimite DTO-ul cu proprietăți cu majusculă, conform backend-ului
+      const updatedReservation = {
+        ReservationId: reservation.reservationId,
+        StartTime: startTime.toISOString(),
+        EndTime: endTime.toISOString(),
+        FieldId: fieldId,
+        AuthorId: reservation.authorId,
+        ParticipantIds: participantIds
+      };
+
+      this.reservationService.updateReservation(reservation.reservationId, updatedReservation).subscribe({
+        next: (res) => {
+          alert('Rezervarea a fost modificată cu succes!');
+          this.loadReservations();
+        },
+        error: (err) => {
+          console.error('Eroare la modificare rezervare:', err);
+          alert('A apărut o eroare la modificare.');
+        }
+      });
+    } else {
+      alert('Datele introduse nu sunt valide.');
+    }
+  }
 }

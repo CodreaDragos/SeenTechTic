@@ -1,102 +1,102 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\II\\piatra\\frontend\\seen-tech-tic\\",
+  "WorkspaceRootPath": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\home\\home.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\reservation.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\services\\reservation.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\post.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\services\\post.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\home\\home.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\home\\home.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\reservations\\reservations.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\comment.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\services\\comment.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\reservations\\reservations.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.routes.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\home\\home.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\reservation.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\services\\reservation.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\register\\register.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\home\\home.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\post.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\services\\post.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\home\\home.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\comment.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\services\\comment.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.routes.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\app.routes.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\profile\\profile.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\profile\\profile.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\profile\\profile.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\app.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.config.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.config.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\app.config.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.module.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.module.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\app.module.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.component.spec.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.component.spec.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\app.component.spec.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\app.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app-routing.module.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app-routing.module.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\app-routing.module.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\auth.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\auth.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\services\\auth.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\login\\login.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\login\\login.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\login\\login.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\register\\register.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.spec.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.spec.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\register\\register.component.spec.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\register\\register.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\components\\register\\register.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -106,28 +106,80 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "home.component.scss",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.scss",
-              "RelativeDocumentMoniker": "src\\app\\components\\home\\home.component.scss",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.scss",
-              "RelativeToolTip": "src\\app\\components\\home\\home.component.scss",
-              "ViewState": "AgIAAEEAAAAAAAAAAAAmwFwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002663|",
-              "WhenOpened": "2025-05-14T18:29:53.141Z",
+              "DocumentIndex": 2,
+              "Title": "home.component.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.ts",
+              "RelativeDocumentMoniker": "src\\app\\components\\home\\home.component.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.ts",
+              "RelativeToolTip": "src\\app\\components\\home\\home.component.ts",
+              "ViewState": "AgIAALMAAAAAAAAAAAAiwOwAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-05-14T18:15:10.02Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "reservations.component.html",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.html",
+              "RelativeDocumentMoniker": "src\\app\\components\\reservations\\reservations.component.html",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.html",
+              "RelativeToolTip": "src\\app\\components\\reservations\\reservations.component.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-05-14T18:15:05.725Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "reservation.service.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\reservation.service.ts",
+              "RelativeDocumentMoniker": "src\\app\\services\\reservation.service.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\reservation.service.ts",
+              "RelativeToolTip": "src\\app\\services\\reservation.service.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-05-14T18:18:47.178Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "reservations.component.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.ts",
+              "RelativeDocumentMoniker": "src\\app\\components\\reservations\\reservations.component.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.ts",
+              "RelativeToolTip": "src\\app\\components\\reservations\\reservations.component.ts",
+              "ViewState": "AgIAAGQAAAAAAAAAAAAiwIoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-05-14T18:16:55.358Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "register.component.html",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.html",
+              "RelativeDocumentMoniker": "src\\app\\components\\register\\register.component.html",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.html",
+              "RelativeToolTip": "src\\app\\components\\register\\register.component.html",
+              "ViewState": "AgIAABoAAAAAAAAAAAAmwEcAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-05-14T11:02:22Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "home.component.html",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.html",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.html",
               "RelativeDocumentMoniker": "src\\app\\components\\home\\home.component.html",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.html",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.html",
               "RelativeToolTip": "src\\app\\components\\home\\home.component.html",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
@@ -136,154 +188,107 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "home.component.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.ts",
-              "RelativeDocumentMoniker": "src\\app\\components\\home\\home.component.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.ts",
-              "RelativeToolTip": "src\\app\\components\\home\\home.component.ts",
-              "ViewState": "AgIAACMAAAAAAAAAAAAiwDsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T18:15:10.02Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "reservation.service.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\reservation.service.ts",
-              "RelativeDocumentMoniker": "src\\app\\services\\reservation.service.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\reservation.service.ts",
-              "RelativeToolTip": "src\\app\\services\\reservation.service.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T18:18:47.178Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "post.service.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\post.service.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\post.service.ts",
               "RelativeDocumentMoniker": "src\\app\\services\\post.service.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\post.service.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\post.service.ts",
               "RelativeToolTip": "src\\app\\services\\post.service.ts",
               "ViewState": "AgIAABQAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T18:17:14.221Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "reservations.component.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.ts",
-              "RelativeDocumentMoniker": "src\\app\\components\\reservations\\reservations.component.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.ts",
-              "RelativeToolTip": "src\\app\\components\\reservations\\reservations.component.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T18:16:55.358Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "comment.service.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\comment.service.ts",
-              "RelativeDocumentMoniker": "src\\app\\services\\comment.service.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\comment.service.ts",
-              "RelativeToolTip": "src\\app\\services\\comment.service.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T18:17:27.719Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-14T18:17:14.221Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "reservations.component.html",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.html",
-              "RelativeDocumentMoniker": "src\\app\\components\\reservations\\reservations.component.html",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\reservations\\reservations.component.html",
-              "RelativeToolTip": "src\\app\\components\\reservations\\reservations.component.html",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2025-05-14T18:15:05.725Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "profile.component.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\profile\\profile.component.ts",
-              "RelativeDocumentMoniker": "src\\app\\components\\profile\\profile.component.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\profile\\profile.component.ts",
-              "RelativeToolTip": "src\\app\\components\\profile\\profile.component.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T18:13:57.035Z",
-              "EditorCaption": ""
+              "Title": "home.component.scss",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.scss",
+              "RelativeDocumentMoniker": "src\\app\\components\\home\\home.component.scss",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\home\\home.component.scss",
+              "RelativeToolTip": "src\\app\\components\\home\\home.component.scss",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAmwFwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002663|",
+              "WhenOpened": "2025-05-14T18:29:53.141Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "app.routes.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.routes.ts",
-              "RelativeDocumentMoniker": "src\\app\\app.routes.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.routes.ts",
-              "RelativeToolTip": "src\\app\\app.routes.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T11:05:41.932Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "app.module.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.module.ts",
-              "RelativeDocumentMoniker": "src\\app\\app.module.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.module.ts",
-              "RelativeToolTip": "src\\app\\app.module.ts",
+              "Title": "comment.service.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\comment.service.ts",
+              "RelativeDocumentMoniker": "src\\app\\services\\comment.service.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\comment.service.ts",
+              "RelativeToolTip": "src\\app\\services\\comment.service.ts",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T11:05:28.6Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "app.config.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.config.ts",
-              "RelativeDocumentMoniker": "src\\app\\app.config.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.config.ts",
-              "RelativeToolTip": "src\\app\\app.config.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T11:05:22.144Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-14T18:17:27.719Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 10,
-              "Title": "app.component.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.component.ts",
-              "RelativeDocumentMoniker": "src\\app\\app.component.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.component.ts",
-              "RelativeToolTip": "src\\app\\app.component.ts",
+              "Title": "profile.component.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\profile\\profile.component.ts",
+              "RelativeDocumentMoniker": "src\\app\\components\\profile\\profile.component.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\profile\\profile.component.ts",
+              "RelativeToolTip": "src\\app\\components\\profile\\profile.component.ts",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-05-14T11:05:13.801Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-14T18:13:57.035Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "app.routes.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.routes.ts",
+              "RelativeDocumentMoniker": "src\\app\\app.routes.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.routes.ts",
+              "RelativeToolTip": "src\\app\\app.routes.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-05-14T11:05:41.932Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 13,
+              "Title": "app.module.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.module.ts",
+              "RelativeDocumentMoniker": "src\\app\\app.module.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.module.ts",
+              "RelativeToolTip": "src\\app\\app.module.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-05-14T11:05:28.6Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "app.config.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.config.ts",
+              "RelativeDocumentMoniker": "src\\app\\app.config.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.config.ts",
+              "RelativeToolTip": "src\\app\\app.config.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-05-14T11:05:22.144Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "app.component.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.component.ts",
+              "RelativeDocumentMoniker": "src\\app\\app.component.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.component.ts",
+              "RelativeToolTip": "src\\app\\app.component.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-05-14T11:05:13.801Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "app.component.spec.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.component.spec.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.component.spec.ts",
               "RelativeDocumentMoniker": "src\\app\\app.component.spec.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.component.spec.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.component.spec.ts",
               "RelativeToolTip": "src\\app\\app.component.spec.ts",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
@@ -291,11 +296,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "app.component.html",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.component.html",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.component.html",
               "RelativeDocumentMoniker": "src\\app\\app.component.html",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app.component.html",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app.component.html",
               "RelativeToolTip": "src\\app\\app.component.html",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
@@ -303,11 +308,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "app-routing.module.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app-routing.module.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app-routing.module.ts",
               "RelativeDocumentMoniker": "src\\app\\app-routing.module.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\app-routing.module.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\app-routing.module.ts",
               "RelativeToolTip": "src\\app\\app-routing.module.ts",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
@@ -315,11 +320,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "auth.service.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\auth.service.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\auth.service.ts",
               "RelativeDocumentMoniker": "src\\app\\services\\auth.service.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\services\\auth.service.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\services\\auth.service.ts",
               "RelativeToolTip": "src\\app\\services\\auth.service.ts",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
@@ -327,11 +332,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "login.component.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.ts",
               "RelativeDocumentMoniker": "src\\app\\components\\login\\login.component.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.ts",
               "RelativeToolTip": "src\\app\\components\\login\\login.component.ts",
               "ViewState": "AgIAABIAAAAAAAAAAAAiwEsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
@@ -339,11 +344,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "login.component.scss",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.scss",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.scss",
               "RelativeDocumentMoniker": "src\\app\\components\\login\\login.component.scss",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.scss",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.scss",
               "RelativeToolTip": "src\\app\\components\\login\\login.component.scss",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002663|",
@@ -351,11 +356,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "login.component.html",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.html",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.html",
               "RelativeDocumentMoniker": "src\\app\\components\\login\\login.component.html",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.html",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\login\\login.component.html",
               "RelativeToolTip": "src\\app\\components\\login\\login.component.html",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
@@ -363,11 +368,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "register.component.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.ts",
               "RelativeDocumentMoniker": "src\\app\\components\\register\\register.component.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.ts",
               "RelativeToolTip": "src\\app\\components\\register\\register.component.ts",
               "ViewState": "AgIAABsAAAAAAAAAAAAiwFQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
@@ -375,11 +380,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "register.component.spec.ts",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.spec.ts",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.spec.ts",
               "RelativeDocumentMoniker": "src\\app\\components\\register\\register.component.spec.ts",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.spec.ts",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.spec.ts",
               "RelativeToolTip": "src\\app\\components\\register\\register.component.spec.ts",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
@@ -387,27 +392,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "register.component.scss",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.scss",
+              "DocumentMoniker": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.scss",
               "RelativeDocumentMoniker": "src\\app\\components\\register\\register.component.scss",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.scss",
+              "ToolTip": "D:\\II\\paginidif\\project_ui\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.scss",
               "RelativeToolTip": "src\\app\\components\\register\\register.component.scss",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002663|",
               "WhenOpened": "2025-05-14T11:03:08.474Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "register.component.html",
-              "DocumentMoniker": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.html",
-              "RelativeDocumentMoniker": "src\\app\\components\\register\\register.component.html",
-              "ToolTip": "D:\\II\\piatra\\frontend\\seen-tech-tic\\src\\app\\components\\register\\register.component.html",
-              "RelativeToolTip": "src\\app\\components\\register\\register.component.html",
-              "ViewState": "AgIAABEAAAAAAAAAAAAmwEwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2025-05-14T11:02:22Z"
             }
           ]
         }

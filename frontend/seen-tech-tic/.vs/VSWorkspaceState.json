@@ -11,6 +11,6 @@
     "\\src\\app\\services",
     "\\src\\assets"
   ],
-  "SelectedNode": "\\src\\app\\services\\reservation.service.ts",
+  "SelectedNode": "\\src\\app\\components\\reservations\\reservations.component.ts",
   "PreviewInSolutionExplorer": false
 }

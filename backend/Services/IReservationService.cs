@@ -1,3 +1,4 @@
+using WebAPIDemo.DTOs.Reservation;
 using WebAPIDemo.Models;
 
 namespace WebAPIDemo.Services
@@ -7,7 +8,8 @@ namespace WebAPIDemo.Services
         Reservation create(Reservation reservation);
         List<Reservation> getAll();
         Reservation getOne(int reservationId);
-        Reservation update(Reservation reservation);
+        Reservation update(UpdateReservationDto dto);
+
         int delete(int reservationId);
         bool isFieldAvailable(int fieldId, DateTime startTime, DateTime endTime);
     }

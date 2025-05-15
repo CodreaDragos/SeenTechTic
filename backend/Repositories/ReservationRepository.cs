@@ -20,14 +20,11 @@ namespace WebAPIDemo.Repositories
             return reservation;
         }
 
-        public List<Reservation> getAll()
+        public IQueryable<Reservation> getAll()
         {
-            return _context.Reservations
-                .Include(r => r.Field)
-                .Include(r => r.Author)
-                .Include(r => r.Participants)
-                .ToList();
+            return _context.Reservations.Include(r => r.Participants);
         }
+
 
         public Reservation? getOne(int reservationId)
         {

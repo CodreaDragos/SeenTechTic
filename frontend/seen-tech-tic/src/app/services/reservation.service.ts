@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Reservation {
-  
+  reservationId?: number;
   startTime: string;
   endTime: string;
   fieldId: number;
@@ -26,5 +26,10 @@ export class ReservationService {
   getAllReservations(): Observable<Reservation[]> {
     return this.http.get<Reservation[]>(this.apiUrl);
   }
-
+  deleteReservation(reservationId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${reservationId}`);
+  }
+  updateReservation(reservationId: number, reservation: any): Observable<Reservation> {
+    return this.http.put<Reservation>(`${this.apiUrl}/${reservationId}`, reservation);
+  }
 }
