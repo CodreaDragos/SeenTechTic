@@ -50,4 +50,11 @@ export class PostService {
   addPost(post: Post): Observable<Post> {
     return this.http.post<Post>(this.apiUrl, post);
   }
+  updatePost(post: Post): Observable<Post> {
+  return this.http.put<Post>(`${this.apiUrl}/${post.postId}`, post);
+}
+
+deletePost(postId: number): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/${postId}`);
+}
 }

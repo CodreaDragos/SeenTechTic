@@ -1,0 +1,23 @@
+.app-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  background-color: #2980b9;
+  color: white;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.logout-button svg {
+  stroke: white;
+  width: 24px;
+  height: 24px;
+}

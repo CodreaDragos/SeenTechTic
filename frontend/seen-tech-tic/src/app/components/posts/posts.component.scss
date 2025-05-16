@@ -1,14 +1,156 @@
+body {
+  background-color: #ffffff; /* fundal alb */
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #3a6351; /* verde închis pastel pentru text */
+}
+
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px 25px;
+  background: #e6f2e6; /* verde pastel deschis */
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(90, 170, 120, 0.3); /* umbră verde pastel */
+  color: #3a6351;
+}
+
+h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #4a7a53; /* verde mai închis pentru titlu */
+  text-align: center;
+  margin-bottom: 40px;
+}
+
 .action-button {
-  background-color: #27ae60;
-  color: white;
+  display: block;
+  margin: 0 auto 35px auto;
+  background: linear-gradient(to right, #a8d5a3, #6aa84f); /* gradient verde pastel */
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 12px;
   border: none;
-  border-radius: 6px;
-  padding: 12px 25px;
-  margin-bottom: 20px;
-  font-size: 1rem;
+  color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 .action-button:hover {
-  background-color: #1e8449;
+  background: linear-gradient(to right, #6aa84f, #a8d5a3);
+  transform: scale(1.05);
+}
+
+.post-card {
+  background: #f9fff9; /* alb verzui foarte deschis */
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(106, 168, 79, 0.3);
+  padding: 25px 30px;
+  margin-bottom: 25px;
+  color: #3a6351;
+}
+
+.post-title {
+  color: #4a7a53; /* verde închis */
+  font-size: 1.8rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.post-description {
+  color: #557a58cc; /* verde pastel semi-transparent */
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.post-actions {
+  margin-top: 20px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.update-button, .delete-button {
+  padding: 12px 30px;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  color: white;
+}
+
+.update-button {
+  background-color: #6aa84f; /* verde update */
+}
+.update-button:hover {
+  background-color: #558b2f;
+  transform: scale(1.05);
+}
+
+.delete-button {
+  background-color: #d32f2f; /* roșu pentru delete */
+}
+.delete-button:hover {
+  background-color: #9a0007;
+  transform: scale(1.05);
+}
+
+.comments-section {
+  border-top: 1px solid #a8d5a3;
+  padding-top: 15px;
+  color: #3a6351;
+}
+
+.comments-section h4 {
+  color: #6aa84f;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.comment {
+  background-color: #dff0d8; /* verde pastel deschis */
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: #3a6351;
+}
+
+textarea {
+  width: 100%;
+  min-height: 70px;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 1px solid #a8d5a3;
+  background: #f5fff5;
+  color: #3a6351;
+  resize: vertical;
+  margin-bottom: 10px;
+  font-family: 'Inter', sans-serif;
+}
+
+textarea::placeholder {
+  color: #7ea472;
+}
+
+.comment-button {
+  background: linear-gradient(to right, #a8d5a3, #6aa84f);
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  display: block;
+  margin-left: auto;
+}
+.comment-button:hover {
+  background: linear-gradient(to right, #6aa84f, #a8d5a3);
+  transform: scale(1.05);
 }

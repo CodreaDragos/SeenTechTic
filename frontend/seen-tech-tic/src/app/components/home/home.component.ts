@@ -5,11 +5,17 @@ import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
 import { ReservationService, Reservation } from '../../services/reservation.service';
-
+import { HeaderComponent } from '../../components/header/header.component';
+  
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NgForOf, RouterModule],
+  imports: [
+    CommonModule,
+    NgForOf,
+    RouterModule,
+    HeaderComponent // 👈 aici îl adaugi
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   providers: [DatePipe]

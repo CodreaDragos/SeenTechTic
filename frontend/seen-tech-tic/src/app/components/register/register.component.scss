@@ -1,51 +1,159 @@
-
+/* Container general */
 .register-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f5f5f5;
+  background: #ffffff; /* fundal alb */
   padding: 2rem;
+  font-family: 'Inter', sans-serif;
+  color: #2e4a36; /* verde închis */
 }
 
-mat-card {
+/* Card */
+mat-card.register-card {
   width: 100%;
-  max-width: 400px;
-  padding: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  background-color: white;
+  max-width: 420px;
+  padding: 2.5rem 3rem;
+  background: #ffffff;
+  border: 2px solid #8bc34a; /* verde pastel contur */
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(139, 195, 74, 0.2); /* umbră verde pastel */
+  transition: box-shadow 0.3s ease;
 }
 
+mat-card.register-card:hover {
+  box-shadow: 0 15px 45px rgba(139, 195, 74, 0.35);
+}
+
+/* Titlul */
+mat-card-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+mat-card-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #558b2f; /* verde închis */
+  letter-spacing: 1.2px;
+}
+
+/* Formular - inputuri full width */
 mat-form-field.full-width {
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 1.6rem;
 }
 
-.response-message {
-  margin-bottom: 1rem;
-  font-weight: 500;
+/* Contur input normal și la focus */
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  border-color: #aed581; /* verde pastel contur */
+  border-width: 1.8px;
+  transition: border-color 0.3s ease;
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline {
+  border-color: #558b2f; /* verde închis contur */
+  border-width: 2.3px;
+  box-shadow: 0 0 6px #8bc34a99;
+}
+
+/* Input propriu-zis */
+.mat-input-element {
+  background-color: #f5fff0; /* verde foarte deschis fundal */
+  color: #2e4a36; /* verde închis text */
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  font-size: 1.05rem;
+  transition: background-color 0.3s ease;
+}
+
+.mat-input-element::placeholder {
+  color: #a5d6a7; /* verde pastel placeholder */
+}
+
+/* Erori */
+mat-error {
   color: #d32f2f;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Mesaj de răspuns */
+.response-message {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .response-message.error {
   color: #d32f2f;
 }
 
-button {
-  display: block;
+.response-message.success {
+  color: #558b2f;
+}
+
+/* Buton submit */
+button.submit-button {
   width: 100%;
-  margin-top: 1rem;
+  padding: 14px 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(90deg, #8bc34a 0%, #558b2f 100%);
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 5px 15px #aed581aa;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 }
 
-a {
-  display: block;
-  text-decoration: none;
-  font-weight: bold;
+button.submit-button:hover:not(:disabled) {
+  background: linear-gradient(90deg, #558b2f 0%, #8bc34a 100%);
+  box-shadow: 0 8px 20px #558b2fcc;
+  transform: scale(1.05);
+}
+
+button:disabled {
+  background: #c7d9a6 !important;
+  cursor: not-allowed;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Icon incarcare */
+.loading-icon {
+  animation: spin 1.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Link login */
+.login-link {
+  margin-top: 2rem;
   text-align: center;
-  margin-top: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #2e4a36;
 }
 
-a:hover {
+.login-link a {
+  color: #8bc34a;
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 6px;
+  transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+  color: #558b2f;
   text-decoration: underline;
 }
