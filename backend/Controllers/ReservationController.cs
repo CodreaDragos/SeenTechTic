@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebAPIDemo.Models;
 using WebAPIDemo.Services;
 using WebAPIDemo.DTOs.Reservation;
@@ -44,7 +44,10 @@ namespace WebAPIDemo.Controllers
         {
             try
             {
-                var reservations = _reservationService.getAll();
+                var userId = GetCurrentUserId();
+                var reservations = _reservationService.getAll()
+                    .Where(r => r.AuthorId == userId)
+                    .ToList();
                 return Ok(reservations);
             }
             catch (Exception ex)
@@ -53,19 +56,37 @@ namespace WebAPIDemo.Controllers
             }
         }
 
+        // Metodă ajutătoare pentru a extrage userId din contextul HTTP (depinde de implementarea ta de autentificare)
+        private int GetCurrentUserId()
+        {
+            // Exemplu, dacă userId e stocat în claim-ul "sub"
+            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub");
+            return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+        }
+
+
         [HttpGet("{id}")]
         public IActionResult GetReservation(int id)
         {
             try
             {
+                var userId = GetCurrentUserId();
                 var reservation = _reservationService.getOne(id);
+
+                if (reservation == null)
+                    return NotFound();
+
+                if (reservation.AuthorId != userId)
+                    return Forbid();  // 403 Forbidden
+
                 return Ok(reservation);
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
+
 
         [HttpPut("{id}")]
         public IActionResult UpdateReservation(int id, [FromBody] UpdateReservationDto reservationDto)

@@ -6,7 +6,8 @@ import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { HeaderComponent } from '../../components/header/header.component';
-  
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -14,7 +15,8 @@ import { HeaderComponent } from '../../components/header/header.component';
     CommonModule,
     NgForOf,
     RouterModule,
-    HeaderComponent // 👈 aici îl adaugi
+    HeaderComponent ,// 👈 aici îl adaugi
+    ReactiveFormsModule,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -132,113 +134,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-    addReservation() {
-        if (!this.currentUserId) {
-          alert('You must be logged in to make a reservation.');
-          return;
-        }
-    
-        const startTimeStr = prompt('Enter start time (ISO format, e.g., 2025-05-14T10:00):');
-        const endTimeStr = prompt('Enter end time (ISO format, e.g., 2025-05-14T11:00):');
-        const fieldId = Number(prompt('Enter field ID:'));
-        const participantIds = prompt('Enter participant IDs (comma-separated):')?.split(',').map(id => Number(id.trim())) || [];
-       
-        if (startTimeStr && endTimeStr && fieldId) {
-          const startTime = new Date(startTimeStr);
-          const endTime = new Date(endTimeStr);
-          if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-            alert('Invalid date format for start or end time.');
-            return;
-          }
-          const reservation: Reservation = {
-            startTime: startTime.toISOString(),
-            endTime: endTime.toISOString(),
-            authorId: this.currentUserId,
-            fieldId,
-            participantIds: participantIds  // Assign parsed participantIds here
-          };
-  
-          this.reservationService.addReservation(reservation).subscribe({
-            next: (res) => {
-              alert('Rezervare salvată cu succes!');
-              console.log('Rezervare:', res);
-              // Dacă vrei, poți reîncărca postările aici cu `this.loadPosts();`
-            },
-            error: (err) => {
-              console.error('Eroare la salvare rezervare:', err);
-              alert('A apărut o eroare: ' + (err?.message || JSON.stringify(err)));
-            }
-  
-          });
-        } else {
-          alert('Datele introduse nu sunt valide.');
-        }
-  }
-  deleteReservation(reservation: Reservation) {
-    if (!reservation.reservationId) {
-      alert('Reservation ID missing!');
-      return;
-    }
-    if (confirm('Ești sigur că vrei să ștergi această rezervare?')) {
-      this.reservationService.deleteReservation(reservation.reservationId).subscribe({
-        next: () => {
-          this.reservations = this.reservations.filter(r => r.reservationId !== reservation.reservationId);
-          alert('Rezervarea a fost ștearsă.');
-        },
-        error: (err) => {
-          console.error('Eroare la ștergere rezervare:', err);
-          alert('A apărut o eroare la ștergere.');
-        }
-      });
-    }
-  }
-  editReservation(reservation: Reservation) {
-    if (!reservation.reservationId) {
-      alert('Reservation ID missing!');
-      return;
-    }
+ 
 
-    const startTimeStr = prompt('Enter new start time (ISO format):', reservation.startTime);
-    const endTimeStr = prompt('Enter new end time (ISO format):', reservation.endTime);
-    const fieldIdStr = prompt('Enter new field ID:', reservation.fieldId.toString());
-    const participantIdsStr = prompt(
-      'Enter new participant IDs (comma-separated):',
-      reservation.participantIds.join(',')
-    );
-
-    if (startTimeStr && endTimeStr && fieldIdStr && participantIdsStr) {
-      const startTime = new Date(startTimeStr);
-      const endTime = new Date(endTimeStr);
-      const fieldId = Number(fieldIdStr);
-      const participantIds = participantIdsStr.split(',').map(id => Number(id.trim()));
-
-      if (isNaN(startTime.getTime()) || isNaN(endTime.getTime()) || isNaN(fieldId)) {
-        alert('Invalid input.');
-        return;
-      }
-
-      // Trimite DTO-ul cu proprietăți cu majusculă, conform backend-ului
-      const updatedReservation = {
-        ReservationId: reservation.reservationId,
-        StartTime: startTime.toISOString(),
-        EndTime: endTime.toISOString(),
-        FieldId: fieldId,
-        AuthorId: reservation.authorId,
-        ParticipantIds: participantIds
-      };
-
-      this.reservationService.updateReservation(reservation.reservationId, updatedReservation).subscribe({
-        next: (res) => {
-          alert('Rezervarea a fost modificată cu succes!');
-          this.loadReservations();
-        },
-        error: (err) => {
-          console.error('Eroare la modificare rezervare:', err);
-          alert('A apărut o eroare la modificare.');
-        }
-      });
-    } else {
-      alert('Datele introduse nu sunt valide.');
-    }
-  }
 }

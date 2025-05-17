@@ -1,50 +1,44 @@
 <div class="container">
   <h1>Rezervări</h1>
-  <button (click)="addReservation()" class="action-button">Adaugă Rezervare</button>
+
+  <!-- Buton pentru toggle formular -->
+  <button (click)="showAddForm = !showAddForm" class="action-button toggle-btn">
+    {{ showAddForm ? 'Anulează' : 'Adaugă Rezervare' }}
+  </button>
+
+  <!-- Formularul apare doar când showAddForm e true -->
+  <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
+    <label>
+      Start Time (ISO):
+      <input type="datetime-local" formControlName="startTime" required />
+    </label>
+
+    <label>
+      End Time (ISO):
+      <input type="datetime-local" formControlName="endTime" required />
+    </label>
+
+    <label>
+      Field ID:
+      <input type="number" formControlName="fieldId" required min="1" />
+    </label>
+
+    <label>
+      Participant IDs (comma-separated):
+      <input type="text" formControlName="participantIds" required />
+    </label>
+
+    <button type="submit" class="action-button save-btn">Salvează Rezervarea</button>
+  </form>
+
   <div *ngFor="let reservation of reservations" class="reservation-card">
     <p><strong>Start:</strong> {{ reservation.startTime | date:'short' }}</p>
     <p><strong>End:</strong> {{ reservation.endTime | date:'short' }}</p>
     <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
     <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
-    <button (click)="deleteReservation(reservation)">Șterge</button>
-    <button (click)="editReservation(reservation)">Modifică</button>
+    <div class="btn-group">
+      <button (click)="deleteReservation(reservation)" class="action-button delete-btn">Șterge</button>
+      <button (click)="editReservation(reservation)" class="action-button edit-btn">Modifică</button>
+    </div>
   </div>
 </div>
-
-<style>
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f4f8;
-    border-radius: 10px;
-  }
-  h1 {
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  .reservation-card {
-    background-color: #ffffff;
-    border: 1px solid #d1d9e6;
-    border-radius: 8px;
-    padding: 15px 20px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 5px rgba(41, 128, 185, 0.1);
-  }
-  .action-button {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 25px;
-    margin-bottom: 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .action-button:hover {
-    background-color: #1e8449;
-  }
-</style>

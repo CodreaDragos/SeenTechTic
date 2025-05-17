@@ -1,87 +1,121 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgForOf } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-reservations',
   standalone: true,
-  imports: [CommonModule, NgForOf],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.scss']
 })
 export class ReservationsComponent implements OnInit {
   reservations: Reservation[] = [];
   currentUserId: number | null = null;
+  reservationForm!: FormGroup;
+  showAddForm = false;
+  editingReservationId: number | null = null;
 
-  constructor(private reservationService: ReservationService, private authService: AuthService) {}
+  constructor(
+    private fb: FormBuilder,
+    private reservationService: ReservationService,
+    private authService: AuthService
+  ) { }
 
-  ngOnInit() {
-    this.authService.currentUserId$.subscribe((id: number | null) => {
-      this.currentUserId = id;
-    });
+  ngOnInit(): void {
+    this.authService.currentUserId$.subscribe(id => this.currentUserId = id);
     this.loadReservations();
+
+    this.reservationForm = this.fb.group({
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      fieldId: ['', [Validators.required, Validators.min(1)]],
+      participantIds: ['', Validators.required]
+    });
   }
 
-  loadReservations() {
+  loadReservations(): void {
     this.reservationService.getAllReservations().subscribe({
       next: (data: any) => {
-        console.log('Raw reservations data:', data);
-        if (data && data.$values && Array.isArray(data.$values)) {
-          this.reservations = data.$values;
-        } else if (Array.isArray(data)) {
-          this.reservations = data;
-        } else {
-          this.reservations = [];
-        }
+        const allReservations = Array.isArray(data?.$values) ? data.$values : data ?? [];
+        this.reservations = this.currentUserId
+          ? allReservations.filter((r: Reservation) => r.authorId === this.currentUserId)
+          : [];
       },
-      error: (err: any) => console.error('Failed to load reservations', err)
+      error: err => console.error('Eroare la încărcare rezervări', err)
     });
   }
 
-  addReservation() {
+  addReservation(): void {
     if (!this.currentUserId) {
-      alert('You must be logged in to make a reservation.');
+      alert('Trebuie să fii logat pentru a face o rezervare.');
       return;
     }
 
-    const startTimeStr = prompt('Enter start time (ISO format, e.g., 2025-05-14T10:00):');
-    const endTimeStr = prompt('Enter end time (ISO format, e.g., 2025-05-14T11:00):');
-    const fieldId = Number(prompt('Enter field ID:'));
-    const participantIds = prompt('Enter participant IDs (comma-separated):')?.split(',').map(id => Number(id.trim())) || [];
+    if (this.reservationForm.invalid) {
+      alert('Completează toate câmpurile.');
+      this.reservationForm.markAllAsTouched();
+      return;
+    }
 
-    if (startTimeStr && endTimeStr && fieldId && this.currentUserId !== null && fieldId > 0 && this.currentUserId > 0 && Array.isArray(participantIds)) {
-      const startTime = new Date(startTimeStr);
-      const endTime = new Date(endTimeStr);
-      if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-        alert('Invalid date format for start or end time.');
-        return;
-      }
-      console.log('Validated inputs:', { startTime, endTime, fieldId, currentUserId: this.currentUserId, participantIds });
-      const reservationDto = {
-        StartTime: startTime.toISOString(),
-        EndTime: endTime.toISOString(),
-        AuthorId: this.currentUserId,
-        FieldId: fieldId,
-        ParticipantIds: participantIds  // Match backend DTO property names
-      };
-      console.log('Sending reservation DTO:', reservationDto);
+    const { startTime, endTime, fieldId, participantIds } = this.reservationForm.value;
 
-      this.reservationService.addReservation(reservationDto).subscribe({
-        next: (res) => {
-          alert('Rezervare salvată cu succes!');
-          console.log('Rezervare:', res);
-          this.loadReservations();
+    // Convertim ora locală București (input datetime-local) în ISO UTC
+    const startIso = this.parseDateLocalToUTC(startTime);
+    const endIso = this.parseDateLocalToUTC(endTime);
+
+    const field = Number(fieldId);
+    const participants = participantIds
+      .split(',')
+      .map((id: string) => Number(id.trim()))
+      .filter((id: number) => !isNaN(id));
+
+    const reservationDto = {
+      StartTime: startIso,
+      EndTime: endIso,
+      AuthorId: this.currentUserId,
+      FieldId: field,
+      ParticipantIds: participants
+    };
+
+    if (this.editingReservationId) {
+      this.reservationService.updateReservation(this.editingReservationId, {
+        ...reservationDto,
+        ReservationId: this.editingReservationId
+      }).subscribe({
+        next: () => {
+          alert('Rezervarea a fost modificată cu succes!');
+          this.resetForm();
         },
-        error: (err) => {
-          console.error('Eroare la salvare rezervare:', err);
-          alert('A apărut o eroare: ' + (err?.message || JSON.stringify(err)));
+        error: err => {
+          console.error('Eroare la modificare rezervare:', err);
+          alert('A apărut o eroare la modificare.');
         }
       });
     } else {
-      alert('Datele introduse nu sunt valide.');
+      this.reservationService.addReservation(reservationDto).subscribe({
+        next: () => {
+          alert('Rezervare salvată cu succes!');
+          this.resetForm();
+        },
+        error: err => {
+          console.error('Eroare la salvare rezervare:', err);
+          alert('Eroare: ' + (err?.message || 'A apărut o problemă.'));
+        }
+      });
     }
   }
+
+  private resetForm() {
+    this.reservationForm.reset();
+    this.showAddForm = false;
+    this.editingReservationId = null;
+    this.loadReservations();
+  }
+
   deleteReservation(reservation: Reservation) {
     if (!reservation.reservationId) {
       alert('Reservation ID missing!');
@@ -100,56 +134,116 @@ export class ReservationsComponent implements OnInit {
       });
     }
   }
-  editReservation(reservation: Reservation) {
-    if (!reservation.reservationId) {
-      alert('Reservation ID missing!');
-      return;
-    }
 
-    const startTimeStr = prompt('Enter new start time (ISO format):', reservation.startTime);
-    const endTimeStr = prompt('Enter new end time (ISO format):', reservation.endTime);
-    const fieldIdStr = prompt('Enter new field ID:', reservation.fieldId.toString());
-    const participantIdsStr = prompt(
-      'Enter new participant IDs (comma-separated):',
-      Array.isArray(reservation.participantIds) ? reservation.participantIds.join(',') : ''
+  editReservation(reservation: Reservation) {
+    this.editingReservationId = reservation.reservationId ?? null;
+    this.showAddForm = true;
+
+    this.reservationForm.setValue({
+      startTime: reservation.startTime ? this.toInputDateTimeLocal(reservation.startTime) : '',
+      endTime: reservation.endTime ? this.toInputDateTimeLocal(reservation.endTime) : '',
+      fieldId: reservation.fieldId ?? '',
+      participantIds: reservation.participantIds?.join(',') ?? ''
+    });
+  }
+
+  // Convertim ISO date UTC la string formatat pentru input datetime-local în fusul Europe/Bucharest
+  private toInputDateTimeLocal(dateStr: string): string {
+    const date = new Date(dateStr);
+
+    const formatter = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: 'Europe/Bucharest',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+
+    const parts = formatter.formatToParts(date);
+    const getPart = (type: string) => parts.find(p => p.type === type)?.value || '';
+
+    return `${getPart('year')}-${getPart('month')}-${getPart('day')}T${getPart('hour')}:${getPart('minute')}`;
+  }
+
+  // Convertim input datetime-local (ora București) în ISO UTC string pentru backend
+  private parseDateLocalToUTC(dateTimeLocal: string): string {
+    // dateTimeLocal ex: "2025-05-17T12:30"
+    // construim un obiect Date folosind fusul Europe/Bucharest
+
+    const [datePart, timePart] = dateTimeLocal.split('T');
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hour, minute] = timePart.split(':').map(Number);
+
+    // Obținem data în fusul Europe/Bucharest cu offset corect
+    // Folosim Intl API pentru asta:
+
+    // Construim o dată în UTC fix, apoi calculăm timestamp cu fusul orar București
+    const dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Europe/Bucharest',
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+
+    // Mai întâi construim o dată UTC pentru momentul introdus (fără fus orar):
+    // Adică interpretăm ora ca UTC (nu e corect, dar e punct de plecare)
+    const fakeUTCDate = new Date(Date.UTC(year, month - 1, day, hour-3, minute));
+
+    // Extragem ora reală în București
+    const parts = dtf.formatToParts(fakeUTCDate);
+
+    const getPart = (type: string) => parts.find(p => p.type === type)?.value || '00';
+
+    const bucharestYear = Number(getPart('year'));
+    const bucharestMonth = Number(getPart('month'));
+    const bucharestDay = Number(getPart('day'));
+    const bucharestHour = Number(getPart('hour'));
+    const bucharestMinute = Number(getPart('minute'));
+    const bucharestSecond = Number(getPart('second'));
+
+    // Construim data corectă în București ca timestamp UTC:
+    const bucharestDateUTC = Date.UTC(
+      bucharestYear,
+      bucharestMonth - 1,
+      bucharestDay,
+      bucharestHour,
+      bucharestMinute,
+      bucharestSecond
     );
 
-    if (startTimeStr && endTimeStr && fieldIdStr && participantIdsStr) {
-      const startTime = new Date(startTimeStr);
-      const endTime = new Date(endTimeStr);
-      const fieldId = Number(fieldIdStr);
-      const participantIds = participantIdsStr.split(',').map(id => Number(id.trim()));
+    return new Date(bucharestDateUTC).toISOString();
+  }
 
-      if (isNaN(startTime.getTime()) || isNaN(endTime.getTime()) || isNaN(fieldId)) {
-        alert('Invalid input.');
-        return;
-      }
 
-      // Trimite DTO-ul cu proprietăți cu majusculă, conform backend-ului
-      const updatedReservation = {
-        ReservationId: reservation.reservationId,
-        StartTime: startTime.toISOString(),
-        EndTime: endTime.toISOString(),
-        FieldId: fieldId,
-        AuthorId: reservation.authorId,
-        ParticipantIds: participantIds
-      };
-      console.log('Trimitem:', updatedReservation);
-      console.log('ParticipantIds:', updatedReservation.ParticipantIds);
+  // Determină offset-ul în minute pentru fusul Europe/Bucharest la o anumită dată
+  private toISOStringForBucharest(dateTimeLocal: string): string {
+    // dateTimeLocal ex: "2025-05-17T12:30"
+    const [datePart, timePart] = dateTimeLocal.split('T');
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hour, minute] = timePart.split(':').map(Number);
 
-      this.reservationService.updateReservation(reservation.reservationId, updatedReservation).subscribe({
-        next: (res) => {
-          alert('Rezervarea a fost modificată cu succes!'); // <-- Mesaj clar de succes
-          this.loadReservations();
-        },
-        error: (err) => {
-          console.error('Eroare la modificare rezervare:', err);
-          alert('A apărut o eroare la modificare.');
-        }
-      });
-    } else {
-      alert('Datele introduse nu sunt valide.');
-    }
+    // Construim obiectul Date local, JS îl consideră în fusul local al mașinii
+    // Dar tu vrei fix București, deci trebuie să forțezi compensarea:
+    const localDate = new Date(year, month - 1, day, hour, minute);
+
+    // Offset-ul București (UTC+2 sau UTC+3) depinde de data (ora de vară)
+    // Verificăm offsetul real pentru data respectivă în București
+    // Problema e că getTimezoneOffset() returnează offset-ul mașinii locale
+    // Dacă mașina ta nu e pe fusul București, trebuie să forțezi manual
+    const bucharestOffset = 180; // +180 min = +3 ore
+
+    // Convertim la UTC scăzând offset-ul București
+    const utcTimestamp = localDate.getTime() - bucharestOffset * 60 * 1000;
+
+    const utcDate = new Date(utcTimestamp);
+
+    return utcDate.toISOString();
   }
 
 }
