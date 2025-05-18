@@ -1,0 +1,30 @@
+### Test Get All Reservations for Authenticated User
+
+GET http://localhost:5041/api/reservation
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Accept: application/json
+
+###
+
+### Test Get Reservation by ID
+
+GET http://localhost:5041/api/reservation/1
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Accept: application/json
+
+###
+
+### Test Create Reservation
+
+POST http://localhost:5041/api/reservation
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "startTime": "2024-07-01T10:00:00",
+  "endTime": "2024-07-01T12:00:00",
+  "fieldId": 1,
+  "authorId": 1
+}
+
+###

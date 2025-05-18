@@ -1,28 +1,65 @@
 <div class="container">
-  <h1>SeenTechTic - Postări</h1>
+  <h1 class="page-title">Postări</h1>
   
-  <button (click)="addPost()" class="action-button">Adaugă Postare</button>
-  
-  <div *ngFor="let post of posts" class="post-card">
-    <h3 class="post-title">{{ post.postTitle }}</h3>
-    <p class="post-description">{{ post.postDescription }}</p>
-    <p><strong>Autor ID:</strong> {{ post.authorId }}</p>
-    <p><strong>Creat la:</strong> {{ post.createdAt | date:'short' }}</p>
+  <app-posts-new (postCreated)="loadPosts()"></app-posts-new>
 
-    <div class="post-actions">
-      <button (click)="updatePost(post)" class="update-button">Update</button>
-      <button (click)="deletePost(post)" class="delete-button">Delete</button>
-    </div>
+  <div *ngFor="let post of posts" class="post-wrapper">
+    <div class="post-card">
+      <h3 class="post-title">{{ post.postTitle }}</h3>
+      
+      <p class="post-description">{{ post.postDescription }}</p>
+      
+      <div class="post-meta">
+        <div class="meta-item" *ngIf="post.reservation">
+  <i class="fas fa-calendar-alt"></i> Rezervare: {{ post.reservation.StartTime | date:'shortDate' }} 
+  de la {{ post.reservation.StartTime | date:'shortTime' }} la {{ post.reservation.EndTime | date:'shortTime' }}
+</div>
 
-    <div class="comments-section">
-      <h4>Comentarii</h4>
-      <div *ngFor="let comment of post.comments" class="comment">
-        <p>{{ comment.commentContent }}</p>
-        <small>de {{ comment.author?.username || 'Anonim' }} la {{ comment.createdAt | date:'short' }}</small>
+        <div class="meta-item">
+          <i class="fas fa-clock"></i> Creat la: {{ post.createdAt | date:'short' }}
+        </div>
+        <div class="meta-item" *ngIf="post.reservation">
+  <i class="fas fa-calendar-alt"></i> Rezervare ID: {{ post.reservation.ReservationId }}<br>
+  Ora: de la {{ post.reservation.StartTime | date:'shortTime' }} la {{ post.reservation.EndTime | date:'shortTime' }}
+</div>
+
       </div>
-
-      <textarea [(ngModel)]="newCommentContent[post.postId || 0]" placeholder="Adaugă un comentariu..."></textarea>
-      <button (click)="addComment(post)" class="comment-button">Adaugă Comentariu</button>
+      
+      <div class="post-actions">
+        <button (click)="openEditPost(post)" class="update-button">
+          <i class="fas fa-edit"></i> Modifică
+        </button>
+        <button (click)="deletePost(post)" class="delete-button">
+          <i class="fas fa-trash-alt"></i> Șterge
+        </button>
+      </div>
+      
+      <div class="comments-section">
+        <h4 class="comments-title">
+          <i class="fas fa-comments"></i> Comentarii
+        </h4>
+        
+        <div *ngFor="let comment of post.comments" class="comment">
+          <p class="comment-content">{{ comment.commentContent }}</p>
+          <div class="comment-meta">
+            <span class="comment-author">{{ comment.author?.username || 'Anonim' }}</span>
+            <span>{{ comment.createdAt | date:'short' }}</span>
+          </div>
+        </div>
+        
+        <div class="comment-form">
+          <textarea [(ngModel)]="newCommentContent[post.postId || 0]" placeholder="Adaugă un comentariu..."></textarea>
+          <button (click)="addComment(post)" class="comment-button">
+            <i class="fas fa-paper-plane"></i> Adaugă Comentariu
+          </button>
+        </div>
+      </div>
     </div>
+
+    <app-posts-edit 
+      *ngIf="editingPostId === post.postId" 
+      [editPost]="post" 
+      (postUpdated)="onPostUpdated($event)">
+    </app-posts-edit>
   </div>
 </div>

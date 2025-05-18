@@ -1,91 +1,20 @@
-<div class="container">
-  <h1>Postări Noi</h1>
-  <button (click)="addPost()" class="action-button">Adaugă Postare</button>
-  <div *ngFor="let post of posts" class="post-card">
-    <h3 class="post-title">{{ post.postTitle }}</h3>
-    <p class="post-description">{{ post.postDescription }}</p>
-    <p><strong>Autor:</strong> {{ post.author?.username || post.authorId }}</p>
-    <p><strong>Creat la:</strong> {{ post.createdAt | date:'short' }}</p>
-
-    <!-- Comments Section -->
-    <div class="comments-section" *ngIf="post.comments && post.comments.length > 0">
-      <h4>Comentarii:</h4>
-      <div *ngFor="let comment of post.comments" class="comment">
-        <p>{{ comment.commentContent }}</p>
-        <small>de {{ comment.author?.username || comment.authorId }}, la {{ comment.createdAt | date:'short' }}</small>
-      </div>
-    </div>
-
-    <!-- Add Comment -->
-    <div class="add-comment">
-      <textarea [(ngModel)]="newCommentContent[post.postId]" placeholder="Adaugă un comentariu..."></textarea>
-      <button (click)="addComment(post.postId)" class="action-button">Trimite Comentariu</button>
-    </div>
+<form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="postTitle">Title</label>
+    <input id="postTitle" formControlName="postTitle" />
   </div>
-</div>
-
-<style>
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f4f8;
-    border-radius: 10px;
-  }
-  h1 {
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  .post-card {
-    background-color: #ffffff;
-    border: 1px solid #d1d9e6;
-    border-radius: 8px;
-    padding: 15px 20px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 5px rgba(41, 128, 185, 0.1);
-  }
-  .post-title {
-    color: #2980b9;
-    margin-top: 0;
-    margin-bottom: 10px;
-  }
-  .post-description {
-    color: #555;
-    margin-bottom: 10px;
-  }
-  .action-button {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 25px;
-    margin-top: 10px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .action-button:hover {
-    background-color: #1e8449;
-  }
-  .comments-section {
-    margin-top: 15px;
-    padding-top: 10px;
-    border-top: 1px solid #ccc;
-  }
-  .comment {
-    background-color: #e9f0f7;
-    border-radius: 5px;
-    padding: 8px 12px;
-    margin-bottom: 8px;
-  }
-  .add-comment textarea {
-    width: 100%;
-    min-height: 50px;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    resize: vertical;
-  }
-</style>
+  <div>
+    <label for="postDescription">Description</label>
+    <textarea id="postDescription" formControlName="postDescription"></textarea>
+  </div>
+  <div>
+    <label for="reservationId">Reservation</label>
+    <select id="reservationId" formControlName="reservationId">
+      <option [ngValue]="null">None</option>
+      <option *ngFor="let reservation of reservations" [ngValue]="reservation.reservationId">
+        {{ reservation.startTime | date:'short' }} - {{ reservation.endTime | date:'short' }}
+      </option>
+    </select>
+  </div>
+  <button type="submit" [disabled]="postForm.invalid">Create Post</button>
+</form>

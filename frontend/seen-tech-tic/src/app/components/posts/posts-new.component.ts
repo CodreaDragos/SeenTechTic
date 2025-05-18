@@ -1,64 +1,71 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgForOf } from '@angular/common';
-import { PostService, Post } from '../../services/post.service';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ReservationService, Reservation } from '../../services/reservation.service';
+import { PostService } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-posts',
+  selector: 'app-posts-new',
+  templateUrl: './posts-new.component.html',
+  styleUrls: ['./posts-new.component.scss'],
   standalone: true,
-  imports: [CommonModule, NgForOf],
-  templateUrl: './posts.component.html',
-  styleUrls: ['./posts.component.scss']
+  imports: [ReactiveFormsModule, CommonModule]
 })
-export class PostsComponent implements OnInit {
-  posts: Post[] = [];
+export class PostsNewComponent implements OnInit {
+  @Output() postCreated = new EventEmitter<void>();
+
+  postForm: FormGroup;
+  reservations: Reservation[] = [];
   currentUserId: number | null = null;
 
-  constructor(private postService: PostService, private authService: AuthService) {}
+  constructor(
+    private fb: FormBuilder,
+    private reservationService: ReservationService,
+    private postService: PostService,
+    private authService: AuthService
+  ) {
+    this.postForm = this.fb.group({
+      postTitle: ['', Validators.required],
+      postDescription: ['', Validators.required],
+      reservationId: [null]
+    });
+  }
 
-  ngOnInit() {
-    this.authService.currentUserId$.subscribe((id: number | null) => {
+  ngOnInit(): void {
+    this.authService.currentUserId$.subscribe(id => {
       this.currentUserId = id;
+      if (this.currentUserId) {
+        this.loadReservations();
+      }
     });
-    this.loadPosts();
   }
 
-  loadPosts() {
-    this.postService.getPosts().subscribe({
-      next: (data: any) => {
-        if (data && data.$values && Array.isArray(data.$values)) {
-          this.posts = data.$values;
-        } else if (Array.isArray(data)) {
-          this.posts = data;
-        } else {
-          this.posts = [];
-        }
+  loadReservations(): void {
+    this.reservationService.getAllReservations().subscribe({
+      next: (data: Reservation[]) => {
+        this.reservations = data;
       },
-      error: (err: any) => console.error('Failed to load posts', err)
+      error: (err: any) => console.error('Failed to load reservations', err)
     });
   }
 
-  addPost() {
-    if (!this.currentUserId) {
-      alert('You must be logged in to add a post.');
+  onSubmit(): void {
+    if (this.postForm.invalid || !this.currentUserId) {
       return;
     }
-    const postTitle = prompt('Enter post title:');
-    const postDescription = prompt('Enter post description:');
-    if (postTitle && postDescription) {
-      const newPost: Post = {
-        postTitle,
-        postDescription,
-        authorId: this.currentUserId,
-        reservationId: null,
-        createdAt: new Date().toISOString()
-      };
-      this.postService.addPost(newPost).subscribe({
-        next: (post: Post) => {
-          this.posts.unshift(post);
-        },
-        error: (err: any) => console.error('Failed to add post', err)
-      });
-    }
+    const newPost = {
+      postTitle: this.postForm.value.postTitle,
+      postDescription: this.postForm.value.postDescription,
+      authorId: this.currentUserId,
+      reservationId: this.postForm.value.reservationId
+    };
+    this.postService.addPost(newPost).subscribe({
+      next: () => {
+        this.postForm.reset();
+        this.postCreated.emit();
+      },
+      error: (err: any) => console.error('Failed to create post', err)
+    });
   }
 }

@@ -2,6 +2,7 @@
 using WebAPIDemo.Models;
 using WebAPIDemo.Services;
 using WebAPIDemo.DTOs.Reservation;
+using Microsoft.Extensions.Logging;
 
 namespace WebAPIDemo.Controllers
 {
@@ -10,60 +11,60 @@ namespace WebAPIDemo.Controllers
     public class ReservationController : ControllerBase
     {
         private readonly IReservationService _reservationService;
+        private readonly ILogger<ReservationController> _logger;
 
-        public ReservationController(IReservationService reservationService)
+        public ReservationController(IReservationService reservationService, ILogger<ReservationController> logger)
         {
             _reservationService = reservationService;
-        }
-
-        [HttpPost]
-        public IActionResult CreateReservation([FromBody] CreateReservationDto reservationDto)
-        {
-            try
-            {
-                var reservation = new Reservation
-                {
-                    StartTime = reservationDto.StartTime,
-                    EndTime = reservationDto.EndTime,
-                    FieldId = reservationDto.FieldId,
-                    AuthorId = reservationDto.AuthorId,
-                    Participants = new List<User>() // Will be populated by the service
-                };
-
-                var createdReservation = _reservationService.create(reservation);
-                return CreatedAtAction(nameof(GetReservation), new { id = createdReservation.ReservationId }, createdReservation);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            _logger = logger;
         }
 
         [HttpGet]
-        public IActionResult GetAllReservations()
-        {
-            try
+public IActionResult GetAllReservations()
+{
+    try
+    {
+        var reservations = _reservationService.getAll()
+            .Select(r => new ReservationResponseDto
             {
-                var userId = GetCurrentUserId();
-                var reservations = _reservationService.getAll()
-                    .Where(r => r.AuthorId == userId)
-                    .ToList();
-                return Ok(reservations);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+                ReservationId = r.ReservationId,
+                StartTime = r.StartTime,
+                EndTime = r.EndTime,
+                AuthorId = r.AuthorId,
+                FieldId = r.FieldId
+            })
+            .ToList();
+        return Ok(reservations);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error in GetAllReservations");
+        return BadRequest(ex.Message);
+    }
+}
 
-        // Metodă ajutătoare pentru a extrage userId din contextul HTTP (depinde de implementarea ta de autentificare)
+
         private int GetCurrentUserId()
         {
-            // Exemplu, dacă userId e stocat în claim-ul "sub"
-            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub");
-            return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
-        }
+            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)
+                              ?? HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub")
+                              ?? HttpContext.User.Claims.FirstOrDefault(c => c.Type == "userId");
 
+            if (userIdClaim == null)
+            {
+                _logger.LogWarning("UserId claim not found in token");
+                return 0;
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out int userId))
+            {
+                _logger.LogWarning($"UserId claim value '{userIdClaim.Value}' is not a valid integer");
+                return 0;
+            }
+
+            _logger.LogInformation($"Extracted userId: {userId}");
+            return userId;
+        }
 
         [HttpGet("{id}")]
         public IActionResult GetReservation(int id)
@@ -79,46 +80,22 @@ namespace WebAPIDemo.Controllers
                 if (reservation.AuthorId != userId)
                     return Forbid();  // 403 Forbidden
 
-                return Ok(reservation);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        [HttpPut("{id}")]
-        public IActionResult UpdateReservation(int id, [FromBody] UpdateReservationDto reservationDto)
-        {
-            try
-            {
-                if (id != reservationDto.ReservationId)
+                var reservationDto = new ReservationResponseDto
                 {
-                    return BadRequest("Reservation ID mismatch");
-                }
+                    ReservationId = reservation.ReservationId,
+                    StartTime = reservation.StartTime,
+                    EndTime = reservation.EndTime,
+                    AuthorId = reservation.AuthorId,
+                    FieldId = reservation.FieldId
+                };
 
-                var updatedReservation = _reservationService.update(reservationDto);
-                return Ok(updatedReservation);
+                return Ok(reservationDto);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult DeleteReservation(int id)
-        {
-            try
-            {
-                _reservationService.delete(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
+                _logger.LogError(ex, "Error in GetReservation");
                 return BadRequest(ex.Message);
             }
         }
     }
-} 
+}

@@ -1,63 +1,104 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background-color: #000; /* fundal negru */
-  color: #fff; /* text alb */
+  color: #fff;
+  min-height: 100vh;
+  background-color: #000;
+  background-image: 
+    linear-gradient(135deg, rgba(255, 0, 0, 0.2) 0%, rgba(255, 0, 0, 0.2) 20%, transparent 20%),
+    linear-gradient(115deg, rgba(255, 0, 0, 0.3) 0%, rgba(255, 0, 0, 0.3) 10%, transparent 10%),
+    linear-gradient(155deg, rgba(255, 0, 0, 0.2) 0%, rgba(255, 0, 0, 0.2) 15%, transparent 15%);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
 }
 
-.container {
-  flex-grow: 1;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 60px 20px 40px; /* sus mai mult pentru titlu */
-  text-align: center;
+/* Transparent top navbar */
+.navbar {
+  background-color: rgba(20, 20, 20, 0.4);
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  backdrop-filter: blur(8px);
 }
 
-.main-title {
-  font-size: 3.5rem;
-  margin-bottom: 60px;
+.logo {
+  font-size: 1.8rem;
   font-weight: 700;
-  color: #4caf50; /* verde deschis pentru contrast */
+  color: #fff;
+  text-shadow: 2px 2px #b30000;
 }
 
-.info-section p {
-  font-size: 1.5rem;
-  margin-bottom: 30px;
+/* Move buttons to center of page */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  text-align: center;
+  padding-top: 150px;
+  gap: 25px;
 }
 
-.nav-button {
-  background-color: #2980b9;
+/* Title styling */
+.main-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
   color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 18px 40px;
-  margin: 0 15px;
+  text-shadow: 2px 2px #b30000;
+}
+
+.subtitle {
   font-size: 1.3rem;
+  color: #ccc;
+}
+
+/* Centered button styling */
+.nav-button {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid #b30000;
+  color: #fff;
+  font-weight: 600;
+  padding: 15px 30px;
+  border-radius: 15px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 1.1rem;
+  transition: 0.3s ease;
+  backdrop-filter: blur(4px);
+  width: 250px;
 }
 
 .nav-button:hover {
-  background-color: #1c5980;
+  background-color: #b30000;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
 }
 
+/* Transparent footer, compact layout */
 footer.contact-section {
-  background-color: #111;
-  padding: 30px 20px;
+  background-color: rgba(20, 20, 20, 0.3);
+  padding: 10px 20px;
   text-align: center;
-  font-size: 1.1rem;
-  border-top: 1px solid #222;
+  font-size: 0.9rem;
+  color: #ccc;
 }
 
 footer.contact-section a {
-  color: #4caf50;
+  color: #ff4d4d;
   text-decoration: none;
   font-weight: 600;
+  margin: 0 10px;
 }
 
-footer.contact-section a:hover {
-  text-decoration: underline;
+footer.contact-section p {
+  display: inline;
+  margin: 0 5px;
 }

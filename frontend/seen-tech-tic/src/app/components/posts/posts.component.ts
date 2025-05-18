@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, NgForOf } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // ✅ Importat pentru ngModel
+import { FormsModule } from '@angular/forms'; // For ngModel
 import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
+import { ReservationService, Reservation } from '../../services/reservation.service';
+
+import { PostsNewComponent } from './posts-new.component';
+import { PostsEditComponent } from './posts-edit.component';
 
 @Component({
   selector: 'app-posts',
   standalone: true,
-  imports: [CommonModule, NgForOf, FormsModule], // ✅ Adăugat FormsModule
+  imports: [CommonModule, NgForOf, FormsModule, PostsNewComponent, PostsEditComponent],
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss']
 })
@@ -16,11 +20,14 @@ export class PostsComponent implements OnInit {
   posts: Post[] = [];
   currentUserId: number | null = null;
   newCommentContent: { [postId: number]: string } = {};
+  editingPostId?: number;
+  reservationsMap: Map<number, Reservation> = new Map();
 
   constructor(
     private postService: PostService,
     private authService: AuthService,
-    private commentService: CommentService
+    private commentService: CommentService,
+    private reservationService: ReservationService
   ) {}
 
   ngOnInit() {
@@ -46,33 +53,40 @@ export class PostsComponent implements OnInit {
             post.comments = [];
           }
         });
+        this.loadAllReservationsAndMap();
       },
       error: (err: any) => console.error('Failed to load posts', err)
     });
   }
 
-  addPost() {
-    if (!this.currentUserId) {
-      alert('You must be logged in to add a post.');
-      return;
-    }
-    const postTitle = prompt('Enter post title:');
-    const postDescription = prompt('Enter post description:');
-    if (postTitle && postDescription) {
-      const newPost: Post = {
-        postTitle,
-        postDescription,
-        authorId: this.currentUserId,
-        reservationId: null,
-        createdAt: new Date().toISOString()
-      };
-      this.postService.addPost(newPost).subscribe({
-        next: (post: Post) => {
-          this.posts.unshift(post);
-        },
-        error: (err: any) => console.error('Failed to add post', err)
+  loadAllReservationsAndMap() {
+  this.reservationService.getAllReservations().subscribe({
+    next: (reservations: Reservation[]) => {
+      this.reservationsMap.clear();
+      reservations.forEach(reservation => {
+        this.reservationsMap.set(reservation.reservationId || 0, reservation);
       });
-    }
+      this.assignReservationsToPosts();
+    },
+    error: (err: any) => console.error('Failed to load reservations', err)
+  });
+}
+
+
+  assignReservationsToPosts() {
+    this.posts.forEach(post => {
+      if (post.reservationId) {
+        const reservation = this.reservationsMap.get(post.reservationId);
+        if (reservation) {
+          (post as any).reservation = reservation;
+        } else {
+          (post as any).reservation = null; // or fallback info
+          console.warn(`Reservation with id ${post.reservationId} not found for post ${post.postId}`);
+        }
+      } else {
+        (post as any).reservation = null;
+      }
+    });
   }
 
   addComment(post: Post) {
@@ -98,44 +112,40 @@ export class PostsComponent implements OnInit {
       error: (err: any) => console.error('Failed to add comment', err)
     });
   }
-  updatePost(post: Post) {
-  if (!this.currentUserId) {
-    alert('You must be logged in to update a post.');
-    return;
-  }
-  const updatedTitle = prompt('Update post title:', post.postTitle);
-  const updatedDescription = prompt('Update post description:', post.postDescription);
-  if (updatedTitle && updatedDescription) {
-    const updatedPost: Post = {
-      ...post,
-      postTitle: updatedTitle,
-      postDescription: updatedDescription
-    };
-    this.postService.updatePost(updatedPost).subscribe({
-      next: (res: Post) => {
-        const index = this.posts.findIndex(p => p.postId === res.postId);
-        if (index !== -1) {
-          this.posts[index] = res;
-        }
-      },
-      error: (err: any) => console.error('Failed to update post', err)
-    });
-  }
-}
 
-deletePost(post: Post) {
-  if (!this.currentUserId) {
-    alert('You must be logged in to delete a post.');
-    return;
+  openEditPost(post: Post) {
+    if (!this.currentUserId) {
+      alert('You must be logged in to edit a post.');
+      return;
+    }
+    if (post.authorId !== this.currentUserId) {
+      alert('Nu ai permisiunea să modifici această postare.');
+      return;
+    }
+    this.editingPostId = post.postId;
   }
-  if (confirm('Are you sure you want to delete this post?')) {
-    this.postService.deletePost(post.postId || 0).subscribe({
-      next: () => {
-        this.posts = this.posts.filter(p => p.postId !== post.postId);
-      },
-      error: (err: any) => console.error('Failed to delete post', err)
-    });
-  }
-}
 
+  onPostUpdated(post: Post) {
+    this.editingPostId = undefined;
+    this.loadPosts();
+  }
+
+  deletePost(post: Post) {
+    if (!this.currentUserId) {
+      alert('You must be logged in to delete a post.');
+      return;
+    }
+    if (post.authorId !== this.currentUserId) {
+      alert('Nu ai permisiunea să ștergi această postare.');
+      return;
+    }
+    if (confirm('Are you sure you want to delete this post?')) {
+      this.postService.deletePost(post.postId || 0).subscribe({
+        next: () => {
+          this.posts = this.posts.filter(p => p.postId !== post.postId);
+        },
+        error: (err: any) => console.error('Failed to delete post', err)
+      });
+    }
+  }
 }

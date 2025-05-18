@@ -15,6 +15,13 @@ namespace WebAPIDemo.Repositories
 
         public Post? create(Post post)
         {
+            // Check if a post with the same ReservationId already exists
+            var existingPost = _context.Posts.FirstOrDefault(p => p.ReservationId == post.ReservationId);
+            if (existingPost != null)
+            {
+                throw new InvalidOperationException($"A post for ReservationId {post.ReservationId} already exists.");
+            }
+
             _context.Posts.Add(post);
             _context.SaveChanges();
             return post;
