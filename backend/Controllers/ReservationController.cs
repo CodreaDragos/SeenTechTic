@@ -65,7 +65,29 @@ public IActionResult GetAllReservations()
             _logger.LogInformation($"Extracted userId: {userId}");
             return userId;
         }
+        [HttpPost]
+        public IActionResult CreateReservation([FromBody] CreateReservationDto dto)
+        {
+            try
+            {
+                var reservation = new Reservation
+                {
+                    StartTime = dto.StartTime,
+                    EndTime = dto.EndTime,
+                    AuthorId = dto.AuthorId,
+                    FieldId = dto.FieldId,
+                    // Populează Participants dacă e nevoie
+                };
 
+                var created = _reservationService.create(reservation);
+                return CreatedAtAction(nameof(GetReservation), new { id = created.ReservationId }, created);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating reservation");
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("{id}")]
         public IActionResult GetReservation(int id)
         {
