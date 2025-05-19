@@ -97,5 +97,40 @@ public IActionResult GetAllReservations()
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPut("{id}")]
+        public IActionResult UpdateReservation(int id, [FromBody] UpdateReservationDto reservationDto)
+        {
+            try
+            {
+                if (id != reservationDto.ReservationId)
+                {
+                    return BadRequest("Reservation ID mismatch");
+                }
+
+                var updatedReservation = _reservationService.update(reservationDto);
+                return Ok(updatedReservation);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteReservation(int id)
+        {
+            try
+            {
+                _reservationService.delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
+
+
 }
+

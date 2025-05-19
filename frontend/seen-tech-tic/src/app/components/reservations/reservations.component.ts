@@ -193,7 +193,7 @@ export class ReservationsComponent implements OnInit {
 
     // Mai întâi construim o dată UTC pentru momentul introdus (fără fus orar):
     // Adică interpretăm ora ca UTC (nu e corect, dar e punct de plecare)
-    const fakeUTCDate = new Date(Date.UTC(year, month - 1, day, hour-3, minute));
+    const fakeUTCDate = new Date(Date.UTC(year, month - 1, day, hour - 3, minute));
 
     // Extragem ora reală în București
     const parts = dtf.formatToParts(fakeUTCDate);

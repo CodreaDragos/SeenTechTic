@@ -45,12 +45,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // adresa Angular
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod(); // This must include DELETE
     });
 });
-
 var app = builder.Build();
 
 // Middleware   
