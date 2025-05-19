@@ -1,6 +1,8 @@
 <div class="container">
   <h1>Rezervări</h1>
-
+ <div class="logo ut-bar">
+  <button mat-button color="primary" (click)="logout()">Log Out</button>
+</div>
   <!-- Buton pentru toggle formular -->
   <button (click)="showAddForm = !showAddForm" class="action-button toggle-btn">
     {{ showAddForm ? 'Anulează' : 'Adaugă Rezervare' }}

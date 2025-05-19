@@ -10,7 +10,7 @@
     * {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
+      box-sizing: border-bosx;
     }
     
     body {
@@ -370,22 +370,24 @@
     <div class="shape shape-3"></div>
   </div>
   
-  <header class="navbar">
+  <header class="navbar" *ngIf="true">
     <h1 class="logo">SeenTechTic</h1>
     <nav class="nav-links">
       <button class="nav-button" routerLink="/posts">Vezi Postările</button>
       <button class="nav-button" routerLink="/reservations">Vezi Rezervările</button>
-      <button class="nav-button logout">Logout</button>
+      <button class="nav-button logout" (click)="logout()">Logout</button>
     </nav>
   </header>
   
   <div class="main-content">
     <div class="content-wrapper">
-      <h2 class="main-title">Contactați-<span class="accent">ne</span></h2>
-      <p class="subtitle">Suntem aici pentru a vă ajuta cu orice informație</p>
+      <h2 class="main-title">Platforma ta pentru sport<span class="accent"></span></h2>
+      <p class="subtitle">Cu SeenTechTic găsești rapid un teren liber și oameni gata de joacă — sportul devine mai simplu și mai distractiv!</p>
       <button class="cta-button">Contactează-ne Acum</button>
     </div>
   </div>
+  
+  <button class="profile-button" routerLink="/profile" title="Profil">Profil</button>
   
   <footer class="contact-section">
     <div class="social-icons">

@@ -48,16 +48,16 @@ export class AuthService {
 
   updateUserIdFromToken() {
     const token = localStorage.getItem('token');
-    console.log('updateUserIdFromToken called, token:', token);
     if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      console.log('Token payload:', payload);
-      const userId = payload?.id ? parseInt(payload.id, 10) : null;
-      this.currentUserIdSubject.next(userId);
-      console.log('Updated currentUserIdSubject with:', userId);
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload?.id ? parseInt(payload.id, 10) : null;
+        this.currentUserIdSubject.next(userId);
+      } catch (e) {
+        this.currentUserIdSubject.next(null);
+      }
     } else {
       this.currentUserIdSubject.next(null);
-      console.log('No token found, set currentUserIdSubject to null');
     }
   }
 
@@ -69,7 +69,7 @@ export class AuthService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An error occurred';
+    let errorMessage = 'An unknown error occurred';
     if (error.error instanceof ErrorEvent) {
       errorMessage = error.error.message;
     } else {
@@ -81,9 +81,13 @@ export class AuthService {
   private loadUserIdFromToken() {
     const token = localStorage.getItem('token');
     if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const userId = payload?.id ? parseInt(payload.id, 10) : null;
-      this.currentUserIdSubject.next(userId);
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload?.id ? parseInt(payload.id, 10) : null;
+        this.currentUserIdSubject.next(userId);
+      } catch (e) {
+        this.currentUserIdSubject.next(null);
+      }
     } else {
       this.currentUserIdSubject.next(null);
     }

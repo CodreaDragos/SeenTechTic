@@ -1,28 +1,32 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule, DatePipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule } from '@angular/router';
-import { CommonModule, DatePipe } from '@angular/common';
 
-// Material Imports
+// Angular Material modules
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 
-import { routes } from './app.routes';
+// Components
+import { AppComponent } from './app.component';
+import { HeaderComponent } from './components/header/header.component';
+import { ProfileComponent } from './components/profile/profile.component';
+
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
-    // AppComponent removed because it is standalone
+  
   ],
   imports: [
     BrowserModule,
     CommonModule,
-    RouterModule.forRoot(routes),
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -30,9 +34,11 @@ import { routes } from './app.routes';
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
+    RouterModule,
+    AppRoutingModule,
     MatIconModule
   ],
   providers: [DatePipe],
-  bootstrap: [] // No bootstrap array because AppComponent is standalone
+  bootstrap: []
 })
 export class AppModule { }

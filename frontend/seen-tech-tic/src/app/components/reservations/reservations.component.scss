@@ -9,6 +9,10 @@ h1 {
   text-align: center;
   margin-bottom: 25px;
 }
+:host {
+  display: block;
+  padding-top: 60px; /* height of the fixed header + some spacing */
+}
 
 .action-button {
   cursor: pointer;

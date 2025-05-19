@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from '../header/header.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reservations',
@@ -20,11 +22,15 @@ export class ReservationsComponent implements OnInit {
   editingReservationId: number | null = null;
 
   constructor(
-    private fb: FormBuilder,
-    private reservationService: ReservationService,
-    private authService: AuthService
-  ) { }
-
+  private fb: FormBuilder,
+  private reservationService: ReservationService,
+  private authService: AuthService,
+  private router: Router
+) { }
+logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
   ngOnInit(): void {
     this.authService.currentUserId$.subscribe(id => this.currentUserId = id);
     this.loadReservations();

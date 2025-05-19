@@ -1,14 +1,24 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { HeaderComponent } from './components/header/header.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, HeaderComponent],
+  imports: [RouterModule, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'seen-tech-tic';
+  showHeader: boolean = true;
+
+  constructor(private router: Router) {
+this.router.events.pipe(
+  filter(event => event instanceof NavigationEnd)
+).subscribe((event: NavigationEnd) => {
+  this.showHeader = event.url !== '/login' && event.url !== '/register';
+});
+}
 }

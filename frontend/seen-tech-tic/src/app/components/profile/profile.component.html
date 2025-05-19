@@ -1,0 +1,15 @@
+<div class="logo ut-bar">
+  <button mat-button color="primary" (click)="logout()">Log Out</button>
+</div>
+<div class="profile-container">
+  <h2>Your Posts</h2>
+  <div *ngIf="posts.length === 0">You have no posts.</div>
+  <div *ngFor="let post of posts" class="post-card">
+    <h3>{{ post.postTitle }}</h3>
+    <p>{{ post.postDescription }}</p>
+    <div class="post-actions">
+      <button (click)="editPost(post)">Edit</button>
+      <button (click)="deletePost(post.postId)">Delete</button>
+    </div>
+  </div>
+</div>

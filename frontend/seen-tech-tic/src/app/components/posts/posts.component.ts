@@ -5,6 +5,7 @@ import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
 import { ReservationService, Reservation } from '../../services/reservation.service';
+import { Router } from '@angular/router';
 
 import { PostsNewComponent } from './posts-new.component';
 import { PostsEditComponent } from './posts-edit.component';
@@ -24,11 +25,13 @@ export class PostsComponent implements OnInit {
   reservationsMap: Map<number, Reservation> = new Map();
 
   constructor(
-    private postService: PostService,
-    private authService: AuthService,
-    private commentService: CommentService,
-    private reservationService: ReservationService
-  ) {}
+  private postService: PostService,
+  private authService: AuthService,
+  private commentService: CommentService,
+  private reservationService: ReservationService,
+  private router: Router
+) {}
+
 
   ngOnInit() {
     this.authService.currentUserId$.subscribe((id: number | null) => {
@@ -129,7 +132,10 @@ export class PostsComponent implements OnInit {
     this.editingPostId = undefined;
     this.loadPosts();
   }
-
+logout() {
+  this.authService.logout();
+  this.router.navigate(['/login']);
+}
   deletePost(post: Post) {
     if (!this.currentUserId) {
       alert('You must be logged in to delete a post.');

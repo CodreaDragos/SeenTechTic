@@ -46,6 +46,11 @@ export class HomeComponent implements OnInit {
     this.loadReservations();
   }
 
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   goToProfile() {
     this.router.navigate(['/profile']);
   }

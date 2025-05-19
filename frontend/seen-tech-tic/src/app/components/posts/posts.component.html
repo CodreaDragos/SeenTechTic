@@ -1,6 +1,8 @@
 <div class="container">
   <h1 class="page-title">Postări</h1>
-  
+  <div class="logo ut-bar">
+  <button mat-button color="primary" (click)="logout()">Log Out</button>
+</div>
   <app-posts-new (postCreated)="loadPosts()"></app-posts-new>
 
   <div *ngFor="let post of posts" class="post-wrapper">

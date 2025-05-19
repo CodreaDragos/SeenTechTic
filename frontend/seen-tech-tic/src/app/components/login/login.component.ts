@@ -1,4 +1,3 @@
-
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService, AuthResponse } from '../../services/auth.service';
@@ -74,4 +73,4 @@ export class LoginComponent {
     this.router.navigate(['/register']);
   }
 
-} 
+}
