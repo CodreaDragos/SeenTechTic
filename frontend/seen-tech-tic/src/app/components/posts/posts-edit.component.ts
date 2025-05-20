@@ -5,6 +5,8 @@ import { PostService, Post } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { ReservationService, Reservation } from '../../services/reservation.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserService, UserProfile } from '../../services/user.service';
 
 @Component({
   selector: 'app-posts-edit',
@@ -20,6 +22,8 @@ export class PostsEditComponent implements OnInit, OnChanges {
   reservations: Reservation[] = [];
   selectedReservationId: number | null = null;
 
+  userProfile?: UserProfile;
+
   @Input() editPost?: Post;
   @Output() postUpdated = new EventEmitter<Post>();
 
@@ -27,17 +31,36 @@ export class PostsEditComponent implements OnInit, OnChanges {
     private fb: FormBuilder,
     private postService: PostService,
     private authService: AuthService,
-    private reservationService: ReservationService
+    private reservationService: ReservationService,
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.authService.currentUserId$.subscribe(id => this.currentUserId = id);
     this.loadReservations();
 
+    this.userService.getCurrentUserProfile().subscribe({
+      next: (profile) => {
+        this.userProfile = profile;
+      },
+      error: (err) => {
+        console.error('Failed to load user profile', err);
+      }
+    });
+
     this.postForm = this.fb.group({
       postTitle: ['', Validators.required],
       postDescription: ['', Validators.required],
       reservationId: [null]
+    });
+
+    this.route.paramMap.subscribe(params => {
+      const postId = params.get('id');
+      if (postId) {
+        this.loadPostById(+postId);
+      }
     });
   }
 
@@ -51,6 +74,25 @@ export class PostsEditComponent implements OnInit, OnChanges {
       });
       this.selectedReservationId = this.editPost.reservationId || null;
     }
+  }
+
+  loadPostById(postId: number): void {
+    this.postService.getPostById(postId).subscribe({
+      next: (post: Post) => {
+        this.editPost = post;
+        this.showEditForm = true;
+        this.postForm.patchValue({
+          postTitle: post.postTitle,
+          postDescription: post.postDescription,
+          reservationId: post.reservationId || null
+        });
+        this.selectedReservationId = post.reservationId || null;
+      },
+      error: err => {
+        console.error('Failed to load post', err);
+        alert('Failed to load post for editing.');
+      }
+    });
   }
 
   loadReservations(): void {
@@ -90,9 +132,10 @@ export class PostsEditComponent implements OnInit, OnChanges {
 
     this.postService.updatePost(updatedPost).subscribe({
       next: (post: Post) => {
-        alert('Postare modificată cu succes!');
+        // alert('Postare modificată cu succes!');
         this.resetForm();
         this.postUpdated.emit(post);
+        this.router.navigate(['/profile']);
       },
       error: err => {
         console.error('Eroare la modificarea postării:', err);
@@ -110,5 +153,6 @@ export class PostsEditComponent implements OnInit, OnChanges {
 
   cancel(): void {
     this.resetForm();
+    this.router.navigate(['/profile']);
   }
 }

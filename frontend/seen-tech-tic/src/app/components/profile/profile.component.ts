@@ -3,22 +3,26 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { PostService, Post } from '../../services/post.service';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { UserService, UserProfile } from '../../services/user.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
   posts: Post[] = [];
   currentUserId: number | null = null;
+  userProfile: UserProfile | null = null;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private postService: PostService
+    private postService: PostService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -28,6 +32,7 @@ export class ProfileComponent implements OnInit {
 
       if (this.currentUserId) {
         this.loadUserPosts();
+        this.loadUserProfile();
       } else {
         console.warn('User not authenticated.');
       }
@@ -45,8 +50,23 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  loadUserProfile() {
+    this.userService.getCurrentUserProfile().subscribe(profile => {
+      this.userProfile = profile;
+      console.log('User profile loaded:', profile);
+    }, error => {
+      console.error('Failed to load user profile:', error);
+    });
+  }
+
   editPost(post: Post) {
-    alert(`Edit post: ${post.postTitle}`);
+    console.log('editPost called with post:', post);
+    if (post.postId) {
+      console.log('Navigating to edit post with ID:', post.postId);
+      this.router.navigate(['/posts/edit', post.postId]);
+    } else {
+      alert('Post ID is missing, cannot edit.');
+    }
   }
 
   deletePost(postId: number | undefined) {

@@ -2,6 +2,11 @@
   <button mat-button color="primary" (click)="logout()">Log Out</button>
 </div>
 <div class="profile-container">
+  <div *ngIf="userProfile" class="user-profile">
+    <img *ngIf="userProfile.photoUrl" [src]="userProfile.photoUrl" alt="Profile Photo" class="profile-photo" />
+    <h2>{{ userProfile.username }}</h2>
+    <p>{{ userProfile.description }}</p>
+  </div>
   <h2>Your Posts</h2>
   <div *ngIf="posts.length === 0">You have no posts.</div>
   <div *ngFor="let post of posts" class="post-card">

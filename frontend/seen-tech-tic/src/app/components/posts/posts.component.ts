@@ -62,11 +62,13 @@ export class PostsComponent implements OnInit {
     });
   }
 
-  loadAllReservationsAndMap() {
+loadAllReservationsAndMap() {
   this.reservationService.getAllReservations().subscribe({
     next: (reservations: Reservation[]) => {
       this.reservationsMap.clear();
-      reservations.forEach(reservation => {
+      // Filter reservations by current user
+      const userReservations = reservations.filter(reservation => reservation.authorId === this.currentUserId);
+      userReservations.forEach(reservation => {
         this.reservationsMap.set(reservation.reservationId || 0, reservation);
       });
       this.assignReservationsToPosts();

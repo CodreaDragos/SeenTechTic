@@ -44,7 +44,8 @@ export class PostsNewComponent implements OnInit {
   loadReservations(): void {
     this.reservationService.getAllReservations().subscribe({
       next: (data: Reservation[]) => {
-        this.reservations = data;
+        // Filter reservations by current user
+        this.reservations = data.filter(reservation => reservation.authorId === this.currentUserId);
       },
       error: (err: any) => console.error('Failed to load reservations', err)
     });

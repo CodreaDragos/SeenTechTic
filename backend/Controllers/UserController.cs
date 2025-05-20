@@ -34,6 +34,29 @@ namespace WebAPIDemo.Controllers
             return Ok(_service.getOne(id));
         }
 
+        [HttpGet("profile")]
+        public ActionResult<User> getProfile()
+        {
+            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId");
+            if (userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return BadRequest("Invalid user ID claim");
+            }
+
+            var user = _service.getOne(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+
         [HttpPut("{id}")]
         public ActionResult<User> update(int id, [FromBody] User user)
         {

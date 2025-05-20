@@ -38,8 +38,7 @@ logout() {
     this.reservationForm = this.fb.group({
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      fieldId: ['', [Validators.required, Validators.min(1)]],
-      participantIds: ['', Validators.required]
+      fieldId: ['', [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -67,24 +66,19 @@ logout() {
       return;
     }
 
-    const { startTime, endTime, fieldId, participantIds } = this.reservationForm.value;
+    const { startTime, endTime, fieldId } = this.reservationForm.value;
 
-    // Convertim ora locală București (input datetime-local) în ISO UTC
     const startIso = this.parseDateLocalToUTC(startTime);
     const endIso = this.parseDateLocalToUTC(endTime);
 
     const field = Number(fieldId);
-    const participants = participantIds
-      .split(',')
-      .map((id: string) => Number(id.trim()))
-      .filter((id: number) => !isNaN(id));
 
     const reservationDto = {
       StartTime: startIso,
       EndTime: endIso,
       AuthorId: this.currentUserId,
       FieldId: field,
-      ParticipantIds: participants
+      ParticipantIds: [] // Send empty array to satisfy backend
     };
 
     if (this.editingReservationId) {
@@ -148,12 +142,10 @@ logout() {
     this.reservationForm.setValue({
       startTime: reservation.startTime ? this.toInputDateTimeLocal(reservation.startTime) : '',
       endTime: reservation.endTime ? this.toInputDateTimeLocal(reservation.endTime) : '',
-      fieldId: reservation.fieldId ?? '',
-      participantIds: reservation.participantIds?.join(',') ?? ''
+      fieldId: reservation.fieldId ?? ''
     });
   }
 
-  // Convertim ISO date UTC la string formatat pentru input datetime-local în fusul Europe/Bucharest
   private toInputDateTimeLocal(dateStr: string): string {
     const date = new Date(dateStr);
 
@@ -173,19 +165,11 @@ logout() {
     return `${getPart('year')}-${getPart('month')}-${getPart('day')}T${getPart('hour')}:${getPart('minute')}`;
   }
 
-  // Convertim input datetime-local (ora București) în ISO UTC string pentru backend
   private parseDateLocalToUTC(dateTimeLocal: string): string {
-    // dateTimeLocal ex: "2025-05-17T12:30"
-    // construim un obiect Date folosind fusul Europe/Bucharest
-
     const [datePart, timePart] = dateTimeLocal.split('T');
     const [year, month, day] = datePart.split('-').map(Number);
     const [hour, minute] = timePart.split(':').map(Number);
 
-    // Obținem data în fusul Europe/Bucharest cu offset corect
-    // Folosim Intl API pentru asta:
-
-    // Construim o dată în UTC fix, apoi calculăm timestamp cu fusul orar București
     const dtf = new Intl.DateTimeFormat('en-US', {
       timeZone: 'Europe/Bucharest',
       hour12: false,
@@ -197,11 +181,8 @@ logout() {
       second: '2-digit',
     });
 
-    // Mai întâi construim o dată UTC pentru momentul introdus (fără fus orar):
-    // Adică interpretăm ora ca UTC (nu e corect, dar e punct de plecare)
     const fakeUTCDate = new Date(Date.UTC(year, month - 1, day, hour - 3, minute));
 
-    // Extragem ora reală în București
     const parts = dtf.formatToParts(fakeUTCDate);
 
     const getPart = (type: string) => parts.find(p => p.type === type)?.value || '00';
@@ -213,7 +194,6 @@ logout() {
     const bucharestMinute = Number(getPart('minute'));
     const bucharestSecond = Number(getPart('second'));
 
-    // Construim data corectă în București ca timestamp UTC:
     const bucharestDateUTC = Date.UTC(
       bucharestYear,
       bucharestMonth - 1,
@@ -225,31 +205,5 @@ logout() {
 
     return new Date(bucharestDateUTC).toISOString();
   }
-
-
-  // Determină offset-ul în minute pentru fusul Europe/Bucharest la o anumită dată
-  private toISOStringForBucharest(dateTimeLocal: string): string {
-    // dateTimeLocal ex: "2025-05-17T12:30"
-    const [datePart, timePart] = dateTimeLocal.split('T');
-    const [year, month, day] = datePart.split('-').map(Number);
-    const [hour, minute] = timePart.split(':').map(Number);
-
-    // Construim obiectul Date local, JS îl consideră în fusul local al mașinii
-    // Dar tu vrei fix București, deci trebuie să forțezi compensarea:
-    const localDate = new Date(year, month - 1, day, hour, minute);
-
-    // Offset-ul București (UTC+2 sau UTC+3) depinde de data (ora de vară)
-    // Verificăm offsetul real pentru data respectivă în București
-    // Problema e că getTimezoneOffset() returnează offset-ul mașinii locale
-    // Dacă mașina ta nu e pe fusul București, trebuie să forțezi manual
-    const bucharestOffset = 180; // +180 min = +3 ore
-
-    // Convertim la UTC scăzând offset-ul București
-    const utcTimestamp = localDate.getTime() - bucharestOffset * 60 * 1000;
-
-    const utcDate = new Date(utcTimestamp);
-
-    return utcDate.toISOString();
-  }
-
 }
+

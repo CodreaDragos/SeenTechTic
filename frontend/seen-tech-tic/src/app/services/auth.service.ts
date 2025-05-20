@@ -92,6 +92,9 @@ export class AuthService {
       this.currentUserIdSubject.next(null);
     }
   }
+getToken(): string | null {
+  return localStorage.getItem('authToken');
+}
 
   getCurrentUserId(): number | null {
     return this.currentUserIdSubject.value;

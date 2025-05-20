@@ -22,7 +22,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
-  
+
   ],
   imports: [
     BrowserModule,
@@ -36,7 +36,10 @@ import { AppRoutingModule } from './app-routing.module';
     MatFormFieldModule,
     RouterModule,
     AppRoutingModule,
-    MatIconModule
+    MatIconModule,
+    AppComponent,
+    HeaderComponent,
+    ProfileComponent
   ],
   providers: [DatePipe],
   bootstrap: []
