@@ -143,7 +143,7 @@ namespace WebAPIDemo.Services
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim("id", user.UserId.ToString()),
+                new Claim("UserId", user.UserId.ToString()),
                 new Claim(ClaimTypes.Role, user.Role)
             };
 

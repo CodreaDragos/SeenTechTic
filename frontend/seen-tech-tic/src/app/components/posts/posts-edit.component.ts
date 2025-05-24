@@ -7,11 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
+import { BackButtonComponent } from '../back-button/back-button.component';
 
 @Component({
   selector: 'app-posts-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, BackButtonComponent],
   templateUrl: './posts-edit.component.html',
   styleUrls: []  // Removed reference to missing stylesheet
 })

@@ -1,62 +1,59 @@
-<div class="container">
-  <h1 class="page-title">Postări</h1>
-  <div class="logo ut-bar">
-  <button mat-button color="primary" (click)="logout()">Log Out</button>
-</div>
-  <app-posts-new (postCreated)="loadPosts()"></app-posts-new>
+<div class="posts-page-bg">
+  <div class="bg-shape bg-shape-bottom"></div>
+  <div class="bg-shape bg-shape-left"></div>
+  <div class="container posts-dark-bg">
+    <div class="posts-header-bar">
+      <h1 class="page-title posts-title">Postări</h1>
+      <button mat-button color="primary" (click)="logout()" class="logout-btn">Logout</button>
+    </div>
+    <app-back-button></app-back-button>
+    <button class="action-button add-post-btn" (click)="showAddPostForm = !showAddPostForm">
+      {{ showAddPostForm ? 'Anulează' : 'Adaugă postare' }}
+    </button>
+    <app-posts-new *ngIf="showAddPostForm" (postCreated)="onPostCreated()"></app-posts-new>
 
-  <div *ngFor="let post of posts" class="post-wrapper">
-    <div class="post-card">
-      <h3 class="post-title">{{ post.postTitle }}</h3>
-      
-      <p class="post-description">{{ post.postDescription }}</p>
-      
-      <div class="post-meta">
-        <div class="meta-item" *ngIf="post.reservation">
-  <i class="fas fa-calendar-alt"></i> Rezervare: {{ post.reservation.StartTime | date:'shortDate' }} 
-  de la {{ post.reservation.StartTime | date:'shortTime' }} la {{ post.reservation.EndTime | date:'shortTime' }}
-</div>
-
-        <div class="meta-item">
-          <i class="fas fa-clock"></i> Creat la: {{ post.createdAt | date:'short' }}
-        </div>
-        <div class="meta-item" *ngIf="post.reservation">
-  <i class="fas fa-calendar-alt"></i> Rezervare ID: {{ post.reservation.ReservationId }}<br>
-  Ora: de la {{ post.reservation.StartTime | date:'shortTime' }} la {{ post.reservation.EndTime | date:'shortTime' }}
-</div>
-
-      </div>
-      
-      <div class="post-actions">
-        <!-- Buttons hidden as per user request -->
-      </div>
-      
-      <div class="comments-section">
-        <h4 class="comments-title">
-          <i class="fas fa-comments"></i> Comentarii
-        </h4>
-        
-        <div *ngFor="let comment of post.comments" class="comment">
-          <p class="comment-content">{{ comment.commentContent }}</p>
-          <div class="comment-meta">
-            <span class="comment-author">{{ comment.author?.username || 'Anonim' }}</span>
-            <span>{{ comment.createdAt | date:'short' }}</span>
+    <div *ngFor="let post of posts" class="post-wrapper">
+      <div class="post-card post-card-dark">
+        <h3 class="post-title posts-title-main">{{ post.postTitle }}</h3>
+        <p class="post-description posts-desc">{{ post.postDescription }}</p>
+        <div *ngIf="post.reservation" class="reservation-info">
+          <div class="reservation-field">
+            <span class="reservation-label">Field</span>
+            <span class="reservation-value">{{ post.reservation.fieldId }}</span>
+          </div>
+          <div class="reservation-time">
+            <span class="reservation-label">{{ post.reservation.startTime | date:'mediumDate' }}</span>
+            <span class="reservation-value">{{ post.reservation.startTime | date:'shortTime' }} - {{ post.reservation.endTime | date:'shortTime' }}</span>
           </div>
         </div>
-        
-        <div class="comment-form">
-          <textarea [(ngModel)]="newCommentContent[post.postId || 0]" placeholder="Adaugă un comentariu..."></textarea>
-          <button (click)="addComment(post)" class="comment-button">
-            <i class="fas fa-paper-plane"></i> Adaugă Comentariu
-          </button>
+        <div class="comments-section comments-section-dark">
+          <h4 class="comments-title">
+            <i class="fas fa-comments"></i> Comentarii
+          </h4>
+          <div *ngFor="let comment of post.comments" class="comment comment-dark">
+            <p class="comment-content">{{ comment.commentContent }}</p>
+            <div class="comment-meta">
+              <span class="comment-author">{{ comment.author?.username || 'Anonim' }}</span>
+              <span>{{ comment.createdAt | date:'short' }}</span>
+            </div>
+          </div>
+          <div class="comment-form">
+            <textarea [(ngModel)]="newCommentContent[post.postId || 0]" placeholder="Adaugă un comentariu..." class="comment-textarea"></textarea>
+            <button (click)="addComment(post)" class="comment-button comment-button-dark">
+              <i class="fas fa-paper-plane"></i> Adaugă Comentariu
+            </button>
+          </div>
+        </div>
+        <div class="post-meta-footer">
+          <span class="meta-footer-item">Posted by: {{ post.author?.username || 'Unknown' }}</span>
+          <span class="meta-footer-item">{{ post.createdAt | date:'short' }}</span>
         </div>
       </div>
+      <app-posts-edit 
+        *ngIf="editingPostId === post.postId" 
+        [editPost]="post" 
+        (postUpdated)="onPostUpdated($event)">
+      </app-posts-edit>
     </div>
-
-    <app-posts-edit 
-      *ngIf="editingPostId === post.postId" 
-      [editPost]="post" 
-      (postUpdated)="onPostUpdated($event)">
-    </app-posts-edit>
   </div>
 </div>

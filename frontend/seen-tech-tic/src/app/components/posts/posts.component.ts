@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgForOf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // For ngModel
 import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { Router } from '@angular/router';
+import { BackButtonComponent } from '../back-button/back-button.component';
 
 import { PostsNewComponent } from './posts-new.component';
 import { PostsEditComponent } from './posts-edit.component';
@@ -13,7 +14,13 @@ import { PostsEditComponent } from './posts-edit.component';
 @Component({
   selector: 'app-posts',
   standalone: true,
-  imports: [CommonModule, NgForOf, FormsModule, PostsNewComponent, PostsEditComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    PostsNewComponent,
+    PostsEditComponent,
+    BackButtonComponent
+  ],
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss']
 })
@@ -23,6 +30,7 @@ export class PostsComponent implements OnInit {
   newCommentContent: { [postId: number]: string } = {};
   editingPostId?: number;
   reservationsMap: Map<number, Reservation> = new Map();
+  showAddPostForm = false;
 
   constructor(
   private postService: PostService,
@@ -50,6 +58,12 @@ export class PostsComponent implements OnInit {
         } else {
           this.posts = [];
         }
+        // Sort posts by createdAt (newest first)
+        this.posts = this.posts.sort((a, b) => {
+          const dateA = new Date(a.createdAt || 0).getTime();
+          const dateB = new Date(b.createdAt || 0).getTime();
+          return dateB - dateA;
+        });
         // Initialize comments array if not present
         this.posts.forEach(post => {
           if (!post.comments) {
@@ -66,9 +80,8 @@ loadAllReservationsAndMap() {
   this.reservationService.getAllReservations().subscribe({
     next: (reservations: Reservation[]) => {
       this.reservationsMap.clear();
-      // Filter reservations by current user
-      const userReservations = reservations.filter(reservation => reservation.authorId === this.currentUserId);
-      userReservations.forEach(reservation => {
+      // Store all reservations, not just user's reservations
+      reservations.forEach(reservation => {
         this.reservationsMap.set(reservation.reservationId || 0, reservation);
       });
       this.assignReservationsToPosts();
@@ -78,18 +91,19 @@ loadAllReservationsAndMap() {
 }
 
 
-  assignReservationsToPosts() {
+  private assignReservationsToPosts(): void {
     this.posts.forEach(post => {
       if (post.reservationId) {
         const reservation = this.reservationsMap.get(post.reservationId);
         if (reservation) {
-          (post as any).reservation = reservation;
-        } else {
-          (post as any).reservation = null; // or fallback info
-          console.warn(`Reservation with id ${post.reservationId} not found for post ${post.postId}`);
+          post.reservation = {
+            ...reservation,
+            fieldId: (reservation as any).fieldId ?? (reservation as any).FieldId,
+            startTime: (reservation as any).startTime ?? (reservation as any).StartTime,
+            endTime: (reservation as any).endTime ?? (reservation as any).EndTime,
+            authorId: (reservation as any).authorId ?? (reservation as any).AuthorId,
+          };
         }
-      } else {
-        (post as any).reservation = null;
       }
     });
   }
@@ -155,5 +169,10 @@ logout() {
         error: (err: any) => console.error('Failed to delete post', err)
       });
     }
+  }
+
+  onPostCreated() {
+    this.showAddPostForm = false;
+    this.loadPosts();
   }
 }

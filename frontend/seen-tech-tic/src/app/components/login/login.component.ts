@@ -54,7 +54,7 @@ export class LoginComponent {
 
           if (response.success && response.token) {
             // Store the token
-            localStorage.setItem('token', response.token);
+            localStorage.setItem('authToken', response.token);
             // Update currentUserId in AuthService
             this.authService.updateUserIdFromToken();
             // Redirect to dashboard or home page

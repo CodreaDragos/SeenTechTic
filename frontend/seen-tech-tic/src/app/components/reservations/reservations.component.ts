@@ -6,11 +6,12 @@ import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
 import { Router } from '@angular/router';
+import { BackButtonComponent } from '../back-button/back-button.component';
 
 @Component({
   selector: 'app-reservations',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, BackButtonComponent],
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.scss']
 })
@@ -38,19 +39,16 @@ logout() {
     this.reservationForm = this.fb.group({
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      fieldId: ['', [Validators.required, Validators.min(1)]]
+      fieldId: ['', Validators.required]
     });
   }
 
   loadReservations(): void {
     this.reservationService.getAllReservations().subscribe({
-      next: (data: any) => {
-        const allReservations = Array.isArray(data?.$values) ? data.$values : data ?? [];
-        this.reservations = this.currentUserId
-          ? allReservations.filter((r: Reservation) => r.authorId === this.currentUserId)
-          : [];
+      next: (reservations: Reservation[]) => {
+        this.reservations = reservations.filter((r: Reservation) => r.authorId === this.currentUserId);
       },
-      error: err => console.error('Eroare la încărcare rezervări', err)
+      error: (err: any) => console.error('Failed to load reservations', err)
     });
   }
 
@@ -74,11 +72,11 @@ logout() {
     const field = Number(fieldId);
 
     const reservationDto = {
-      StartTime: startIso,
-      EndTime: endIso,
-      AuthorId: this.currentUserId,
-      FieldId: field,
-      ParticipantIds: [] // Send empty array to satisfy backend
+      startTime: startIso,
+      endTime: endIso,
+      authorId: this.currentUserId,
+      fieldId: field,
+      participantIds: [] // Send empty array to satisfy backend
     };
 
     if (this.editingReservationId) {
@@ -139,7 +137,7 @@ logout() {
     this.editingReservationId = reservation.reservationId ?? null;
     this.showAddForm = true;
 
-    this.reservationForm.setValue({
+    this.reservationForm.patchValue({
       startTime: reservation.startTime ? this.toInputDateTimeLocal(reservation.startTime) : '',
       endTime: reservation.endTime ? this.toInputDateTimeLocal(reservation.endTime) : '',
       fieldId: reservation.fieldId ?? ''
@@ -204,6 +202,19 @@ logout() {
     );
 
     return new Date(bucharestDateUTC).toISOString();
+  }
+
+  onSubmit() {
+    if (this.reservationForm.valid) {
+      const reservation: Reservation = {
+        startTime: this.reservationForm.value.startTime,
+        endTime: this.reservationForm.value.endTime,
+        fieldId: Number(this.reservationForm.value.fieldId),
+        authorId: this.currentUserId || 0,
+        participantIds: []
+      };
+      // ... rest of the code ...
+    }
   }
 }
 

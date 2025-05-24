@@ -42,21 +42,26 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
     this.currentUserIdSubject.next(null);
   }
 
   updateUserIdFromToken() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
+    console.log('Token from localStorage:', token);
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        const userId = payload?.id ? parseInt(payload.id, 10) : null;
+        console.log('Decoded token payload:', payload);
+        const userId = payload?.UserId ? parseInt(payload.UserId, 10) : null;
+        console.log('Extracted userId:', userId);
         this.currentUserIdSubject.next(userId);
       } catch (e) {
+        console.error('Error processing token:', e);
         this.currentUserIdSubject.next(null);
       }
     } else {
+      console.log('No token found in localStorage');
       this.currentUserIdSubject.next(null);
     }
   }
@@ -79,11 +84,11 @@ export class AuthService {
   }
 
   private loadUserIdFromToken() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        const userId = payload?.id ? parseInt(payload.id, 10) : null;
+        const userId = payload?.UserId ? parseInt(payload.UserId, 10) : null;
         this.currentUserIdSubject.next(userId);
       } catch (e) {
         this.currentUserIdSubject.next(null);
@@ -92,9 +97,10 @@ export class AuthService {
       this.currentUserIdSubject.next(null);
     }
   }
-getToken(): string | null {
-  return localStorage.getItem('authToken');
-}
+
+  getToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
 
   getCurrentUserId(): number | null {
     return this.currentUserIdSubject.value;

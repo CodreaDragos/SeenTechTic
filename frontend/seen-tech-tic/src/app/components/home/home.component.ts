@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe, NgForOf } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
@@ -7,20 +7,19 @@ import { CommentService } from '../../services/comment.service';
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { BackButtonComponent } from '../back-button/back-button.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
-    NgForOf,
     RouterModule,
-    HeaderComponent ,// 👈 aici îl adaugi
     ReactiveFormsModule,
+    BackButtonComponent
   ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  providers: [DatePipe]
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
   profileIcon = 'assets/profile-icon.png';

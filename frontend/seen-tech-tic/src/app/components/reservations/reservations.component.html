@@ -1,8 +1,9 @@
 <div class="container">
   <h1>Rezervări</h1>
- <div class="logo ut-bar">
-  <button mat-button color="primary" (click)="logout()">Log Out</button>
-</div>
+  <app-back-button></app-back-button>
+  <div class="logo ut-bar">
+    <button mat-button color="primary" (click)="logout()">Log Out</button>
+  </div>
   <!-- Buton pentru toggle formular -->
   <button (click)="showAddForm = !showAddForm" class="action-button toggle-btn">
     {{ showAddForm ? 'Anulează' : 'Adaugă Rezervare' }}
@@ -10,15 +11,14 @@
 
   <!-- Formularul apare doar când showAddForm e true -->
   <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
-    <label>
-      Start Time (ISO):
-      <input type="datetime-local" formControlName="startTime" required />
-    </label>
-
-    <label>
-      End Time (ISO):
-      <input type="datetime-local" formControlName="endTime" required />
-    </label>
+    <div class="form-group">
+      <label for="StartTime">Start Time</label>
+      <input type="datetime-local" id="StartTime" formControlName="StartTime" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="EndTime">End Time</label>
+      <input type="datetime-local" id="EndTime" formControlName="EndTime" class="form-control">
+    </div>
 
     <label>
       Field ID:

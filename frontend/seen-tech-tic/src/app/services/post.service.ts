@@ -12,13 +12,7 @@ export interface Post {
     username: string;
   };
   reservationId?: number | null;
-  reservation?: {
-    ReservationId?: number;
-    StartTime: string;
-    EndTime: string;
-    AuthorId: number;
-    FieldId: number;
-  } | null;
+  reservation?: any | null;
   comments?: Comment[];
   createdAt?: string;
 }

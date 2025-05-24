@@ -17,13 +17,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { BackButtonComponent } from './components/back-button/back-button.component';
 
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
-  declarations: [
-
-  ],
+  declarations: [],
   imports: [
     BrowserModule,
     CommonModule,
@@ -39,7 +38,8 @@ import { AppRoutingModule } from './app-routing.module';
     MatIconModule,
     AppComponent,
     HeaderComponent,
-    ProfileComponent
+    ProfileComponent,
+    BackButtonComponent
   ],
   providers: [DatePipe],
   bootstrap: []

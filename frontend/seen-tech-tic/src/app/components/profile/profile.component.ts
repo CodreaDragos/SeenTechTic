@@ -5,11 +5,12 @@ import { PostService, Post } from '../../services/post.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
+import { BackButtonComponent } from '../back-button/back-button.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BackButtonComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })

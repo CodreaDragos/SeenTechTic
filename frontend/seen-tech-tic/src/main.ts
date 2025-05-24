@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    ...appConfig.providers,
     provideRouter(routes),
     importProvidersFrom(
       BrowserAnimationsModule,
@@ -30,6 +31,4 @@ bootstrapApplication(AppComponent, {
     )
   ]
 }).catch(err => console.error(err));
-bootstrapApplication(AppComponent, appConfig)
-  .catch((err) => console.error(err));
 
