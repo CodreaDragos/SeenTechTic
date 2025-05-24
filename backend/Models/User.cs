@@ -22,6 +22,8 @@ namespace WebAPIDemo.Models
         public string Role { get; set; } = string.Empty;
         [Column("email")]
         public string Email { get; set; } = string.Empty;
+        [Column("profile_picture")]
+        public string ProfilePicture { get; set; } = string.Empty;
         [Column("Reservations")]
         public List<Reservation> AuthoredReservations { get; set; }
         [Column("Reservations")]

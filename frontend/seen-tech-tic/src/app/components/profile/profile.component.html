@@ -1,12 +1,55 @@
-<div class="logo ut-bar">
-  <button mat-button color="primary" (click)="logout()">Log Out</button>
-</div>
 <div class="profile-container">
   <div *ngIf="userProfile" class="user-profile">
-    <img *ngIf="userProfile.photoUrl" [src]="userProfile.photoUrl" alt="Profile Photo" class="profile-photo" />
-    <h2>{{ userProfile.username }}</h2>
-    <p>{{ userProfile.description }}</p>
+    <div class="profile-header">
+      <div class="profile-photo-container">
+        <img *ngIf="userProfile.photoUrl" [src]="userProfile.photoUrl" alt="Profile Photo" class="profile-photo" />
+        <div *ngIf="!userProfile.photoUrl" class="profile-photo-placeholder">
+          <span>No Photo</span>
+        </div>
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          style="display: none;"
+        />
+        <button *ngIf="isEditing" type="button" (click)="fileInput.click()" class="choose-photo-btn">
+          Choose Photo
+        </button>
+      </div>
+      
+      <div class="profile-info">
+        <div *ngIf="!isEditing">
+          <h2>{{ userProfile.username }}</h2>
+          <p>Password: ••••••••</p>
+          <button (click)="toggleEdit()">Edit Profile</button>
+        </div>
+        
+        <div *ngIf="isEditing" class="edit-form">
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" [(ngModel)]="newUsername" />
+          </div>
+          
+          <div class="form-group">
+            <label for="password">New Password:</label>
+            <div class="password-input">
+              <input [type]="passwordVisible ? 'text' : 'password'" id="password" [(ngModel)]="newPassword" />
+              <button type="button" (click)="togglePasswordVisibility()">
+                {{ passwordVisible ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button (click)="saveProfile()">Save Changes</button>
+            <button (click)="toggleEdit()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
   <h2>Your Posts</h2>
   <div *ngIf="posts.length === 0">You have no posts.</div>
   <div *ngFor="let post of posts" class="post-card">

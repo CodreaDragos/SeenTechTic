@@ -5,11 +5,12 @@ import { PostService, Post } from '../../services/post.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
@@ -17,6 +18,11 @@ export class ProfileComponent implements OnInit {
   posts: Post[] = [];
   currentUserId: number | null = null;
   userProfile: UserProfile | null = null;
+  isEditing = false;
+  newUsername = '';
+  newPassword = '';
+  selectedFile: File | null = null;
+  passwordVisible = false;
 
   constructor(
     private authService: AuthService,
@@ -42,7 +48,6 @@ export class ProfileComponent implements OnInit {
   loadUserPosts() {
     this.postService.getPosts().subscribe(posts => {
       console.log('Posts received:', posts);
-
       this.posts = posts.filter(post => post.authorId === this.currentUserId);
       console.log('Filtered posts:', this.posts);
     }, error => {
@@ -53,10 +58,70 @@ export class ProfileComponent implements OnInit {
   loadUserProfile() {
     this.userService.getCurrentUserProfile().subscribe(profile => {
       this.userProfile = profile;
+      this.newUsername = profile.username;
       console.log('User profile loaded:', profile);
     }, error => {
       console.error('Failed to load user profile:', error);
     });
+  }
+
+  onFileSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.selectedFile = file;
+      // Create a preview URL for the selected image
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        if (this.userProfile) {
+          this.userProfile.photoUrl = e.target.result;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  toggleEdit() {
+    this.isEditing = !this.isEditing;
+    if (!this.isEditing) {
+      // Reset form when canceling edit
+      this.loadUserProfile();
+    }
+  }
+
+  saveProfile() {
+    if (!this.userProfile) return;
+
+    const formData = new FormData();
+    if (this.selectedFile) {
+      formData.append('profilePicture', this.selectedFile);
+    }
+    if (this.newUsername !== this.userProfile.username) {
+      formData.append('username', this.newUsername);
+    }
+    if (this.newPassword) {
+      formData.append('password', this.newPassword);
+    }
+
+    this.userService.updateProfile(formData).subscribe({
+      next: (updatedProfile) => {
+        this.userProfile = updatedProfile;
+        // If profile picture is present, convert to data URL for preview
+        if (this.userProfile && this.userProfile.photoUrl && !this.userProfile.photoUrl.startsWith('data:image')) {
+          this.userProfile.photoUrl = 'data:image/png;base64,' + this.userProfile.photoUrl;
+        }
+        this.isEditing = false;
+        this.newPassword = '';
+        this.selectedFile = null;
+      },
+      error: (error) => {
+        console.error('Failed to update profile:', error);
+        alert('Failed to update profile. Please try again.');
+      }
+    });
+  }
+
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
   }
 
   editPost(post: Post) {

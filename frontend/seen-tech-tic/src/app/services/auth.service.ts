@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
@@ -37,17 +37,23 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
+        tap((response: AuthResponse) => {
+          if (response.token) {
+            localStorage.setItem('authToken', response.token);
+            this.updateUserIdFromToken();
+          }
+        }),
         catchError(this.handleError)
       );
   }
 
   logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
     this.currentUserIdSubject.next(null);
   }
 
   updateUserIdFromToken() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -79,7 +85,7 @@ export class AuthService {
   }
 
   private loadUserIdFromToken() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -92,9 +98,10 @@ export class AuthService {
       this.currentUserIdSubject.next(null);
     }
   }
-getToken(): string | null {
-  return localStorage.getItem('authToken');
-}
+
+  getToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
 
   getCurrentUserId(): number | null {
     return this.currentUserIdSubject.value;
