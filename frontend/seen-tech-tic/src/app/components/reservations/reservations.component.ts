@@ -7,10 +7,27 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
 import { Router } from '@angular/router';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+
 @Component({
   selector: 'app-reservations',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatOptionModule
+  ],
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.scss'],
   providers: [DatePipe]
@@ -24,7 +41,8 @@ export class ReservationsComponent implements OnInit {
   endTimeValue: string = '';
   formattedEndTime: string = '';
 
-  // New property to hold occupied hours for selected date and field
+  // New properties for custom date and hour controls
+  allHours: string[] = [];
   occupiedHours: string[] = [];
 
   constructor(
@@ -39,63 +57,70 @@ export class ReservationsComponent implements OnInit {
     this.authService.currentUserId$.subscribe(id => this.currentUserId = id);
     this.loadReservations();
 
+    // Initialize allHours with 6 AM to 10 PM in 12-hour format with AM/PM
+    this.allHours = [];
+    for (let hour = 6; hour <= 22; hour++) {
+      let displayHour = hour % 12;
+      if (displayHour === 0) displayHour = 12;
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      this.allHours.push(`${displayHour} ${ampm}`);
+    }
+
     this.reservationForm = this.fb.group({
-      startTime: ['', [Validators.required, this.occupiedHourValidator.bind(this)]],
+      startDate: ['', Validators.required],
+      startHour: ['', [Validators.required, this.occupiedHourValidator.bind(this)]],
       endTime: ['', Validators.required],
       fieldId: ['', [Validators.required, Validators.min(1)]]
     });
 
-    // Watch for changes in fieldId and startTime to update occupied hours and validation
+    // Watch for changes in fieldId, startDate, and startHour to update occupied hours and validation
     this.reservationForm.get('fieldId')?.valueChanges.subscribe(() => {
       this.updateOccupiedHours();
     });
-
-    this.reservationForm.get('startTime')?.valueChanges.subscribe(value => {
-      if (value) {
-        const startDate = new Date(value);
-        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour
-
-        // Format endDate to match desired display format MM/dd/yyyy hh:mm a
-        this.formattedEndTime = this.datePipe.transform(endDate, 'MM/dd/yyyy hh:mm a') || '';
-
-        // Also update endTimeValue in ISO format for form control
-        const pad = (n: number) => n.toString().padStart(2, '0');
-        const year = endDate.getFullYear();
-        const month = pad(endDate.getMonth() + 1);
-        const day = pad(endDate.getDate());
-        const hours = pad(endDate.getHours());
-        const minutes = pad(endDate.getMinutes());
-
-        this.endTimeValue = `${year}-${month}-${day}T${hours}:${minutes}`;
-        this.reservationForm.get('endTime')?.setValue(this.endTimeValue, { emitEvent: false });
-
-        // Check for conflict with existing reservations for selected field
-        const fieldId = Number(this.reservationForm.get('fieldId')?.value);
-        if (fieldId) {
-          const conflict = this.reservations.some(r => {
-            if (r.fieldId !== fieldId) return false;
-            const resStart = new Date(r.startTime);
-            const resEnd = new Date(r.endTime);
-            return startDate >= resStart && startDate < resEnd;
-          });
-          if (conflict) {
-            this.calculateFreeIntervals(fieldId);
-          } else {
-            this.freeIntervals = [];
-          }
-          this.updateOccupiedHours();
-        } else {
-          this.freeIntervals = [];
-          this.occupiedHours = [];
-        }
+    this.reservationForm.get('startDate')?.valueChanges.subscribe(() => {
+      this.updateOccupiedHours();
+    });
+    this.reservationForm.get('startHour')?.valueChanges.subscribe((value) => {
+      if (this.occupiedHours.includes(value)) {
+        alert('Ora selectată este deja ocupată. Te rugăm să alegi o altă oră.');
+        this.reservationForm.get('startHour')?.setValue('', { emitEvent: false });
       } else {
-        this.endTimeValue = '';
-        this.formattedEndTime = '';
-        this.reservationForm.get('endTime')?.setValue('', { emitEvent: false });
-        this.freeIntervals = [];
-        this.occupiedHours = [];
+        this.updateOccupiedHours();
+        this.updateEndTime();
       }
     });
+  }
+
+  updateEndTime(): void {
+    const startDate = this.reservationForm.get('startDate')?.value;
+    const startHour = this.reservationForm.get('startHour')?.value;
+    if (!startDate || !startHour) {
+      this.reservationForm.get('endTime')?.setValue('');
+      return;
+    }
+
+    // Parse startHour string like "6 AM" to 24-hour number
+    const [hourStr, ampm] = startHour.split(' ');
+    let hour = parseInt(hourStr, 10);
+    if (ampm === 'PM' && hour !== 12) {
+      hour += 12;
+    } else if (ampm === 'AM' && hour === 12) {
+      hour = 0;
+    }
+
+    const endDate = new Date(startDate);
+    endDate.setHours(hour + 1, 0, 0, 0);
+
+    // Format endDate to ISO string for form control
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const year = endDate.getFullYear();
+    const month = pad(endDate.getMonth() + 1);
+    const day = pad(endDate.getDate());
+    const hours = pad(endDate.getHours());
+    const minutes = pad(endDate.getMinutes());
+
+    const endTimeValue = `${year}-${month}-${day}T${hours}:${minutes}`;
+    this.reservationForm.get('endTime')?.setValue(endTimeValue, { emitEvent: false });
   }
 
   // New method to update occupied hours based on selected date and field
@@ -190,7 +215,27 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
-    const { startTime, endTime, fieldId } = this.reservationForm.value;
+    // Combine startDate and startHour into startTime string
+    const startDate: string = this.reservationForm.get('startDate')?.value;
+    const startHour: string = this.reservationForm.get('startHour')?.value;
+    if (!startDate || !startHour) {
+      alert('Completează toate câmpurile.');
+      return;
+    }
+    // Parse startHour string like "6 AM" to 24-hour number
+    const [hourStr, ampm] = startHour.split(' ');
+    let hour = parseInt(hourStr, 10);
+    if (ampm === 'PM' && hour !== 12) {
+      hour += 12;
+    } else if (ampm === 'AM' && hour === 12) {
+      hour = 0;
+    }
+    const startDateObj = new Date(startDate);
+    startDateObj.setHours(hour, 0, 0, 0);
+    const startTime = startDateObj.toISOString();
+
+    const endTime: string = this.reservationForm.get('endTime')?.value;
+    const fieldId: number = Number(this.reservationForm.get('fieldId')?.value);
 
     if (!startTime || !endTime || !fieldId) {
       alert('Completează toate câmpurile.');
@@ -200,14 +245,12 @@ export class ReservationsComponent implements OnInit {
     const startIso = this.parseDateLocalToUTC(startTime);
     const endIso = this.parseDateLocalToUTC(endTime);
 
-    const field = Number(fieldId);
-
     const reservationDto = {
-      StartTime: startIso,
-      EndTime: endIso,
-      AuthorId: this.currentUserId!,
-      FieldId: field,
-      ParticipantIds: [] // Send empty array to satisfy backend
+      startTime: startIso,
+      endTime: endIso,
+      authorId: this.currentUserId!,
+      fieldId: fieldId,
+      participantIds: [] // Send empty array to satisfy backend
     };
 
     if (this.editingReservationId) {
@@ -219,7 +262,7 @@ export class ReservationsComponent implements OnInit {
           alert('Rezervarea a fost modificată cu succes!');
           this.resetForm();
           this.loadReservations();
-          this.calculateFreeIntervals(field);
+          this.calculateFreeIntervals(fieldId);
         },
         error: (err: any) => {
           console.error('Eroare la modificare rezervare:', err);
@@ -232,7 +275,7 @@ export class ReservationsComponent implements OnInit {
           alert('Rezervare salvată cu succes!');
           this.resetForm();
           this.loadReservations();
-          this.calculateFreeIntervals(field);
+          this.calculateFreeIntervals(fieldId);
         },
         error: (err: any) => {
           console.error('Eroare la salvare rezervare:', err);
@@ -321,11 +364,35 @@ export class ReservationsComponent implements OnInit {
     this.editingReservationId = reservation.reservationId ?? null;
     this.showAddForm = true;
 
-    this.reservationForm.setValue({
-      startTime: reservation.startTime ? this.toInputDateTimeLocal(reservation.startTime) : '',
-      endTime: reservation.endTime ? this.toInputDateTimeLocal(reservation.endTime) : '',
-      fieldId: reservation.fieldId ?? ''
-    });
+    // Parse reservation.startTime to set startDate and startHour controls
+    if (reservation.startTime) {
+      const startDateObj = new Date(reservation.startTime);
+      const year = startDateObj.getFullYear();
+      const month = (startDateObj.getMonth() + 1).toString().padStart(2, '0');
+      const day = startDateObj.getDate().toString().padStart(2, '0');
+      const hours = startDateObj.getHours();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      let hour12 = hours % 12;
+      if (hour12 === 0) hour12 = 12;
+      const startDateStr = `${year}-${month}-${day}`;
+      const startHourStr = `${hour12} ${ampm}`;
+
+      this.reservationForm.setValue({
+        startDate: startDateStr,
+        startHour: startHourStr,
+        endTime: reservation.endTime ? this.toInputDateTimeLocal(reservation.endTime) : '',
+        fieldId: reservation.fieldId ?? ''
+      });
+
+      this.updateEndTime();
+    } else {
+      this.reservationForm.setValue({
+        startDate: '',
+        startHour: '',
+        endTime: '',
+        fieldId: reservation.fieldId ?? ''
+      });
+    }
   }
 
   private toInputDateTimeLocal(dateStr: string): string {
@@ -348,43 +415,7 @@ export class ReservationsComponent implements OnInit {
   }
 
   private parseDateLocalToUTC(dateTimeLocal: string): string {
-    const [datePart, timePart] = dateTimeLocal.split('T');
-    const [year, month, day] = datePart.split('-').map(Number);
-    const [hour, minute] = timePart.split(':').map(Number);
-
-    const dtf = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'Europe/Bucharest',
-      hour12: false,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-
-    const fakeUTCDate = new Date(Date.UTC(year, month - 1, day, hour - 3, minute));
-
-    const parts = dtf.formatToParts(fakeUTCDate);
-
-    const getPart = (type: string) => parts.find(p => p.type === type)?.value || '00';
-
-    const bucharestYear = Number(getPart('year'));
-    const bucharestMonth = Number(getPart('month'));
-    const bucharestDay = Number(getPart('day'));
-    const bucharestHour = Number(getPart('hour'));
-    const bucharestMinute = Number(getPart('minute'));
-    const bucharestSecond = Number(getPart('second'));
-
-    const bucharestDateUTC = Date.UTC(
-      bucharestYear,
-      bucharestMonth - 1,
-      bucharestDay,
-      bucharestHour,
-      bucharestMinute,
-      bucharestSecond
-    );
-
-    return new Date(bucharestDateUTC).toISOString();
+    const localDate = new Date(dateTimeLocal);
+    return localDate.toISOString();
   }
 }

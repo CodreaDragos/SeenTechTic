@@ -6,9 +6,6 @@ import { PostsComponent } from './components/posts/posts.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { PostsEditComponent } from './components/posts/posts-edit.component';
 
-import { ReservationsComponent } from './components/reservations/reservations.component';
-
-
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
@@ -16,9 +13,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'posts', component: PostsComponent },
     { path: 'posts/edit/:id', component: PostsEditComponent },
-      { path: 'reservations', component: ReservationsComponent },
-
-
+      { path: 'reservations', loadComponent: () => import('./components/reservations/reservations.component').then(m => m.ReservationsComponent) },
 ];
 
 @NgModule({

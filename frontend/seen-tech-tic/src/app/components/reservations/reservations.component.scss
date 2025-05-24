@@ -96,6 +96,15 @@ h1 {
   font-size: 1rem;
 }
 
+.reservation-card p:first-child {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #007bff;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
 .btn-group {
   margin-top: 15px;
   display: flex;
@@ -122,4 +131,42 @@ h1 {
 
 .edit-btn:hover {
   background-color: #cc9a06;
+}
+
+::ng-deep .hour-select-field .mat-option[aria-disabled="true"] {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  font-weight: bold !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+.hour-select-field .mat-option.occupied-hour {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  font-weight: bold !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+.error .mat-select-trigger {
+  border: 3px solid #ff0000 !important;
+  border-radius: 6px;
+  background-color: #ffe6e6 !important;
+}
+
+.error-message {
+  color: #ff0000;
+  font-weight: 700;
+  margin-top: 8px;
+  font-size: 1.1rem;
+  background-color: #ffe6e6;
+  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 0 5px #ff0000aa;
+}
+
+.save-btn:disabled {
+  background-color: #6c757d !important;
+  cursor: not-allowed !important;
 }

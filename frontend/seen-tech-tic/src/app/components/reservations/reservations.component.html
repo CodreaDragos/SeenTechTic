@@ -16,15 +16,23 @@
     </label>
 
     <label *ngIf="reservationForm.get('fieldId')?.value">
-      Start Time (ISO):
-      <input type="datetime-local" formControlName="startTime" required (change)="onStartTimeChange()" />
-      <div class="occupied-hours-container" *ngIf="occupiedHours.length > 0">
-        <p>Ore ocupate în ziua selectată:</p>
-        <div class="occupied-hour" *ngFor="let hour of occupiedHours" [title]="'Ora ' + hour + ' este ocupată'">
-          {{ hour }}
-        </div>
-      </div>
-      <div *ngIf="reservationForm.get('startTime')?.errors?.['occupiedHour']" class="error-message">
+      Data rezervării:
+      <mat-form-field appearance="fill" class="date-picker-field">
+        <input matInput [matDatepicker]="picker" formControlName="startDate" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      Ora rezervării:
+      <mat-form-field appearance="fill" class="hour-select-field" [class.error]="reservationForm.get('startHour')?.errors?.['occupiedHour']">
+        <mat-select formControlName="startHour" required>
+<mat-option *ngFor="let hour of allHours" [value]="hour" [class.occupied-hour]="occupiedHours.includes(hour)">
+  {{ hour }}
+</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="reservationForm.get('startHour')?.errors?.['occupiedHour']" class="error-message">
         Ora selectată este deja ocupată. Te rugăm să alegi o altă oră.
       </div>
     </label>
@@ -34,12 +42,12 @@
       <input type="datetime-local" formControlName="endTime" required readonly />
     </label>
 
-    <button type="submit" class="action-button save-btn">Salvează Rezervarea</button>
+    <button type="submit" class="action-button save-btn" [disabled]="reservationForm.invalid">Salvează Rezervarea</button>
   </form>
 
   <div *ngFor="let reservation of reservations" class="reservation-card">
-    <p><strong>Start:</strong> {{ reservation.startTime | date:'short' }}</p>
-    <p><strong>End:</strong> {{ reservation.endTime | date:'short' }}</p>
+    <p><strong>Start:</strong> {{ reservation.startTime | date:'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>End:</strong> {{ reservation.endTime | date:'dd/MM/yyyy HH:mm' }}</p>
     <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
     <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
     <div class="btn-group">
