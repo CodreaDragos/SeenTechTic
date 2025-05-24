@@ -1,6 +1,5 @@
 <div class="container">
   <h1>Rezervări</h1>
-  <app-back-button></app-back-button>
   <div class="logo ut-bar">
     <button mat-button color="primary" (click)="logout()">Log Out</button>
   </div>
@@ -11,18 +10,28 @@
 
   <!-- Formularul apare doar când showAddForm e true -->
   <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
-    <div class="form-group">
-      <label for="StartTime">Start Time</label>
-      <input type="datetime-local" id="StartTime" formControlName="StartTime" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="EndTime">End Time</label>
-      <input type="datetime-local" id="EndTime" formControlName="EndTime" class="form-control">
-    </div>
-
     <label>
       Field ID:
       <input type="number" formControlName="fieldId" required min="1" />
+    </label>
+
+    <label *ngIf="reservationForm.get('fieldId')?.value">
+      Start Time (ISO):
+      <input type="datetime-local" formControlName="startTime" required (change)="onStartTimeChange()" />
+      <div class="occupied-hours-container" *ngIf="occupiedHours.length > 0">
+        <p>Ore ocupate în ziua selectată:</p>
+        <div class="occupied-hour" *ngFor="let hour of occupiedHours" [title]="'Ora ' + hour + ' este ocupată'">
+          {{ hour }}
+        </div>
+      </div>
+      <div *ngIf="reservationForm.get('startTime')?.errors?.['occupiedHour']" class="error-message">
+        Ora selectată este deja ocupată. Te rugăm să alegi o altă oră.
+      </div>
+    </label>
+
+    <label *ngIf="reservationForm.get('fieldId')?.value">
+      End Time (ISO):
+      <input type="datetime-local" formControlName="endTime" required readonly />
     </label>
 
     <button type="submit" class="action-button save-btn">Salvează Rezervarea</button>
