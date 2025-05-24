@@ -1,41 +1,55 @@
-<div class="container">
-  <h1>Rezervări</h1>
-  <app-back-button></app-back-button>
-  <div class="logo ut-bar">
-    <button mat-button color="primary" (click)="logout()">Log Out</button>
-  </div>
-  <!-- Buton pentru toggle formular -->
-  <button (click)="showAddForm = !showAddForm" class="action-button toggle-btn">
-    {{ showAddForm ? 'Anulează' : 'Adaugă Rezervare' }}
-  </button>
-
-  <!-- Formularul apare doar când showAddForm e true -->
-  <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
-    <div class="form-group">
-      <label for="StartTime">Start Time</label>
-      <input type="datetime-local" id="StartTime" formControlName="StartTime" class="form-control">
+<div class="reservations-page-bg">
+  <div class="bg-shape bg-shape-bottom"></div>
+  <div class="bg-shape bg-shape-left"></div>
+  <div class="container reservations-dark-bg">
+    <div class="reservations-header-bar">
+      <h1 class="page-title reservations-title">Rezervări</h1>
+      <button mat-button color="primary" (click)="logout()" class="logout-btn">Logout</button>
     </div>
-    <div class="form-group">
-      <label for="EndTime">End Time</label>
-      <input type="datetime-local" id="EndTime" formControlName="EndTime" class="form-control">
-    </div>
+    <app-back-button></app-back-button>
+    
+    <button (click)="showAddForm = !showAddForm" class="action-button add-reservation-btn">
+      {{ showAddForm ? 'Anulează' : 'Adaugă Rezervare' }}
+    </button>
 
-    <label>
-      Field ID:
-      <input type="number" formControlName="fieldId" required min="1" />
-    </label>
+    <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
+      <div class="form-group">
+        <label for="StartTime">Ora de început</label>
+        <input type="datetime-local" id="StartTime" formControlName="StartTime" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="EndTime">Ora de sfârșit</label>
+        <input type="datetime-local" id="EndTime" formControlName="EndTime" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="fieldId">Număr Teren</label>
+        <input type="number" id="fieldId" formControlName="fieldId" required min="1" class="form-control">
+      </div>
+      <button type="submit" class="action-button save-btn">Salvează Rezervarea</button>
+    </form>
 
-    <button type="submit" class="action-button save-btn">Salvează Rezervarea</button>
-  </form>
-
-  <div *ngFor="let reservation of reservations" class="reservation-card">
-    <p><strong>Start:</strong> {{ reservation.startTime | date:'short' }}</p>
-    <p><strong>End:</strong> {{ reservation.endTime | date:'short' }}</p>
-    <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
-    <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
-    <div class="btn-group">
-      <button (click)="deleteReservation(reservation)" class="action-button delete-btn">Șterge</button>
-      <button (click)="editReservation(reservation)" class="action-button edit-btn">Modifică</button>
+    <div *ngFor="let reservation of reservations" class="reservation-card reservation-card-dark">
+      <div class="reservation-info">
+        <div class="reservation-field">
+          <span class="reservation-label">Teren</span>
+          <span class="reservation-value">{{ reservation.fieldId }}</span>
+        </div>
+        <div class="reservation-time">
+          <span class="reservation-label">{{ reservation.startTime | date:'mediumDate' }}</span>
+          <span class="reservation-value">{{ reservation.startTime | date:'shortTime' }} - {{ reservation.endTime | date:'shortTime' }}</span>
+        </div>
+      </div>
+      <div class="reservation-meta-footer">
+        <span class="meta-footer-item">Autor ID: {{ reservation.authorId }}</span>
+        <div class="btn-group">
+          <button (click)="editReservation(reservation)" class="action-button edit-btn">
+            <i class="fas fa-edit"></i> Modifică
+          </button>
+          <button (click)="deleteReservation(reservation)" class="action-button delete-btn">
+            <i class="fas fa-trash"></i> Șterge
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

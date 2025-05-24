@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit {
   goToProfile() {
     this.router.navigate(['/profile']);
   }
+
   loadReservations() {
     this.reservationService.getAllReservations().subscribe({
       next: (data: any) => {
@@ -138,6 +139,15 @@ export class HomeComponent implements OnInit {
     }
   }
 
- 
+  navigateToPosts() {
+    this.router.navigate(['/posts']);
+  }
 
+  navigateToReservations() {
+    this.router.navigate(['/reservations']);
+  }
+
+  contactUs() {
+    window.location.href = 'mailto:seen-tech-tic@gmail.com';
+  }
 }

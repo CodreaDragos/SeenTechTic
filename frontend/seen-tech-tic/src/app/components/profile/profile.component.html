@@ -1,21 +1,49 @@
-<app-back-button></app-back-button>
-<div class="logo ut-bar">
-  <button mat-button color="primary" (click)="logout()">Log Out</button>
-</div>
-<div class="profile-container">
-  <div *ngIf="userProfile" class="user-profile">
-    <img *ngIf="userProfile.photoUrl" [src]="userProfile.photoUrl" alt="Profile Photo" class="profile-photo" />
-    <h2>{{ userProfile.username }}</h2>
-    <p>{{ userProfile.description }}</p>
-  </div>
-  <h2>Your Posts</h2>
-  <div *ngIf="posts.length === 0">You have no posts.</div>
-  <div *ngFor="let post of posts" class="post-card">
-    <h3>{{ post.postTitle }}</h3>
-    <p>{{ post.postDescription }}</p>
-    <div class="post-actions">
-      <button (click)="editPost(post)">Edit</button>
-      <button (click)="deletePost(post.postId)">Delete</button>
+<div class="profile-page-bg">
+  <div class="bg-shape bg-shape-bottom"></div>
+  <div class="bg-shape bg-shape-left"></div>
+  <div class="container profile-dark-bg">
+    <div class="profile-header-bar">
+      <h1 class="page-title profile-title">Profil</h1>
+      <button mat-button color="primary" (click)="logout()" class="logout-btn">Logout</button>
+    </div>
+    <app-back-button></app-back-button>
+
+    <div *ngIf="userProfile" class="profile-card profile-card-dark">
+      <div class="profile-header">
+        <div class="profile-photo-container">
+          <img *ngIf="userProfile.photoUrl" [src]="userProfile.photoUrl" alt="Profile Photo" class="profile-photo" />
+          <div *ngIf="!userProfile.photoUrl" class="profile-photo-placeholder">
+            <i class="fas fa-user-circle"></i>
+          </div>
+        </div>
+        <div class="profile-info">
+          <h2 class="profile-username">{{ userProfile.username }}</h2>
+          <p class="profile-description">{{ userProfile.description || 'No description provided.' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-content">
+      <h2 class="section-title">Postările Tale</h2>
+      <div *ngIf="posts.length === 0" class="no-posts">
+        <i class="fas fa-newspaper"></i>
+        <p>Nu ai postări încă.</p>
+      </div>
+      <div *ngFor="let post of posts" class="post-card post-card-dark">
+        <h3 class="post-title">{{ post.postTitle }}</h3>
+        <p class="post-description">{{ post.postDescription }}</p>
+        <div class="post-meta">
+          <span class="post-date">{{ post.createdAt | date:'medium' }}</span>
+        </div>
+        <div class="post-actions">
+          <button (click)="editPost(post)" class="action-button edit-btn">
+            <i class="fas fa-edit"></i> Modifică
+          </button>
+          <button (click)="deletePost(post.postId)" class="action-button delete-btn">
+            <i class="fas fa-trash"></i> Șterge
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

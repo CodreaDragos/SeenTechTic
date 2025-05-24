@@ -1,12 +1,12 @@
 <app-back-button></app-back-button>
 
 <div class="container">
-  <h1>Modifică Postare</h1>
+  <h1 class="page-title">Modifică Postare</h1>
 
   <form *ngIf="showEditForm" [formGroup]="postForm" (ngSubmit)="updatePost()" class="post-form">
     <div class="form-group">
       <label for="postTitle">Titlu Postare</label>
-      <input id="postTitle" type="text" formControlName="postTitle" />
+      <input id="postTitle" type="text" formControlName="postTitle" class="form-control" />
       <div *ngIf="postForm.get('postTitle')?.touched && postForm.get('postTitle')?.invalid" class="error">
         Titlul este obligatoriu.
       </div>
@@ -14,81 +14,29 @@
 
     <div class="form-group">
       <label for="postDescription">Descriere Postare</label>
-      <textarea id="postDescription" formControlName="postDescription"></textarea>
+      <textarea id="postDescription" formControlName="postDescription" class="form-control"></textarea>
       <div *ngIf="postForm.get('postDescription')?.touched && postForm.get('postDescription')?.invalid" class="error">
         Descrierea este obligatorie.
       </div>
     </div>
 
+    <div class="form-group">
+      <label for="reservationId">Selectează Rezervarea</label>
+      <select id="reservationId" formControlName="reservationId" class="form-control">
+        <option [ngValue]="null">Fără Rezervare</option>
+        <option *ngFor="let reservation of reservations" [ngValue]="reservation.reservationId">
+          Teren {{ reservation.fieldId }} - {{ reservation.startTime | date:'medium' }} până la {{ reservation.endTime | date:'shortTime' }}
+        </option>
+      </select>
+    </div>
+
     <div class="form-actions">
-      <button type="submit" [disabled]="postForm.invalid" class="action-button">Modifică Postarea</button>
-      <button type="button" (click)="cancel()" class="cancel-button">Anulează</button>
+      <button type="submit" [disabled]="postForm.invalid" class="submit-button">
+        <i class="fas fa-save"></i> Salvează Modificările
+      </button>
+      <button type="button" (click)="cancel()" class="cancel-button">
+        <i class="fas fa-times"></i> Anulează
+      </button>
     </div>
   </form>
 </div>
-
-<style>
-  .container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  h1 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 20px;
-  }
-  .action-button {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-right: 10px;
-  }
-  .action-button:disabled {
-    background-color: #a5d6a7;
-    cursor: not-allowed;
-  }
-  .cancel-button {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  .form-group {
-    margin-bottom: 15px;
-  }
-  label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: #34495e;
-  }
-  input[type="text"],
-  textarea {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
-    resize: vertical;
-  }
-  .error {
-    color: #e74c3c;
-    font-size: 0.875rem;
-    margin-top: 3px;
-  }
-  .form-actions {
-    text-align: right;
-  }
-</style>
