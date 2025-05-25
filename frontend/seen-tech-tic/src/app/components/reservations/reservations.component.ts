@@ -43,6 +43,7 @@ export class ReservationsComponent implements OnInit {
   // New properties for custom date and hour controls
   allHours: string[] = [];
   occupiedHours: string[] = [];
+  occupiedHoursFormatted: string[] = [];
   freeIntervals: string[] = [];
 
   constructor(
@@ -57,7 +58,7 @@ export class ReservationsComponent implements OnInit {
     this.authService.currentUserId$.subscribe(id => this.currentUserId = id);
     this.loadReservations();
 
-    // Initialize allHours with 6 AM to 10 PM in 12-hour format with AM/PM
+    // Initialize allHours with 6 AM to 10 PM in "X AM/PM" format
     this.allHours = [];
     for (let hour = 6; hour <= 22; hour++) {
       let displayHour = hour % 12;
@@ -175,6 +176,15 @@ export class ReservationsComponent implements OnInit {
           // h is in format like "9 AM", convert to "09:00"
           const hourNum = this.parse12HourTo24Hour(h);
           return hourNum.toString().padStart(2, '0') + ':00';
+        });
+        // Also create formatted occupied hours in "X AM/PM" format for template class binding
+        this.occupiedHoursFormatted = hours.map(h => {
+          // Normalize to consistent "X AM/PM" format
+          const hourNum = this.parse12HourTo24Hour(h);
+          let displayHour = hourNum % 12;
+          if (displayHour === 0) displayHour = 12;
+          const ampm = hourNum >= 12 ? 'PM' : 'AM';
+          return `${displayHour} ${ampm}`;
         });
       },
       error: (err) => {

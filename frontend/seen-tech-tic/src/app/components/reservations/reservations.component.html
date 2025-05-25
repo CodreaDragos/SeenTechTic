@@ -1,40 +1,38 @@
 <div class="container">
   <h1>Rezervări</h1>
+
   <div class="logo ut-bar">
     <button mat-button color="primary" (click)="logout()">Log Out</button>
   </div>
-  <!-- Buton pentru toggle formular -->
+
   <button (click)="showAddForm = !showAddForm" class="action-button toggle-btn">
     {{ showAddForm ? 'Anulează' : 'Adaugă Rezervare' }}
   </button>
 
-  <!-- Formularul apare doar când showAddForm e true -->
   <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
     <label>
       Field ID:
-      <input type="number" formControlName="fieldId" required min="1" />
+      <input type="number" formControlName="fieldId" required min="1" (change)="updateOccupiedHours()" />
     </label>
 
     <label *ngIf="reservationForm.get('fieldId')?.value">
       Data rezervării:
       <mat-form-field appearance="fill" class="date-picker-field">
-        <input matInput [matDatepicker]="picker" formControlName="startDate" required>
+        <input matInput [matDatepicker]="picker" formControlName="startDate" required (dateChange)="updateOccupiedHours()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
-      Ora rezervării:
-      <mat-form-field appearance="fill" class="hour-select-field" [class.error]="reservationForm.get('startHour')?.errors?.['occupiedHour']">
-        <mat-select formControlName="startHour" required>
-<mat-option *ngFor="let hour of allHours" [value]="hour" [class.occupied-hour]="occupiedHours.includes(hour)">
-  {{ hour }}
-</mat-option>
+      <mat-form-field appearance="fill" class="hour-select-field">
+        <mat-label>Selectează o oră</mat-label>
+        <mat-select formControlName="startHour" required panelClass="hour-select-panel">
+          <mat-option *ngFor="let hour of allHours"
+                      [value]="hour"
+                      [ngClass]="{'occupied-hour': occupiedHours.includes(hour)}">
+            {{ hour }}
+          </mat-option>
         </mat-select>
       </mat-form-field>
-
-      <div *ngIf="reservationForm.get('startHour')?.errors?.['occupiedHour']" class="error-message">
-        Ora selectată este deja ocupată. Te rugăm să alegi o altă oră.
-      </div>
     </label>
 
     <label *ngIf="reservationForm.get('fieldId')?.value">
@@ -42,7 +40,9 @@
       <input type="datetime-local" formControlName="endTime" required readonly />
     </label>
 
-    <button type="submit" class="action-button save-btn" [disabled]="reservationForm.invalid">Salvează Rezervarea</button>
+    <button type="submit" class="action-button save-btn" [disabled]="reservationForm.invalid">
+      Salvează Rezervarea
+    </button>
   </form>
 
   <div *ngFor="let reservation of reservations" class="reservation-card">
