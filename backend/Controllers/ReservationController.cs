@@ -20,28 +20,59 @@ namespace WebAPIDemo.Controllers
         }
 
         [HttpGet]
-public IActionResult GetAllReservations()
-{
-    try
-    {
-        var reservations = _reservationService.getAll()
-            .Select(r => new ReservationResponseDto
+        public IActionResult GetAllReservations()
+        {
+            try
             {
-                ReservationId = r.ReservationId,
-                StartTime = r.StartTime,
-                EndTime = r.EndTime,
-                AuthorId = r.AuthorId,
-                FieldId = r.FieldId
-            })
-            .ToList();
-        return Ok(reservations);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error in GetAllReservations");
-        return BadRequest(ex.Message);
-    }
-}
+                var reservations = _reservationService.getAll()
+                    .Select(r => new ReservationResponseDto
+                    {
+                        ReservationId = r.ReservationId,
+                        StartTime = r.StartTime,
+                        EndTime = r.EndTime,
+                        AuthorId = r.AuthorId,
+                        FieldId = r.FieldId
+                    })
+                    .ToList();
+                return Ok(reservations);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetAllReservations");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // New endpoint to get reserved hours for a field and date
+        [HttpGet("occupied-hours")]
+        public IActionResult GetOccupiedHours([FromQuery] int fieldId, [FromQuery] string date)
+        {
+            try
+            {
+                if (!DateTime.TryParseExact(date, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime parsedDate))
+                {
+                    return BadRequest("Invalid date format. Expected yyyy-MM-dd.");
+                }
+
+                var reservations = _reservationService.getByFieldAndDate(fieldId, parsedDate);
+
+                var occupiedHours = reservations.Select(r =>
+                {
+                    var startHour = r.StartTime.Hour;
+                    var ampm = startHour >= 12 ? "PM" : "AM";
+                    var hour12 = startHour % 12;
+                    if (hour12 == 0) hour12 = 12;
+                    return $"{hour12} {ampm}";
+                }).ToList();
+
+                return Ok(occupiedHours);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetOccupiedHours");
+                return BadRequest(ex.Message);
+            }
+        }
 
 
         private int GetCurrentUserId()

@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
-import { HeaderComponent } from '../header/header.component';
 import { Router } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -44,6 +43,7 @@ export class ReservationsComponent implements OnInit {
   // New properties for custom date and hour controls
   allHours: string[] = [];
   occupiedHours: string[] = [];
+  freeIntervals: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -74,20 +74,50 @@ export class ReservationsComponent implements OnInit {
     });
 
     // Watch for changes in fieldId, startDate, and startHour to update occupied hours and validation
-    this.reservationForm.get('fieldId')?.valueChanges.subscribe(() => {
+    this.reservationForm.get('fieldId')?.valueChanges.subscribe((value) => {
+      console.log('fieldId changed to:', value);
       this.updateOccupiedHours();
     });
     this.reservationForm.get('startDate')?.valueChanges.subscribe(() => {
       this.updateOccupiedHours();
     });
     this.reservationForm.get('startHour')?.valueChanges.subscribe((value) => {
-      if (this.occupiedHours.includes(value)) {
+      if (!value) return;
+      // Convert value to "HH:00" format for comparison with occupiedHours
+      let hourNum: number;
+      if (/^\d{1,2}$/.test(value.trim())) {
+        hourNum = parseInt(value.trim(), 10);
+      } else {
+        hourNum = this.parse12HourTo24Hour(value);
+      }
+      const hourStr = hourNum.toString().padStart(2, '0') + ':00';
+
+      console.log('startHour value:', value);
+      console.log('Normalized hourStr:', hourStr);
+      console.log('Occupied hours:', this.occupiedHours);
+
+      if (this.occupiedHours.includes(hourStr)) {
         alert('Ora selectată este deja ocupată. Te rugăm să alegi o altă oră.');
         this.reservationForm.get('startHour')?.setValue('', { emitEvent: false });
       } else {
         this.updateOccupiedHours();
         this.updateEndTime();
       }
+    });
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  loadReservations(): void {
+    this.reservationService.getAllReservations().subscribe({
+      next: (data: any) => {
+        const allReservations = Array.isArray(data?.$values) ? data.$values : data ?? [];
+        this.reservations = allReservations; // Load all reservations, not filtered by user
+      },
+      error: (err: any) => console.error('Eroare la încărcare rezervări', err)
     });
   }
 
@@ -99,17 +129,14 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
-    // Parse startHour string like "6 AM" to 24-hour number
-    const [hourStr, ampm] = startHour.split(' ');
-    let hour = parseInt(hourStr, 10);
-    if (ampm === 'PM' && hour !== 12) {
-      hour += 12;
-    } else if (ampm === 'AM' && hour === 12) {
-      hour = 0;
-    }
+    const hour = this.parse12HourTo24Hour(startHour);
 
-    const endDate = new Date(startDate);
-    endDate.setHours(hour + 1, 0, 0, 0);
+    // Combine startDate and hour to create a Date object for start time
+    const startDateObj = new Date(startDate);
+    startDateObj.setHours(hour, 0, 0, 0);
+
+    // Add one hour for end time
+    const endDate = new Date(startDateObj.getTime() + 60 * 60 * 1000);
 
     // Format endDate to ISO string for form control
     const pad = (n: number) => n.toString().padStart(2, '0');
@@ -123,37 +150,40 @@ export class ReservationsComponent implements OnInit {
     this.reservationForm.get('endTime')?.setValue(endTimeValue, { emitEvent: false });
   }
 
-  // New method to update occupied hours based on selected date and field
   updateOccupiedHours(): void {
-    const fieldId = Number(this.reservationForm.get('fieldId')?.value);
-    const startTimeStr = this.reservationForm.get('startTime')?.value;
-    if (!fieldId || !startTimeStr) {
+    const fieldIdRaw = this.reservationForm.get('fieldId')?.value;
+    const fieldId = Number(fieldIdRaw);
+    const startDate = this.reservationForm.get('startDate')?.value;
+
+    if (!fieldIdRaw || isNaN(fieldId) || fieldId <= 0 || !startDate) {
       this.occupiedHours = [];
       return;
     }
-    const selectedDate = new Date(startTimeStr);
-    const selectedDateStr = selectedDate.toISOString().split('T')[0]; // yyyy-mm-dd
+    // Normalize date to local date string yyyy-mm-dd to avoid timezone issues
+    const dateObj = new Date(startDate);
+    const localDateStr = dateObj.getFullYear() + '-' +
+      (dateObj.getMonth() + 1).toString().padStart(2, '0') + '-' +
+      dateObj.getDate().toString().padStart(2, '0');
 
-    // Filter reservations for the selected field and date
-    const reservationsForFieldAndDate = this.reservations.filter(r => {
-      if (r.fieldId !== fieldId) return false;
-      const resStartDate = new Date(r.startTime);
-      const resDateStr = resStartDate.toISOString().split('T')[0];
-      return resDateStr === selectedDateStr;
-    });
+    console.log('updateOccupiedHours called with fieldId:', fieldId, 'startDate:', localDateStr);
 
-    // Extract occupied hours as strings in 12-hour format with AM/PM
-    this.occupiedHours = reservationsForFieldAndDate.map(r => {
-      const resStartDate = new Date(r.startTime);
-      let hour = resStartDate.getHours();
-      const ampm = hour >= 12 ? 'PM' : 'AM';
-      hour = hour % 12;
-      if (hour === 0) hour = 12;
-      return `${hour} ${ampm}`;
+    this.reservationService.getOccupiedHours(fieldId, localDateStr).subscribe({
+      next: (hours: string[]) => {
+        console.log('Occupied hours fetched:', hours);
+        // Normalize occupied hours to "HH:00" format for consistent comparison
+        this.occupiedHours = hours.map(h => {
+          // h is in format like "9 AM", convert to "09:00"
+          const hourNum = this.parse12HourTo24Hour(h);
+          return hourNum.toString().padStart(2, '0') + ':00';
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching occupied hours:', err);
+        this.occupiedHours = [];
+      }
     });
   }
 
-  // Custom validator to prevent selecting occupied hours
   occupiedHourValidator(control: any) {
     if (!control.value) return null;
     const date = new Date(control.value);
@@ -164,44 +194,21 @@ export class ReservationsComponent implements OnInit {
     return null;
   }
 
-  onStartTimeChange(): void {
-    const startTimeControl = this.reservationForm?.get('startTime');
-    if (startTimeControl) {
-      let value: string = startTimeControl.value;
-      if (value) {
-        // Round minutes to 00
-        const date = new Date(value);
-        date.setMinutes(0, 0, 0);
-        const pad = (n: number) => n.toString().padStart(2, '0');
-        const year = date.getFullYear();
-        const month = pad(date.getMonth() + 1);
-        const day = pad(date.getDate());
-        const hours = pad(date.getHours());
-        const minutes = '00';
-        const newValue = `${year}-${month}-${day}T${hours}:${minutes}`;
-        startTimeControl.setValue(newValue, { emitEvent: true });
-      }
+  private parse12HourTo24Hour(time12h: string): number {
+    const trimmed = time12h.trim();
+    if (/^\d{1,2}$/.test(trimmed)) {
+      // Input is already in 24-hour format like "22"
+      return parseInt(trimmed, 10);
     }
+    const [hourStr, ampm] = trimmed.split(' ');
+    let hour = parseInt(hourStr, 10);
+    if (ampm === 'PM' && hour !== 12) {
+      hour += 12;
+    } else if (ampm === 'AM' && hour === 12) {
+      hour = 0;
+    }
+    return hour;
   }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
-
- 
-
-  loadReservations(): void {
-    this.reservationService.getAllReservations().subscribe({
-      next: (data: any) => {
-        const allReservations = Array.isArray(data?.$values) ? data.$values : data ?? [];
-        this.reservations = allReservations; // Load all reservations, not filtered by user
-      },
-      error: (err: any) => console.error('Eroare la încărcare rezervări', err)
-    });
-  }
-
-  freeIntervals: string[] = [];
 
   addReservation(): void {
     if (!this.currentUserId) {
@@ -215,24 +222,18 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
-    // Combine startDate and startHour into startTime string
     const startDate: string = this.reservationForm.get('startDate')?.value;
     const startHour: string = this.reservationForm.get('startHour')?.value;
     if (!startDate || !startHour) {
       alert('Completează toate câmpurile.');
       return;
     }
-    // Parse startHour string like "6 AM" to 24-hour number
-    const [hourStr, ampm] = startHour.split(' ');
-    let hour = parseInt(hourStr, 10);
-    if (ampm === 'PM' && hour !== 12) {
-      hour += 12;
-    } else if (ampm === 'AM' && hour === 12) {
-      hour = 0;
-    }
+
+    const hour = this.parse12HourTo24Hour(startHour);
     const startDateObj = new Date(startDate);
     startDateObj.setHours(hour, 0, 0, 0);
     const startTime = startDateObj.toISOString();
+
 
     const endTime: string = this.reservationForm.get('endTime')?.value;
     const fieldId: number = Number(this.reservationForm.get('fieldId')?.value);
@@ -260,9 +261,11 @@ export class ReservationsComponent implements OnInit {
       }).subscribe({
         next: () => {
           alert('Rezervarea a fost modificată cu succes!');
-          this.resetForm();
-          this.loadReservations();
-          this.calculateFreeIntervals(fieldId);
+        this.resetForm();
+        this.loadReservations();
+        this.calculateFreeIntervals(fieldId);
+        this.updateOccupiedHours();
+        this.updateOccupiedHours();
         },
         error: (err: any) => {
           console.error('Eroare la modificare rezervare:', err);
@@ -279,11 +282,9 @@ export class ReservationsComponent implements OnInit {
         },
         error: (err: any) => {
           console.error('Eroare la salvare rezervare:', err);
-          // Inspect error response to detect conflict
           const errorMsg = err?.error || err?.message || '';
           if (err.status === 400 && typeof errorMsg === 'string' && errorMsg.toLowerCase().includes('already booked')) {
             alert('Terenul este deja rezervat în intervalul selectat.');
-            // Calculate free intervals for the selected field after conflict
             const fieldId = Number(this.reservationForm.get('fieldId')?.value);
             if (fieldId) {
               this.calculateFreeIntervals(fieldId);
@@ -297,20 +298,16 @@ export class ReservationsComponent implements OnInit {
   }
 
   calculateFreeIntervals(fieldId: number): void {
-    // Assuming reservations are loaded and filtered by fieldId
     const reservationsForField = this.reservations.filter(r => r.fieldId === fieldId);
 
-    // Define working hours, e.g., 6:00 to 22:00
     const startHour = 6;
     const endHour = 22;
 
-    // Create an array of all possible 1-hour intervals
     const intervals: string[] = [];
     for (let hour = startHour; hour < endHour; hour++) {
       intervals.push(`${hour.toString().padStart(2, '0')}:00 - ${(hour + 1).toString().padStart(2, '0')}:00`);
     }
 
-    // Remove intervals that overlap with existing reservations
     const freeIntervals = intervals.filter(interval => {
       const [startStr, endStr] = interval.split(' - ');
       const intervalStart = new Date();
@@ -323,7 +320,7 @@ export class ReservationsComponent implements OnInit {
         const resEnd = new Date(res.endTime);
 
         if ((intervalStart < resEnd) && (intervalEnd > resStart)) {
-          return false; // Overlaps, so not free
+          return false;
         }
       }
       return true;
@@ -336,8 +333,6 @@ export class ReservationsComponent implements OnInit {
     this.reservationForm.reset();
     this.showAddForm = false;
     this.editingReservationId = null;
-    // Do not load reservations here to avoid showing free intervals list after reservation
-    // this.loadReservations();
     this.freeIntervals = [];
   }
 
@@ -364,7 +359,6 @@ export class ReservationsComponent implements OnInit {
     this.editingReservationId = reservation.reservationId ?? null;
     this.showAddForm = true;
 
-    // Parse reservation.startTime to set startDate and startHour controls
     if (reservation.startTime) {
       const startDateObj = new Date(reservation.startTime);
       const year = startDateObj.getFullYear();
@@ -414,8 +408,11 @@ export class ReservationsComponent implements OnInit {
     return `${getPart('year')}-${getPart('month')}-${getPart('day')}T${getPart('hour')}:${getPart('minute')}`;
   }
 
-  private parseDateLocalToUTC(dateTimeLocal: string): string {
+  public parseDateLocalToUTC(dateTimeLocal: string): string {
     const localDate = new Date(dateTimeLocal);
-    return localDate.toISOString();
+    // Adjust for timezone offset to keep local time unchanged in UTC string
+    const offsetMs = localDate.getTimezoneOffset() * 60000;
+    const utcDate = new Date(localDate.getTime() - offsetMs);
+    return utcDate.toISOString();
   }
 }

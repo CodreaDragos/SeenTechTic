@@ -12,5 +12,8 @@ namespace WebAPIDemo.Services
 
         int delete(int reservationId);
         bool isFieldAvailable(int fieldId, DateTime startTime, DateTime endTime);
+
+        // New method to get reservations by field and date
+        List<Reservation> getByFieldAndDate(int fieldId, DateTime date);
     }
 } 

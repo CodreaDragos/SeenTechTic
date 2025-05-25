@@ -75,6 +75,11 @@ namespace WebAPIDemo.Services
             return _reservationRepository.getAll().ToList();
         }
 
+        // New method to get reservations by field and date
+        public List<Reservation> getByFieldAndDate(int fieldId, DateTime date)
+        {
+            return _reservationRepository.getByFieldAndDate(fieldId, date).ToList();
+        }
 
         public Reservation getOne(int reservationId)
         {
@@ -142,7 +147,6 @@ namespace WebAPIDemo.Services
             _loggerService.LogInfo($"Reservation {dto.ReservationId} updated successfully");
             return updatedReservation;
         }
-    
 
         public int delete(int reservationId)
         {

@@ -25,6 +25,18 @@ namespace WebAPIDemo.Repositories
             return _context.Reservations.Include(r => r.Participants);
         }
 
+        // New method to get reservations by field and date
+        public IQueryable<Reservation> getByFieldAndDate(int fieldId, DateTime date)
+        {
+            var dateOnly = date.Date;
+            var nextDate = dateOnly.AddDays(1);
+
+            return _context.Reservations
+                .Where(r => r.FieldId == fieldId &&
+                            r.StartTime >= dateOnly &&
+                            r.StartTime < nextDate)
+                .Include(r => r.Participants);
+        }
 
         public Reservation? getOne(int reservationId)
         {
