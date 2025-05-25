@@ -82,6 +82,16 @@ export class ReservationsComponent implements OnInit {
     this.showAddForm = !this.showAddForm;
   }
 
+  cancelAddReservation(): void {
+    this.reservationForm.reset();
+    this.reservationForm.markAsPristine();
+    this.reservationForm.markAsUntouched();
+    this.freeIntervals = [];
+    // Hide the add form after clearing
+    this.showAddForm = false;
+    this.editingReservationId = null;
+  }
+
   ngOnInit(): void {
     this.authService.currentUserId$.subscribe(id => this.currentUserId = id);
     this.loadReservations();

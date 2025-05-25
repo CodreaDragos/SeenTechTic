@@ -132,6 +132,7 @@ h1 {
   flex: 1;
   box-shadow: 0 2px 6px rgba(255,193,7,0.4);
 }
+
 .hour-select-panel .mat-option.occupied-hour {
   background-color: #f44336 !important; /* roșu */
   color: white !important;
@@ -151,85 +152,9 @@ h1 {
   background-color: #cc9a06;
 }
 
-/* Style occupied hours in the dropdown list */
-// ::ng-deep .mat-select-panel .mat-option.occupied-hour {
-//   background-color: #f8d7da !important;
-//   color: #721c24 !important;
-//   font-weight: bold !important;
-//   pointer-events: none !important;
-//   cursor: not-allowed !important;
-// }
-.occupied {
-  color: red;
-  font-weight: bold;
-}
-
-.hour-select-field .mat-option.occupied-hour {
-  background-color: #f8d7da !important;
-  color: #721c24 !important;
+/* Style for selected hour (even if not occupied) */
+.hour-select-panel .mat-option.selected-hour {
+  background-color: #ffcccc !important;
+  color: #b30000 !important;
   font-weight: bold !important;
-  pointer-events: none !important;
-  cursor: not-allowed !important;
-}
-// ::ng-deep .mat-select-panel .mat-option.occupied-hour {
-//   background-color: #f8d7da !important;
-//   color: #721c24 !important;
-//   font-weight: bold !important;
-//   pointer-events: none !important;
-//   cursor: not-allowed !important;
-// }
-// ::ng-deep .hour-select-panel .mat-option.occupied-hour {
-//   font-style: italic !important;
-//   font-weight: bold !important;
-//   color: #8b0000 !important; /* dark red */
-//   background-color: #f8d7da !important; /* light red background */
-//   border-left: 4px solid #8b0000 !important; /* dark red border on left */
-//   pointer-events: auto !important;
-//   cursor: default !important;
-// }
-
-/* Additional styles to ensure visibility on hover and selected states */
-// ::ng-deep .hour-select-panel .mat-option.occupied-hour:hover {
-//   background-color: #f5c6cb !important;
-// }
-
-// ::ng-deep .hour-select-panel .mat-option.occupied-hour.mat-active {
-//   background-color: #f5c6cb !important;
-// }
-
-/* Style the selected item in the mat-select trigger if it is occupied */
-// ::ng-deep .hour-select-field .mat-select-value-text.occupied-hour {
-//   color: #721c24 !important;
-//   font-weight: bold !important;
-// }
-// ::ng-deep .mat-option.occupied-hour {
-//   background-color: #f8d7da !important;
-//   color: #721c24 !important;
-//   font-weight: bold !important;
-//   pointer-events: none !important;
-//   cursor: not-allowed !important;
-// }
-.error .mat-select-trigger {
-  border: 3px solid #ff0000 !important;
-  border-radius: 6px;
-  background-color: #ffe6e6 !important;
-}
-.hour-select-panel .mat-option.occupied-hour {
-  background-color: #f44336 !important;
-  color: white !important;
-}
-.error-message {
-  color: #ff0000;
-  font-weight: 700;
-  margin-top: 8px;
-  font-size: 1.1rem;
-  background-color: #ffe6e6;
-  padding: 6px 10px;
-  border-radius: 6px;
-  box-shadow: 0 0 5px #ff0000aa;
-}
-
-.save-btn:disabled {
-  background-color: #6c757d !important;
-  cursor: not-allowed !important;
 }

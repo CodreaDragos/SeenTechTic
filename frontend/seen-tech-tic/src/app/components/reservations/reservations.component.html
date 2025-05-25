@@ -5,8 +5,11 @@
     <button mat-button color="primary" (click)="logout()">Log Out</button>
   </div>
 
-  <button (click)="showAddForm = !showAddForm" class="action-button toggle-btn">
-    {{ showAddForm ? 'Anulează' : 'Adaugă Rezervare' }}
+  <button *ngIf="showAddForm" (click)="cancelAddReservation()" class="action-button toggle-btn">
+    Anulează
+  </button>
+  <button *ngIf="!showAddForm" (click)="toggleAddForm()" class="action-button toggle-btn">
+    Adaugă Rezervare
   </button>
 
   <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
@@ -34,8 +37,9 @@
         <mat-select formControlName="startHour" required panelClass="hour-select-panel">
           <mat-option *ngFor="let hour of allHours"
                       [value]="hour"
-                      [disabled]="occupiedHours.includes(hour)"
-                      [ngClass]="{'occupied-hour': occupiedHours.includes(hour)}">
+                      [disabled]="occupiedHoursFormatted.includes(hour)"
+[ngClass]="{'occupied-hour': occupiedHoursFormatted.includes(hour), 'selected-hour': reservationForm.get('startHour')?.value === hour}"
+>
             {{ hour }}
           </mat-option>
         </mat-select>
