@@ -11,8 +11,14 @@
 
   <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
     <label>
-      Field ID:
-      <input type="number" formControlName="fieldId" required min="1" (change)="updateOccupiedHours()" />
+      Teren:
+      <mat-form-field appearance="fill" class="field-select-field">
+        <mat-select formControlName="fieldId" required (selectionChange)="updateOccupiedHours()">
+          <mat-option *ngFor="let field of fields" [value]="field.id">
+            {{ field.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </label>
 
     <label *ngIf="reservationForm.get('fieldId')?.value">
@@ -28,6 +34,7 @@
         <mat-select formControlName="startHour" required panelClass="hour-select-panel">
           <mat-option *ngFor="let hour of allHours"
                       [value]="hour"
+                      [disabled]="occupiedHours.includes(hour)"
                       [ngClass]="{'occupied-hour': occupiedHours.includes(hour)}">
             {{ hour }}
           </mat-option>

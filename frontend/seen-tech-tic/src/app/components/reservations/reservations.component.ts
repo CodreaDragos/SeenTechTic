@@ -46,6 +46,25 @@ export class ReservationsComponent implements OnInit {
   occupiedHoursFormatted: string[] = [];
   freeIntervals: string[] = [];
 
+  // New property for fields list
+  fields: { id: number; name: string }[] = [
+    { id: 1, name: 'Football Field 1' },
+    { id: 2, name: 'Football Field 2' },
+    { id: 3, name: 'Football Field 3' },
+    { id: 4, name: 'Football Field 4' },
+    { id: 5, name: 'Football Field 5' },
+    { id: 6, name: 'Basketball Court 1' },
+    { id: 7, name: 'Basketball Court 2' },
+    { id: 8, name: 'Basketball Court 3' },
+    { id: 9, name: 'Basketball Court 4' },
+    { id: 10, name: 'Basketball Court 5' },
+    { id: 11, name: 'Volleyball Court 1' },
+    { id: 12, name: 'Volleyball Court 2' },
+    { id: 13, name: 'Volleyball Court 3' },
+    { id: 14, name: 'Volleyball Court 4' },
+    { id: 15, name: 'Volleyball Court 5' }
+  ];
+
   constructor(
     private fb: FormBuilder,
     private reservationService: ReservationService,
@@ -53,6 +72,15 @@ export class ReservationsComponent implements OnInit {
     private router: Router,
     private datePipe: DatePipe
   ) { }
+
+  toggleAddForm(): void {
+    if (this.showAddForm) {
+      this.resetForm();
+    } else {
+      this.resetForm();
+    }
+    this.showAddForm = !this.showAddForm;
+  }
 
   ngOnInit(): void {
     this.authService.currentUserId$.subscribe(id => this.currentUserId = id);
@@ -341,6 +369,8 @@ export class ReservationsComponent implements OnInit {
 
   private resetForm() {
     this.reservationForm.reset();
+    this.reservationForm.markAsPristine();
+    this.reservationForm.markAsUntouched();
     this.showAddForm = false;
     this.editingReservationId = null;
     this.freeIntervals = [];
