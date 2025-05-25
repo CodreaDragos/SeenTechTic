@@ -40,6 +40,8 @@ export class ReservationsComponent implements OnInit {
   endTimeValue: string = '';
   formattedEndTime: string = '';
 
+  originalReservationData: any = null; // To store original form data for comparison
+
   // New properties for custom date and hour controls
   allHours: string[] = [];
   occupiedHours: string[] = [];
@@ -280,6 +282,16 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
+    // Check if editing and no changes made
+    if (this.editingReservationId !== null && this.originalReservationData) {
+      const currentData = this.reservationForm.getRawValue();
+      const isUnchanged = JSON.stringify(currentData) === JSON.stringify(this.originalReservationData);
+      if (isUnchanged) {
+        alert('Apasă pe anulare dacă nu vrei să modifici');
+        return;
+      }
+    }
+
     const hour = this.parse12HourTo24Hour(startHour);
     const startDateObj = new Date(startDate);
     startDateObj.setHours(hour, 0, 0, 0);
@@ -312,11 +324,17 @@ export class ReservationsComponent implements OnInit {
       }).subscribe({
         next: () => {
           alert('Rezervarea a fost modificată cu succes!');
+        const editedId = this.editingReservationId;
+        if (editedId !== null) {
+          this.editButtonClicked.delete(editedId);
+        }
         this.resetForm();
         this.loadReservations();
         this.calculateFreeIntervals(fieldId);
         this.updateOccupiedHours();
         this.updateOccupiedHours();
+        this.editingReservationId = null;
+        this.showAddForm = false;
         },
         error: (err: any) => {
           console.error('Eroare la modificare rezervare:', err);
@@ -387,6 +405,7 @@ export class ReservationsComponent implements OnInit {
     this.showAddForm = false;
     this.editingReservationId = null;
     this.freeIntervals = [];
+    this.editButtonClicked.clear();
   }
 
   deleteReservation(reservation: Reservation) {
@@ -441,6 +460,9 @@ export class ReservationsComponent implements OnInit {
       });
 
       this.updateEndTime();
+
+      // Store original form data for change detection
+      this.originalReservationData = this.reservationForm.getRawValue();
     } else {
       this.reservationForm.setValue({
         startDate: '',
@@ -448,6 +470,7 @@ export class ReservationsComponent implements OnInit {
         endTime: '',
         fieldId: reservation.fieldId ?? ''
       });
+      this.originalReservationData = null;
     }
   }
 
