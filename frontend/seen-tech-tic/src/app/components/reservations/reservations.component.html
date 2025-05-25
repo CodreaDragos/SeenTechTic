@@ -63,7 +63,7 @@
     <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
     <div class="btn-group">
       <button (click)="deleteReservation(reservation)" class="action-button delete-btn">Șterge</button>
-      <button (click)="editReservation(reservation)" class="action-button edit-btn">Modifică</button>
+      <button (click)="editReservation(reservation)" class="action-button edit-btn" [disabled]="reservation.reservationId !== undefined && editButtonClicked.has(reservation.reservationId)">Modifică</button>
     </div>
   </div>
 </div>

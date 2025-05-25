@@ -65,6 +65,9 @@ export class ReservationsComponent implements OnInit {
     { id: 15, name: 'Volleyball Court 5' }
   ];
 
+  // Track which reservation edit buttons have been clicked
+  editButtonClicked: Set<number> = new Set();
+
   constructor(
     private fb: FormBuilder,
     private reservationService: ReservationService,
@@ -406,6 +409,15 @@ export class ReservationsComponent implements OnInit {
   }
 
   editReservation(reservation: Reservation) {
+    // If this reservation's edit button was already clicked, do nothing
+    if (reservation.reservationId && this.editButtonClicked.has(reservation.reservationId)) {
+      return;
+    }
+    // Mark this reservation's edit button as clicked
+    if (reservation.reservationId) {
+      this.editButtonClicked.add(reservation.reservationId);
+    }
+
     this.editingReservationId = reservation.reservationId ?? null;
     this.showAddForm = true;
 
