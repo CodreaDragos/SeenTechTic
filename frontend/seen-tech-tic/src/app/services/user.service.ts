@@ -20,7 +20,6 @@ export class UserService {
   getCurrentUserProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(this.apiUrl + '/profile');
   }
-
   updateProfile(formData: FormData): Observable<UserProfile> {
     return this.http.put<UserProfile>(this.apiUrl + '/profile', formData);
   }

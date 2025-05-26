@@ -22,7 +22,11 @@ h1 {
   font-size: 1rem;
   transition: background-color 0.3s ease;
 }
-
+.mat-option.occupied-hour {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  font-weight: bold !important;
+}
 .toggle-btn {
   background-color: #007bff;
   color: white;
@@ -96,6 +100,15 @@ h1 {
   font-size: 1rem;
 }
 
+.reservation-card p:first-child {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #007bff;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
 .btn-group {
   margin-top: 15px;
   display: flex;
@@ -120,6 +133,28 @@ h1 {
   box-shadow: 0 2px 6px rgba(255,193,7,0.4);
 }
 
+.hour-select-panel .mat-option.occupied-hour {
+  background-color: #f44336 !important; /* roșu */
+  color: white !important;
+}
+
+.hour-select-panel .mat-option.occupied-hour.mat-active {
+  background-color: #d32f2f !important; /* un roșu mai închis când e selectată */
+  color: white !important;
+}
+
+.hour-select-panel .mat-option.occupied-hour.mat-selected {
+  background-color: #b71c1c !important; /* roșu când e selectată */
+  color: white !important;
+}
+
 .edit-btn:hover {
   background-color: #cc9a06;
+}
+
+/* Style for selected hour (even if not occupied) */
+.hour-select-panel .mat-option.selected-hour {
+  background-color: #ffcccc !important;
+  color: #b30000 !important;
+  font-weight: bold !important;
 }

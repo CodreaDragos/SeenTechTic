@@ -1,38 +1,69 @@
 <div class="container">
   <h1>Rezervări</h1>
-  <!-- Buton pentru toggle formular -->
-  <button (click)="showAddForm = !showAddForm" class="action-button toggle-btn">
-    {{ showAddForm ? 'Anulează' : 'Adaugă Rezervare' }}
+
+  <div class="logo ut-bar">
+    <button mat-button color="primary" (click)="logout()">Log Out</button>
+  </div>
+
+  <button *ngIf="showAddForm" (click)="cancelAddReservation()" class="action-button toggle-btn">
+    Anulează
+  </button>
+  <button *ngIf="!showAddForm" (click)="toggleAddForm()" class="action-button toggle-btn">
+    Adaugă Rezervare
   </button>
 
-  <!-- Formularul apare doar când showAddForm e true -->
   <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
     <label>
-      Start Time (ISO):
-      <input type="datetime-local" formControlName="startTime" required />
+      Teren:
+      <mat-form-field appearance="fill" class="field-select-field">
+        <mat-select formControlName="fieldId" required (selectionChange)="updateOccupiedHours()">
+          <mat-option *ngFor="let field of fields" [value]="field.id">
+            {{ field.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </label>
 
-    <label>
+    <label *ngIf="reservationForm.get('fieldId')?.value">
+      Data rezervării:
+      <mat-form-field appearance="fill" class="date-picker-field">
+        <input matInput [matDatepicker]="picker" formControlName="startDate" required (dateChange)="updateOccupiedHours()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="hour-select-field">
+        <mat-label>Selectează o oră</mat-label>
+        <mat-select formControlName="startHour" required panelClass="hour-select-panel">
+          <mat-option *ngFor="let hour of allHours"
+                      [value]="hour"
+                      [disabled]="occupiedHoursFormatted.includes(hour)"
+[ngClass]="{'occupied-hour': occupiedHoursFormatted.includes(hour), 'selected-hour': reservationForm.get('startHour')?.value === hour}"
+>
+            {{ hour }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </label>
+
+    <label *ngIf="reservationForm.get('fieldId')?.value">
       End Time (ISO):
-      <input type="datetime-local" formControlName="endTime" required />
+      <input type="datetime-local" formControlName="endTime" required readonly />
     </label>
 
-    <label>
-      Field ID:
-      <input type="number" formControlName="fieldId" required min="1" />
-    </label>
-
-    <button type="submit" class="action-button save-btn">Salvează Rezervarea</button>
+    <button type="submit" class="action-button save-btn" [disabled]="reservationForm.invalid">
+      Salvează Rezervarea
+    </button>
   </form>
 
   <div *ngFor="let reservation of reservations" class="reservation-card">
-    <p><strong>Start:</strong> {{ reservation.startTime | date:'short' }}</p>
-    <p><strong>End:</strong> {{ reservation.endTime | date:'short' }}</p>
+    <p><strong>Start:</strong> {{ reservation.startTime | date:'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>End:</strong> {{ reservation.endTime | date:'dd/MM/yyyy HH:mm' }}</p>
     <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
     <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
-    <div class="btn-group">
-      <button (click)="deleteReservation(reservation)" class="action-button delete-btn">Șterge</button>
-      <button (click)="editReservation(reservation)" class="action-button edit-btn">Modifică</button>
-    </div>
+      <div class="btn-group">
+        <button *ngIf="reservation.authorId === currentUserId" (click)="deleteReservation(reservation)" class="action-button delete-btn">Șterge</button>
+        <button *ngIf="reservation.authorId === currentUserId" (click)="editReservation(reservation)" class="action-button edit-btn" [disabled]="reservation.reservationId !== undefined && editButtonClicked.has(reservation.reservationId)">Modifică</button>
+      </div>
   </div>
 </div>
