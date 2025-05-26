@@ -7,13 +7,14 @@ import { FormsModule } from '@angular/forms';
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
+import { BackButtonComponent } from '../back-button/back-button.component';
 
 @Component({
   selector: 'app-posts-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, BackButtonComponent],
   templateUrl: './posts-edit.component.html',
-  styleUrls: []  // Removed reference to missing stylesheet
+  styleUrls: ['./posts-edit.component.scss']
 })
 export class PostsEditComponent implements OnInit, OnChanges {
   currentUserId: number | null = null;
@@ -73,6 +74,8 @@ export class PostsEditComponent implements OnInit, OnChanges {
         reservationId: this.editPost.reservationId || null
       });
       this.selectedReservationId = this.editPost.reservationId || null;
+    } else if (changes['editPost'] && !this.editPost) {
+      this.resetForm();
     }
   }
 
@@ -90,7 +93,10 @@ export class PostsEditComponent implements OnInit, OnChanges {
       },
       error: err => {
         console.error('Failed to load post', err);
-        alert('Failed to load post for editing.');
+        alert('Eroare: Postarea nu a putut fi încărcată sau nu există. Veți fi redirecționat către dashboard.');
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 0);
       }
     });
   }

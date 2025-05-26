@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgForOf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // For ngModel
 import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { Router } from '@angular/router';
+import { BackButtonComponent } from '../back-button/back-button.component';
+import { UserService, UserProfile } from '../../services/user.service';
+import { forkJoin, of } from 'rxjs'; // Import forkJoin and of
+import { switchMap, catchError, map } from 'rxjs/operators'; // Import operators and map
+import { Observable } from 'rxjs';
 
 import { PostsNewComponent } from './posts-new.component';
 import { PostsEditComponent } from './posts-edit.component';
@@ -13,7 +18,13 @@ import { PostsEditComponent } from './posts-edit.component';
 @Component({
   selector: 'app-posts',
   standalone: true,
-  imports: [CommonModule, NgForOf, FormsModule, PostsNewComponent, PostsEditComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    PostsNewComponent,
+    PostsEditComponent,
+    BackButtonComponent
+  ],
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss']
 })
@@ -23,73 +34,141 @@ export class PostsComponent implements OnInit {
   newCommentContent: { [postId: number]: string } = {};
   editingPostId?: number;
   reservationsMap: Map<number, Reservation> = new Map();
+  showAddPostForm = false;
 
   constructor(
-  private postService: PostService,
-  private authService: AuthService,
-  private commentService: CommentService,
-  private reservationService: ReservationService,
-  private router: Router
-) {}
-
+    private postService: PostService,
+    private authService: AuthService,
+    private commentService: CommentService,
+    private reservationService: ReservationService,
+    private router: Router,
+    private userService: UserService // Inject UserService
+  ) {}
 
   ngOnInit() {
     this.authService.currentUserId$.subscribe((id: number | null) => {
       this.currentUserId = id;
     });
-    this.loadPosts();
+    this.loadPostsWithAuthorProfiles();
   }
 
-  loadPosts() {
-    this.postService.getPosts().subscribe({
-      next: (data: any) => {
+  loadPostsWithAuthorProfiles() {
+    this.postService.getPosts().pipe(
+      switchMap((data: any) => {
+        let posts: Post[];
         if (data && data.$values && Array.isArray(data.$values)) {
-          this.posts = data.$values;
+          posts = data.$values;
         } else if (Array.isArray(data)) {
-          this.posts = data;
+          posts = data;
         } else {
-          this.posts = [];
+          posts = [];
         }
-        // Initialize comments array if not present
-        this.posts.forEach(post => {
+
+        // Sort posts and initialize comments
+        posts = posts.sort((a, b) => {
+          const dateA = new Date(a.createdAt || 0).getTime();
+          const dateB = new Date(b.createdAt || 0).getTime();
+          return dateB - dateA;
+        });
+        posts.forEach(post => {
           if (!post.comments) {
             post.comments = [];
           }
         });
-        this.loadAllReservationsAndMap();
-      },
-      error: (err: any) => console.error('Failed to load posts', err)
+
+        console.log('Initial posts data:', JSON.parse(JSON.stringify(posts))); // Log initial data
+
+        // Collect unique authorIds from comments that need profile fetching
+        const authorIdsToFetch = new Set<number>();
+        posts.forEach(post => {
+          if (post.comments) {
+            post.comments.forEach(comment => {
+              // Add authorId if it exists and author profile is not already present
+              if (comment.authorId && (!comment.author || !comment.author.photoUrl)) {
+                 authorIdsToFetch.add(comment.authorId);
+              }
+            });
+          }
+        });
+
+        const fetchObservables: { [key: number]: Observable<UserProfile | { userId: number, username: string, photoUrl: undefined }> } = {};
+        authorIdsToFetch.forEach(authorId => {
+            fetchObservables[authorId] = this.userService.getUserProfile(authorId).pipe(
+              catchError(err => {
+                console.error(`Failed to load profile for user ${authorId}:`, err);
+                // Return a default profile structure on error, ensure it has userId
+                return of({ userId: authorId, username: 'Anonim', photoUrl: undefined });
+              })
+            );
+        });
+
+        // Use forkJoin to wait for all unique profile fetches to complete
+        // If no profiles need fetching, forkJoin on an empty object completes immediately
+        const profileFetch = Object.keys(fetchObservables).length > 0 ? forkJoin(fetchObservables) : of({});
+
+        return profileFetch.pipe(
+           map(fetchedProfiles => {
+            console.log('Fetched profiles:', fetchedProfiles); // Log fetched profiles
+            // Distribute the fetched profiles back to the comments using authorId
+            posts.forEach(post => {
+              if (post.comments) {
+                post.comments.forEach(comment => {
+                   // Use authorId to get the correct profile from the fetchedProfiles object
+                   if (comment.authorId && (fetchedProfiles as any)[comment.authorId]) { // Check if a profile was fetched for this authorId
+                    console.log(`Assigning profile for comment by user ${comment.authorId}:`, (fetchedProfiles as any)[comment.authorId]); // Log assignment
+                    comment.author = (fetchedProfiles as any)[comment.authorId]; // Assign the fetched profile
+                  } else if (comment.authorId && !comment.author) { // Assign a default if fetching failed and author was initially missing
+                     console.log(`Assigning default profile for comment by user ${comment.authorId}:`, { userId: comment.authorId, username: 'Anonim', photoUrl: undefined }); // Log default assignment
+                     comment.author = { userId: comment.authorId, username: 'Anonim', photoUrl: undefined } as UserProfile;
+                  }
+                });
+              }
+            });
+            console.log('Posts after profile assignment:', JSON.parse(JSON.stringify(posts))); // Log final data structure
+            // After processing profiles, load reservations
+            this.loadAllReservationsAndMap();
+            return posts; // Return the updated posts
+          })
+        );
+      }),
+      catchError(err => {
+        console.error('Failed to load posts with author profiles', err);
+        this.loadAllReservationsAndMap(); // Still attempt to load reservations
+        return of([]); // Return empty array on error
+      })
+    ).subscribe(updatedPosts => {
+      this.posts = updatedPosts;
+      // loadAllReservationsAndMap is now called inside the switchMap after profile processing
     });
   }
 
-loadAllReservationsAndMap() {
-  this.reservationService.getAllReservations().subscribe({
-    next: (reservations: Reservation[]) => {
-      this.reservationsMap.clear();
-      // Filter reservations by current user
-      const userReservations = reservations.filter(reservation => reservation.authorId === this.currentUserId);
-      userReservations.forEach(reservation => {
-        this.reservationsMap.set(reservation.reservationId || 0, reservation);
-      });
-      this.assignReservationsToPosts();
-    },
-    error: (err: any) => console.error('Failed to load reservations', err)
-  });
-}
+  loadAllReservationsAndMap() {
+    this.reservationService.getAllReservations().subscribe({
+      next: (reservations: Reservation[]) => {
+        this.reservationsMap.clear();
+        // Store all reservations, not just user's reservations
+        reservations.forEach(reservation => {
+          this.reservationsMap.set(reservation.reservationId || 0, reservation);
+        });
+        this.assignReservationsToPosts();
+      },
+      error: (err: any) => console.error('Failed to load reservations', err)
+    });
+  }
 
-
-  assignReservationsToPosts() {
+  private assignReservationsToPosts(): void {
     this.posts.forEach(post => {
       if (post.reservationId) {
         const reservation = this.reservationsMap.get(post.reservationId);
         if (reservation) {
-          (post as any).reservation = reservation;
-        } else {
-          (post as any).reservation = null; // or fallback info
-          console.warn(`Reservation with id ${post.reservationId} not found for post ${post.postId}`);
+          post.reservation = {
+            ...reservation,
+            fieldId: (reservation as any).fieldId ?? (reservation as any).FieldId,
+            startTime: (reservation as any).startTime ?? (reservation as any).StartTime,
+            endTime: (reservation as any).endTime ?? (reservation as any).EndTime,
+            authorId: (reservation as any).authorId ?? (reservation as any).AuthorId,
+          };
         }
-      } else {
-        (post as any).reservation = null;
       }
     });
   }
@@ -111,8 +190,28 @@ loadAllReservationsAndMap() {
     };
     this.commentService.addComment(newComment).subscribe({
       next: (comment: Comment) => {
-        post.comments?.push(comment);
-        this.newCommentContent[post.postId || 0] = '';
+         if (!Array.isArray(post.comments)) { // Ensure comments is an array
+            post.comments = [];
+          }
+        // Fetch the current user's profile to get the photoUrl after adding the comment
+        this.userService.getCurrentUserProfile().subscribe({
+          next: (currentUserProfile: UserProfile) => {
+            comment.author = currentUserProfile; // Assign the current user's profile
+             if (post.comments) { // Add this check for linter
+                post.comments.push(comment); // Add the comment with the author's profile
+             }
+            this.newCommentContent[post.postId || 0] = '';
+          },
+           error: (err) => {
+              console.error('Failed to fetch current user profile for new comment:', err);
+              // Fallback on error with a default profile structure
+              comment.author = { userId: this.currentUserId!, username: 'You', photoUrl: undefined };
+               if (post.comments) { // Add this check for linter
+                 post.comments.push(comment); // Add the comment even if profile fetching fails
+               }
+              this.newCommentContent[post.postId || 0] = '';
+            }
+        });
       },
       error: (err: any) => console.error('Failed to add comment', err)
     });
@@ -132,12 +231,14 @@ loadAllReservationsAndMap() {
 
   onPostUpdated(post: Post) {
     this.editingPostId = undefined;
-    this.loadPosts();
+    this.loadPostsWithAuthorProfiles(); // Reload posts with updated data
   }
-logout() {
-  this.authService.logout();
-  this.router.navigate(['/login']);
-}
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   deletePost(post: Post) {
     if (!this.currentUserId) {
       alert('You must be logged in to delete a post.');
@@ -155,5 +256,10 @@ logout() {
         error: (err: any) => console.error('Failed to delete post', err)
       });
     }
+  }
+
+  onPostCreated() {
+    this.showAddPostForm = false;
+    this.loadPostsWithAuthorProfiles(); // Reload posts with new post included
   }
 }

@@ -1,54 +1,19 @@
 .app-header {
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px 20px;
-  background-color: #2980b9;
-  color: white;
+  display: none;
 }
 
 .logout-button {
   background: none;
   border: none;
   cursor: pointer;
-  color: white;
+  color: inherit;
   padding: 0;
   display: flex;
   align-items: center;
 }
 
 .logout-button svg {
-  stroke: white;
+  stroke: currentColor;
   width: 24px;
   height: 24px;
-}
-
-.nav-button {
-  background: none;
-  border: 2px solid #fff;
-  color: #fff;
-  padding: 8px 20px;
-  margin-right: 10px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, border 0.2s;
-}
-
-.nav-button:hover, .nav-button:focus {
-  background: #fff;
-  color: #2980b9;
-  border-color: #fff;
-}
-
-.nav-button.profil {
-  background: #fff;
-  color: #2980b9;
-  border: 2px solid #fff;
-}
-
-.nav-button.profil:hover, .nav-button.profil:focus {
-  background: #2980b9;
-  color: #fff;
-  border: 2px solid #fff;
 }

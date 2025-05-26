@@ -7,6 +7,7 @@ export interface UserProfile {
   username: string;
   description?: string;
   photoUrl?: string;
+  // Add other properties as needed
 }
 
 @Injectable({
@@ -20,6 +21,11 @@ export class UserService {
   getCurrentUserProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(this.apiUrl + '/profile');
   }
+
+  getUserProfile(userId: number): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${this.apiUrl}/${userId}`);
+  }
+
   updateProfile(formData: FormData): Observable<UserProfile> {
     return this.http.put<UserProfile>(this.apiUrl + '/profile', formData);
   }

@@ -5,6 +5,7 @@ import { ReservationService, Reservation } from '../../services/reservation.serv
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BackButtonComponent } from '../back-button/back-button.component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -25,7 +26,8 @@ import { MatOptionModule } from '@angular/material/core';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
-    MatOptionModule
+    MatOptionModule,
+    BackButtonComponent
   ],
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.scss'],
@@ -159,7 +161,27 @@ export class ReservationsComponent implements OnInit {
     this.reservationService.getAllReservations().subscribe({
       next: (data: any) => {
         const allReservations = Array.isArray(data?.$values) ? data.$values : data ?? [];
-        this.reservations = allReservations; // Load all reservations, not filtered by user
+        const currentDate = new Date();
+        
+        // Filter reservations for current user and sort them
+        this.reservations = allReservations
+          .filter((reservation: Reservation) => reservation.authorId === this.currentUserId)
+          .sort((a: Reservation, b: Reservation) => {
+            const dateA = new Date(a.startTime);
+            const dateB = new Date(b.startTime);
+            
+            // Check if dates are in the past
+            const isAPast = dateA < currentDate;
+            const isBPast = dateB < currentDate;
+            
+            // If one is past and other isn't, prioritize the non-past one
+            if (isAPast !== isBPast) {
+              return isAPast ? 1 : -1;
+            }
+            
+            // If both are past or both are future, sort by date
+            return dateB.getTime() - dateA.getTime();
+          });
       },
       error: (err: any) => console.error('Eroare la încărcare rezervări', err)
     });

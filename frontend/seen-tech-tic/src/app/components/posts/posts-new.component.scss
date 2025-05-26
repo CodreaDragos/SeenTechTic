@@ -1,58 +1,69 @@
-form {
+.post-form {
   max-width: 600px;
-  margin: 0 auto;
-  padding: 1rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 32px auto 0 auto;
+  padding: 32px 28px 24px 28px;
+  background: #1a181b;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #1a1a1a;
+  border: 1.5px solid #ff1a1a;
+  color: #fff;
 }
 
-form div {
-  margin-bottom: 1rem;
+.form-group {
+  margin-bottom: 22px;
 }
 
-label {
+.form-group label {
   display: block;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #333;
+  margin-bottom: 7px;
+  font-weight: 700;
+  color: #fff;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
 }
 
-input[type="text"],
-textarea,
-select {
+.form-control, select.form-control {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 10px 14px;
+  border: 1.5px solid #ff1a1a;
+  border-radius: 8px;
   font-size: 1rem;
+  background: #18171a;
+  color: #fff;
   box-sizing: border-box;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.2s;
 }
 
-input[type="text"]:focus,
-textarea:focus,
-select:focus {
-  border-color: #007bff;
+.form-control:focus, select.form-control:focus {
+  border-color: #ff1a1a;
   outline: none;
 }
 
-button[type="submit"] {
-  background-color: #007bff;
-  color: white;
-  padding: 0.6rem 1.2rem;
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.submit-button {
+  background: #ff1a1a;
+  color: #fff;
   border: none;
-  border-radius: 4px;
-  font-size: 1rem;
+  padding: 14px 0;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 1.15rem;
+  font-weight: 700;
+  width: 100%;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px #1a1a1a;
+  transition: background 0.2s, transform 0.2s;
 }
-
-button[type="submit"]:hover {
-  background-color: #0056b3;
-}
-
-button[type="submit"]:disabled {
-  background-color: #cccccc;
+.submit-button:disabled {
+  background: #333;
+  color: #aaa;
   cursor: not-allowed;
+}
+.submit-button:hover:not(:disabled) {
+  background: #d10c0c;
+  transform: scale(1.03);
 }

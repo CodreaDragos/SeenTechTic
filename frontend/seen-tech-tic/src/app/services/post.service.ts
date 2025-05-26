@@ -1,24 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { UserProfile } from './user.service'; // Import UserProfile
 
 export interface Post {
   postId?: number;
   postTitle: string;
   postDescription: string;
   authorId: number;
-  author?: {
-    userId: number;
-    username: string;
-  };
+  author?: UserProfile; // Use UserProfile type
   reservationId?: number | null;
-  reservation?: {
-    ReservationId?: number;
-    StartTime: string;
-    EndTime: string;
-    AuthorId: number;
-    FieldId: number;
-  } | null;
+  reservation?: any | null;
   comments?: Comment[];
   createdAt?: string;
 }
@@ -29,10 +21,7 @@ export interface Comment {
   createdAt?: string;
   postId: number;
   authorId: number;
-  author?: {
-    userId: number;
-    username: string;
-  };
+  author?: UserProfile; // Use UserProfile type
 }
 
 @Injectable({

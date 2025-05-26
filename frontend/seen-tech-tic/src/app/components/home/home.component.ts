@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe, NgForOf } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
@@ -7,23 +7,24 @@ import { CommentService } from '../../services/comment.service';
 import { ReservationService, Reservation } from '../../services/reservation.service';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { BackButtonComponent } from '../back-button/back-button.component';
+import { UserService, UserProfile } from '../../services/user.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
-    NgForOf,
     RouterModule,
-    HeaderComponent ,// 👈 aici îl adaugi
     ReactiveFormsModule,
+    BackButtonComponent
   ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  providers: [DatePipe]
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
   profileIcon = 'assets/profile-icon.png';
+  userProfilePhotoUrl: string | null = null;
 
   posts: Post[] = [];
   currentUserId: number | null = null;
@@ -34,7 +35,8 @@ export class HomeComponent implements OnInit {
     private postService: PostService,
     private authService: AuthService,
     private commentService: CommentService,
-    private reservationService: ReservationService 
+    private reservationService: ReservationService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -42,8 +44,9 @@ export class HomeComponent implements OnInit {
       this.currentUserId = id;
       console.log('Current User ID:', this.currentUserId);
     });
-    this.loadPosts();
+    this.loadPostsWithCommentAuthors();
     this.loadReservations();
+    this.loadUserProfilePhoto();
   }
 
   logout() {
@@ -54,6 +57,7 @@ export class HomeComponent implements OnInit {
   goToProfile() {
     this.router.navigate(['/profile']);
   }
+
   loadReservations() {
     this.reservationService.getAllReservations().subscribe({
       next: (data: any) => {
@@ -71,20 +75,42 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  loadPosts() {
+  loadPostsWithCommentAuthors() {
     this.postService.getPosts().subscribe({
       next: (data: any) => {
         console.log('Posts loaded:', JSON.stringify(data, null, 2));
         if (data && data.$values && Array.isArray(data.$values)) {
           this.posts = data.$values;
+          this.fetchCommentAuthorProfiles();
         } else if (Array.isArray(data)) {
           this.posts = data;
+          this.fetchCommentAuthorProfiles();
         } else {
           console.error('Unexpected posts data format', data);
           this.posts = [];
         }
       },
       error: (err: any) => console.error('Failed to load posts', err)
+    });
+  }
+
+  fetchCommentAuthorProfiles() {
+    this.posts.forEach(post => {
+      if (post.comments && post.comments.length > 0) {
+        post.comments.forEach(comment => {
+          if (comment.authorId && !comment.author) {
+            this.userService.getUserProfile(comment.authorId).subscribe({
+              next: (profile: UserProfile) => {
+                comment.author = profile;
+              },
+              error: (err) => {
+                console.error(`Failed to load profile for user ${comment.authorId}:`, err);
+                comment.author = { userId: comment.authorId, username: 'Anonim' };
+              }
+            });
+          }
+        });
+      }
     });
   }
 
@@ -130,15 +156,52 @@ export class HomeComponent implements OnInit {
           if (!Array.isArray(post.comments)) {
             post.comments = [];
           }
-          // Set author username from current user for immediate display
-          comment.author = { userId: this.currentUserId!, username: 'You' };
-          post.comments.unshift(comment);
+          this.userService.getCurrentUserProfile().subscribe({
+            next: (currentUserProfile: UserProfile) => {
+              comment.author = currentUserProfile;
+              if (post.comments) {
+                post.comments.unshift(comment);
+              }
+            },
+            error: (err) => {
+              console.error('Failed to fetch current user profile for new comment:', err);
+              comment.author = { userId: this.currentUserId!, username: 'You' };
+              if (post.comments) {
+                post.comments.unshift(comment);
+              }
+            }
+          });
         },
         error: (err: any) => console.error('Failed to add comment', err)
       });
     }
   }
 
- 
+  navigateToPosts() {
+    this.router.navigate(['/posts']);
+  }
 
+  navigateToReservations() {
+    this.router.navigate(['/reservations']);
+  }
+
+  contactUs() {
+    window.location.href = 'mailto:seen-tech-tic@gmail.com';
+  }
+
+  loadUserProfilePhoto() {
+    this.userService.getCurrentUserProfile().subscribe({
+      next: (profile: UserProfile) => {
+        if (profile && profile.photoUrl) {
+          this.userProfilePhotoUrl = profile.photoUrl;
+        } else {
+          this.userProfilePhotoUrl = null;
+        }
+      },
+      error: (err) => {
+        console.error('Error loading user profile photo:', err);
+        this.userProfilePhotoUrl = null;
+      }
+    });
+  }
 }

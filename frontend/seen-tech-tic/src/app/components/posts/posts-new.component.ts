@@ -4,13 +4,14 @@ import { ReservationService, Reservation } from '../../services/reservation.serv
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { BackButtonComponent } from '../back-button/back-button.component';
 
 @Component({
   selector: 'app-posts-new',
   templateUrl: './posts-new.component.html',
   styleUrls: ['./posts-new.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule]
+  imports: [ReactiveFormsModule, CommonModule, BackButtonComponent]
 })
 export class PostsNewComponent implements OnInit {
   @Output() postCreated = new EventEmitter<void>();
@@ -36,12 +37,12 @@ export class PostsNewComponent implements OnInit {
     this.authService.currentUserId$.subscribe(id => {
       this.currentUserId = id;
       if (this.currentUserId) {
-        this.loadReservations();
+        this.loadUserReservations();
       }
     });
   }
 
-  loadReservations(): void {
+  loadUserReservations(): void {
     this.reservationService.getAllReservations().subscribe({
       next: (data: Reservation[]) => {
         // Filter reservations by current user

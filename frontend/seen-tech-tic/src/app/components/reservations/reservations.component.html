@@ -1,69 +1,73 @@
-<div class="container">
-  <h1>Rezervări</h1>
+<div class="posts-page-bg">
+  <div class="bg-shape bg-shape-bottom"></div>
+  <div class="bg-shape bg-shape-left"></div>
+  <div class="container">
+    <div class="posts-header-bar">
+      <h1>Rezervări</h1>
+    </div>
+    <app-back-button></app-back-button>
 
-  <div class="logo ut-bar">
-    <button mat-button color="primary" (click)="logout()">Log Out</button>
-  </div>
-
-  <button *ngIf="showAddForm" (click)="cancelAddReservation()" class="action-button toggle-btn">
-    Anulează
-  </button>
-  <button *ngIf="!showAddForm" (click)="toggleAddForm()" class="action-button toggle-btn">
-    Adaugă Rezervare
-  </button>
-
-  <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
-    <label>
-      Teren:
-      <mat-form-field appearance="fill" class="field-select-field">
-        <mat-select formControlName="fieldId" required (selectionChange)="updateOccupiedHours()">
-          <mat-option *ngFor="let field of fields" [value]="field.id">
-            {{ field.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </label>
-
-    <label *ngIf="reservationForm.get('fieldId')?.value">
-      Data rezervării:
-      <mat-form-field appearance="fill" class="date-picker-field">
-        <input matInput [matDatepicker]="picker" formControlName="startDate" required (dateChange)="updateOccupiedHours()" />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="hour-select-field">
-        <mat-label>Selectează o oră</mat-label>
-        <mat-select formControlName="startHour" required panelClass="hour-select-panel">
-          <mat-option *ngFor="let hour of allHours"
-                      [value]="hour"
-                      [disabled]="occupiedHoursFormatted.includes(hour)"
-[ngClass]="{'occupied-hour': occupiedHoursFormatted.includes(hour), 'selected-hour': reservationForm.get('startHour')?.value === hour}"
->
-            {{ hour }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </label>
-
-    <label *ngIf="reservationForm.get('fieldId')?.value">
-      End Time (ISO):
-      <input type="datetime-local" formControlName="endTime" required readonly />
-    </label>
-
-    <button type="submit" class="action-button save-btn" [disabled]="reservationForm.invalid">
-      Salvează Rezervarea
+    <button *ngIf="showAddForm" (click)="cancelAddReservation()" class="action-button toggle-btn">
+      Anulează
     </button>
-  </form>
+    <button *ngIf="!showAddForm" (click)="toggleAddForm()" class="action-button toggle-btn">
+      Adaugă Rezervare
+    </button>
 
-  <div *ngFor="let reservation of reservations" class="reservation-card">
-    <p><strong>Start:</strong> {{ reservation.startTime | date:'dd/MM/yyyy HH:mm' }}</p>
-    <p><strong>End:</strong> {{ reservation.endTime | date:'dd/MM/yyyy HH:mm' }}</p>
-    <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
-    <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
+    <form *ngIf="showAddForm" [formGroup]="reservationForm" (ngSubmit)="addReservation()" class="reservation-form">
+      <label>
+        Teren:
+        <mat-form-field appearance="fill" class="field-select-field">
+          <mat-select formControlName="fieldId" required (selectionChange)="updateOccupiedHours()" panelClass="hour-select-panel">
+            <mat-option *ngFor="let field of fields" [value]="field.id">
+              {{ field.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </label>
+
+      <label *ngIf="reservationForm.get('fieldId')?.value">
+        Data rezervării:
+        <div class="date-hour-group">
+          <mat-form-field appearance="fill" class="date-picker-field">
+            <input matInput [matDatepicker]="picker" formControlName="startDate" required (dateChange)="updateOccupiedHours()" />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="hour-select-field">
+            <mat-label>Selectează o oră</mat-label>
+            <mat-select formControlName="startHour" required panelClass="hour-select-panel">
+              <mat-option *ngFor="let hour of allHours"
+                          [value]="hour"
+                          [disabled]="occupiedHoursFormatted.includes(hour)"
+                          [ngClass]="{'occupied-hour': occupiedHoursFormatted.includes(hour), 'selected-hour': reservationForm.get('startHour')?.value === hour}">
+                {{ hour }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </label>
+
+      <label *ngIf="reservationForm.get('fieldId')?.value">
+        End Time (ISO):
+        <input type="datetime-local" formControlName="endTime" required readonly />
+      </label>
+
+      <button type="submit" class="action-button save-btn" [disabled]="reservationForm.invalid">
+        Salvează Rezervarea
+      </button>
+    </form>
+
+    <div *ngFor="let reservation of reservations" class="reservation-card">
+      <p><strong>Start:</strong> {{ reservation.startTime | date:'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>End:</strong> {{ reservation.endTime | date:'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
+      <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
       <div class="btn-group">
         <button *ngIf="reservation.authorId === currentUserId" (click)="deleteReservation(reservation)" class="action-button delete-btn">Șterge</button>
         <button *ngIf="reservation.authorId === currentUserId" (click)="editReservation(reservation)" class="action-button edit-btn" [disabled]="reservation.reservationId !== undefined && editButtonClicked.has(reservation.reservationId)">Modifică</button>
       </div>
+    </div>
   </div>
 </div>

@@ -17,8 +17,6 @@
             <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Password is required</mat-error>
           </mat-form-field>
 
-          <a class="forgot-password">Forgot your password?</a>
-
           <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid || isLoading" class="login-btn">
             <span *ngIf="!isLoading">LOGIN</span>
             <span *ngIf="isLoading">Logging in...</span>

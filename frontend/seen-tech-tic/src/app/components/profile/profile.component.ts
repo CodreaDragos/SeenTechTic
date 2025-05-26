@@ -6,11 +6,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
+import { BackButtonComponent } from '../back-button/back-button.component';
+import { CommentService, Comment } from '../../services/comment.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, BackButtonComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
@@ -23,12 +25,14 @@ export class ProfileComponent implements OnInit {
   newPassword = '';
   selectedFile: File | null = null;
   passwordVisible = false;
+  newCommentContent: { [postId: number]: string } = {};
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private postService: PostService,
-    private userService: UserService
+    private userService: UserService,
+    private commentService: CommentService
   ) {}
 
   ngOnInit() {
@@ -49,6 +53,12 @@ export class ProfileComponent implements OnInit {
     this.postService.getPosts().subscribe(posts => {
       console.log('Posts received:', posts);
       this.posts = posts.filter(post => post.authorId === this.currentUserId);
+      // Initialize comments array if not present
+      this.posts.forEach(post => {
+        if (!post.comments) {
+          post.comments = [];
+        }
+      });
       console.log('Filtered posts:', this.posts);
     }, error => {
       console.error('Error loading posts:', error);
@@ -151,5 +161,38 @@ export class ProfileComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  addComment(post: Post) {
+    if (!this.currentUserId) {
+      alert('You must be logged in to add a comment.');
+      return;
+    }
+
+    const content = this.newCommentContent[post.postId || 0];
+    if (!content || content.trim() === '') {
+      alert('Please enter a comment.');
+      return;
+    }
+
+    const newComment: Comment = {
+      commentContent: content,
+      postId: post.postId || 0,
+      authorId: this.currentUserId
+    };
+
+    this.commentService.addComment(newComment).subscribe({
+      next: (comment) => {
+        if (!post.comments) {
+          post.comments = [];
+        }
+        post.comments.push(comment);
+        this.newCommentContent[post.postId || 0] = '';
+      },
+      error: (error) => {
+        console.error('Failed to add comment:', error);
+        alert('Failed to add comment. Please try again.');
+      }
+    });
   }
 }

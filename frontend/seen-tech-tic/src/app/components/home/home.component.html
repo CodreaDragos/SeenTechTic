@@ -372,19 +372,21 @@
   
   <header class="navbar" *ngIf="true">
     <h1 class="logo">SeenTechTic</h1>
-    <nav class="nav-links">
-      <button class="nav-button" routerLink="/posts">Vezi Postările</button>
-      <button class="nav-button" routerLink="/reservations">Vezi Rezervările</button>
-      <button class="nav-button" routerLink="/profile">Profil</button>
+    <div class="nav-links">
+      <button class="profile-button" (click)="goToProfile()">
+        <img *ngIf="userProfilePhotoUrl" [src]="userProfilePhotoUrl" alt="Profile Photo" class="profile-photo-icon">
+      </button>
+      <button class="nav-button" (click)="navigateToPosts()">Vezi Postări</button>
+      <button class="nav-button" (click)="navigateToReservations()">Rezervări</button>
       <button class="nav-button logout" (click)="logout()">Logout</button>
-    </nav>
+    </div>
   </header>
   
   <div class="main-content">
     <div class="content-wrapper">
       <h2 class="main-title">Platforma ta pentru sport<span class="accent"></span></h2>
       <p class="subtitle">Cu SeenTechTic găsești rapid un teren liber și oameni gata de joacă — sportul devine mai simplu și mai distractiv!</p>
-      <button class="cta-button">Contactează-ne Acum</button>
+      <button class="cta-button" (click)="contactUs()">Contactează-ne Acum</button>
     </div>
   </div>
   

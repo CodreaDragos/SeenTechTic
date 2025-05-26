@@ -11,20 +11,14 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
-
-  navigateTo(page: string) {
-    if (page === 'posts') {
-      this.router.navigate(['/posts']);
-    } else if (page === 'reservations') {
-      this.router.navigate(['/reservations']);
-    } else if (page === 'profile') {
-      this.router.navigate(['/profile']);
-    }
-  }
 }
+

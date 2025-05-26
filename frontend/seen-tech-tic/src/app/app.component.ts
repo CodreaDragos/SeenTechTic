@@ -19,7 +19,7 @@ export class AppComponent {
 this.router.events.pipe(
   filter(event => event instanceof NavigationEnd)
 ).subscribe((event: NavigationEnd) => {
-  this.showHeader = event.url !== '/login' && event.url !== '/register';
+  this.showHeader = event.url !== '/login';
 });
 }
 }
