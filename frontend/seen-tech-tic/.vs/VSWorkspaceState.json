@@ -5,11 +5,10 @@
     "\\src\\app",
     "\\src\\app\\components",
     "\\src\\app\\components\\home",
-    "\\src\\app\\components\\profile",
-    "\\src\\app\\components\\register",
+    "\\src\\app\\components\\posts",
     "\\src\\app\\components\\reservations",
     "\\src\\app\\services",
-    "\\src\\assets"
+    "\\src\\environments"
   ],
   "PreviewInSolutionExplorer": false
 }

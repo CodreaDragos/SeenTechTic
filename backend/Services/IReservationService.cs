@@ -15,5 +15,7 @@ namespace WebAPIDemo.Services
 
         // New method to get reservations by field and date
         List<Reservation> getByFieldAndDate(int fieldId, DateTime date);
+        List<User> FindUsersByUsernames(List<string> usernames);
+
     }
 } 

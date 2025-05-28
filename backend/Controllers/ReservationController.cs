@@ -3,6 +3,7 @@ using WebAPIDemo.Models;
 using WebAPIDemo.Services;
 using WebAPIDemo.DTOs.Reservation;
 using Microsoft.Extensions.Logging;
+using WebAPIDemo.DTOs;
 
 namespace WebAPIDemo.Controllers
 {
@@ -25,15 +26,23 @@ namespace WebAPIDemo.Controllers
             try
             {
                 var reservations = _reservationService.getAll()
-                    .Select(r => new ReservationResponseDto
-                    {
-                        ReservationId = r.ReservationId,
-                        StartTime = r.StartTime,
-                        EndTime = r.EndTime,
-                        AuthorId = r.AuthorId,
-                        FieldId = r.FieldId
-                    })
-                    .ToList();
+     .Select(r => new ReservationResponseDto
+     {
+         ReservationId = r.ReservationId,
+         StartTime = r.StartTime,
+         EndTime = r.EndTime,
+         AuthorId = r.AuthorId,
+         FieldId = r.FieldId,
+         Participants = r.Participants.Select(p => new UserDisplayDto
+         {
+             Id = p.UserId,
+             Username = p.Username,
+             PhotoUrl = p.ProfilePicture // <-- Aici e modificarea
+         }).ToList()
+
+     })
+     .ToList();
+
                 return Ok(reservations);
             }
             catch (Exception ex)
@@ -101,14 +110,24 @@ namespace WebAPIDemo.Controllers
         {
             try
             {
+                _logger.LogInformation("Received reservation DTO: {@dto}", dto);
                 var reservation = new Reservation
                 {
+
                     StartTime = dto.StartTime,
                     EndTime = dto.EndTime,
                     AuthorId = dto.AuthorId,
                     FieldId = dto.FieldId,
-                    // Populează Participants dacă e nevoie
+                    Participants = new List<User>()
                 };
+
+                // Caută utilizatorii după username
+                var participantUsers = _reservationService.FindUsersByUsernames(dto.ParticipantUsernames);
+
+                foreach (var user in participantUsers)
+                {
+                    reservation.Participants.Add(user);
+                }
 
                 var created = _reservationService.create(reservation);
                 return CreatedAtAction(nameof(GetReservation), new { id = created.ReservationId }, created);
@@ -119,6 +138,7 @@ namespace WebAPIDemo.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpGet("{id}")]
         public IActionResult GetReservation(int id)
         {

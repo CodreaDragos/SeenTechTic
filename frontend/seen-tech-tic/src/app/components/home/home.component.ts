@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
-import { ReservationService, Reservation } from '../../services/reservation.service';
+import { ReservationService, ReservationRequest } from '../../services/reservation.service';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { BackButtonComponent } from '../back-button/back-button.component';
@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
 
   posts: Post[] = [];
   currentUserId: number | null = null;
-  reservations: Reservation[] = [];
+  reservations: ReservationRequest[] = [];
 
   constructor(
     private router: Router,

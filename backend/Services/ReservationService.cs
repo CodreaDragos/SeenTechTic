@@ -69,6 +69,12 @@ namespace WebAPIDemo.Services
             _loggerService.LogInfo($"Reservation created successfully for field {field.FieldName}");
             return createdReservation;
         }
+        public List<User> FindUsersByUsernames(List<string> usernames)
+        {
+            return _userRepository.getAll()
+                .Where(u => usernames.Contains(u.Username))
+                .ToList();
+        }
 
         public List<Reservation> getAll()
         {
@@ -127,15 +133,18 @@ namespace WebAPIDemo.Services
             reservation.AuthorId = dto.AuthorId;
 
             // Actualizează lista de participanți
+            // Actualizează lista de participanți
             reservation.Participants.Clear();
-            var participants = dto.ParticipantIds
-                .Select(id => _userRepository.getOne(id))
+
+            var participants = FindUsersByUsernames(dto.ParticipantUsernames)
                 .Where(user => user != null)
                 .ToList();
+
             foreach (var user in participants)
             {
                 reservation.Participants.Add(user);
             }
+
 
             var updatedReservation = _reservationRepository.update(reservation);
             if (updatedReservation == null)

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'; // For ngModel
 import { PostService, Post, Comment } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommentService } from '../../services/comment.service';
-import { ReservationService, Reservation } from '../../services/reservation.service';
+import { ReservationService, ReservationRequest } from '../../services/reservation.service';
 import { Router } from '@angular/router';
 import { BackButtonComponent } from '../back-button/back-button.component';
 import { UserService, UserProfile } from '../../services/user.service';
@@ -33,7 +33,7 @@ export class PostsComponent implements OnInit {
   currentUserId: number | null = null;
   newCommentContent: { [postId: number]: string } = {};
   editingPostId?: number;
-  reservationsMap: Map<number, Reservation> = new Map();
+  reservationsMap: Map<number, ReservationRequest> = new Map();
   showAddPostForm = false;
 
   constructor(
@@ -144,7 +144,7 @@ export class PostsComponent implements OnInit {
 
   loadAllReservationsAndMap() {
     this.reservationService.getAllReservations().subscribe({
-      next: (reservations: Reservation[]) => {
+      next: (reservations: ReservationRequest[]) => {
         this.reservationsMap.clear();
         // Store all reservations, not just user's reservations
         reservations.forEach(reservation => {

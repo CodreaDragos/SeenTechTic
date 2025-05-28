@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ReservationService, Reservation } from '../../services/reservation.service';
+import { ReservationService, ReservationRequest } from '../../services/reservation.service';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
@@ -17,7 +17,7 @@ export class PostsNewComponent implements OnInit {
   @Output() postCreated = new EventEmitter<void>();
 
   postForm: FormGroup;
-  reservations: Reservation[] = [];
+  reservations: ReservationRequest[] = [];
   currentUserId: number | null = null;
 
   constructor(
@@ -44,7 +44,7 @@ export class PostsNewComponent implements OnInit {
 
   loadUserReservations(): void {
     this.reservationService.getAllReservations().subscribe({
-      next: (data: Reservation[]) => {
+      next: (data: ReservationRequest[]) => {
         // Filter reservations by current user
         this.reservations = data.filter(reservation => reservation.authorId === this.currentUserId);
       },

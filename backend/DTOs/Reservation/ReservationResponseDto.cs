@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace WebAPIDemo.DTOs.Reservation
 {
@@ -9,7 +9,8 @@ namespace WebAPIDemo.DTOs.Reservation
         public DateTime EndTime { get; set; }
         public int AuthorId { get; set; }
         public int FieldId { get; set; }
-        public List<int> ParticipantIds { get; set; } = new List<int>();
-        public DateTime Date => StartTime.Date;
+
+        // Aici adaugi lista de participanți
+        public List<UserDisplayDto> Participants { get; set; } = new List<UserDisplayDto>();
     }
 }

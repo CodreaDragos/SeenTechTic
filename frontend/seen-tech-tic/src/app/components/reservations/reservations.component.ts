@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ReservationService, Reservation } from '../../services/reservation.service';
+import { ReservationService , ReservationRequest} from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,6 +13,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { UserService } from '../../services/user.service';
+import { Reservation, UserDisplayDto } from '../../types'; // ajustează calea după caz
+
+
 
 @Component({
   selector: 'app-reservations',
@@ -34,6 +38,7 @@ import { MatOptionModule } from '@angular/material/core';
   providers: [DatePipe]
 })
 export class ReservationsComponent implements OnInit {
+  users: UserDisplayDto[] = [];
   reservations: Reservation[] = [];
   currentUserId: number | null = null;
   reservationForm!: FormGroup;
@@ -73,11 +78,13 @@ export class ReservationsComponent implements OnInit {
   editButtonClicked: Set<number> = new Set();
 
   constructor(
+    
     private fb: FormBuilder,
     private reservationService: ReservationService,
     private authService: AuthService,
     private router: Router,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private userService: UserService
   ) { }
 
   toggleAddForm(): void {
@@ -90,6 +97,7 @@ export class ReservationsComponent implements OnInit {
   }
 
   cancelAddReservation(): void {
+
     this.reservationForm.reset();
     this.reservationForm.markAsPristine();
     this.reservationForm.markAsUntouched();
@@ -98,12 +106,23 @@ export class ReservationsComponent implements OnInit {
     this.showAddForm = false;
     this.editingReservationId = null;
   }
+  // În componentă
+  getParticipantNames(participants: UserDisplayDto[]): string {
+    return participants.map(p => p.username).join(', ');
+  }
+
+
+
+
+
+
+
+
 
   ngOnInit(): void {
     this.authService.currentUserId$.subscribe(id => this.currentUserId = id);
     this.loadReservations();
 
-    // Initialize allHours with 6 AM to 10 PM in "X AM/PM" format
     this.allHours = [];
     for (let hour = 6; hour <= 22; hour++) {
       let displayHour = hour % 12;
@@ -116,20 +135,19 @@ export class ReservationsComponent implements OnInit {
       startDate: ['', Validators.required],
       startHour: ['', [Validators.required, this.occupiedHourValidator.bind(this)]],
       endTime: ['', Validators.required],
-      fieldId: ['', [Validators.required, Validators.min(1)]]
+      fieldId: ['', [Validators.required, Validators.min(1)]],
+      participantIds: [[], Validators.required]
     });
 
-    // Watch for changes in fieldId, startDate, and startHour to update occupied hours and validation
-    this.reservationForm.get('fieldId')?.valueChanges.subscribe((value) => {
-      console.log('fieldId changed to:', value);
+    this.reservationForm.get('fieldId')?.valueChanges.subscribe(() => {
       this.updateOccupiedHours();
     });
     this.reservationForm.get('startDate')?.valueChanges.subscribe(() => {
       this.updateOccupiedHours();
     });
+
     this.reservationForm.get('startHour')?.valueChanges.subscribe((value) => {
       if (!value) return;
-      // Convert value to "HH:00" format for comparison with occupiedHours
       let hourNum: number;
       if (/^\d{1,2}$/.test(value.trim())) {
         hourNum = parseInt(value.trim(), 10);
@@ -137,10 +155,6 @@ export class ReservationsComponent implements OnInit {
         hourNum = this.parse12HourTo24Hour(value);
       }
       const hourStr = hourNum.toString().padStart(2, '0') + ':00';
-
-      console.log('startHour value:', value);
-      console.log('Normalized hourStr:', hourStr);
-      console.log('Occupied hours:', this.occupiedHours);
 
       if (this.occupiedHours.includes(hourStr)) {
         alert('Ora selectată este deja ocupată. Te rugăm să alegi o altă oră.');
@@ -150,7 +164,13 @@ export class ReservationsComponent implements OnInit {
         this.updateEndTime();
       }
     });
+
+    this.userService.getDisplayUsers().subscribe(data => {
+      this.users = data;
+      console.log('Users list:', this.users);
+    });
   }
+
 
   logout() {
     this.authService.logout();
@@ -286,6 +306,9 @@ export class ReservationsComponent implements OnInit {
   }
 
   addReservation(): void {
+    const selectedIds: number[] = this.reservationForm.get('participantIds')?.value || [];
+    console.log('Selected participant IDs:', selectedIds);
+
     if (!this.currentUserId) {
       alert('Trebuie să fii logat pentru a face o rezervare.');
       return;
@@ -319,7 +342,6 @@ export class ReservationsComponent implements OnInit {
     startDateObj.setHours(hour, 0, 0, 0);
     const startTime = startDateObj.toISOString();
 
-
     const endTime: string = this.reservationForm.get('endTime')?.value;
     const fieldId: number = Number(this.reservationForm.get('fieldId')?.value);
 
@@ -331,38 +353,41 @@ export class ReservationsComponent implements OnInit {
     const startIso = this.parseDateLocalToUTC(startTime);
     const endIso = this.parseDateLocalToUTC(endTime);
 
+    const participantUsernames: string[] = selectedIds
+      .map(id => this.users.find(u => u.id === id)?.username)
+      .filter((u): u is string => !!u); // filter out undefined
+
     const reservationDto = {
       startTime: startIso,
       endTime: endIso,
-      authorId: this.currentUserId!,
       fieldId: fieldId,
-      participantIds: [] // Send empty array to satisfy backend
+      authorId: this.currentUserId!,
+      participantUsernames: participantUsernames
     };
 
-    if (this.editingReservationId) {
-      this.reservationService.updateReservation(this.editingReservationId, {
+    if (this.editingReservationId !== null) {
+      const payload = {
         ...reservationDto,
         ReservationId: this.editingReservationId
-      }).subscribe({
-        next: () => {
-          alert('Rezervarea a fost modificată cu succes!');
-        const editedId = this.editingReservationId;
-        if (editedId !== null) {
-          this.editButtonClicked.delete(editedId);
-        }
-        this.resetForm();
-        this.loadReservations();
-        this.calculateFreeIntervals(fieldId);
-        this.updateOccupiedHours();
-        this.updateOccupiedHours();
-        this.editingReservationId = null;
-        this.showAddForm = false;
-        },
-        error: (err: any) => {
-          console.error('Eroare la modificare rezervare:', err);
-          alert('A apărut o eroare la modificare.');
-        }
-      });
+      };
+      if (this.editingReservationId !== null) {
+        this.reservationService.updateReservation(this.editingReservationId, payload).subscribe({
+          next: () => {
+            alert('Rezervarea a fost modificată cu succes!');
+            this.editButtonClicked.delete(this.editingReservationId!);
+            this.resetForm();
+            this.loadReservations();
+            this.calculateFreeIntervals(fieldId);
+            this.updateOccupiedHours();
+            this.editingReservationId = null;
+            this.showAddForm = false;
+          },
+          error: (err: any) => {
+            console.error('Eroare la modificare rezervare:', err);
+            alert('A apărut o eroare la modificare.');
+          }
+        });
+      }
     } else {
       this.reservationService.addReservation(reservationDto).subscribe({
         next: () => {
@@ -387,6 +412,8 @@ export class ReservationsComponent implements OnInit {
       });
     }
   }
+
+
 
   calculateFreeIntervals(fieldId: number): void {
     const reservationsForField = this.reservations.filter(r => r.fieldId === fieldId);
@@ -448,53 +475,46 @@ export class ReservationsComponent implements OnInit {
       });
     }
   }
+  extractHour(datetime: string): string {
+    const date = new Date(datetime);
+    const hours = date.getHours().toString().padStart(2, '0');
+    return `${hours}:00`; // or match your actual mat-select format
+  }
 
   editReservation(reservation: Reservation) {
-    // If this reservation's edit button was already clicked, do nothing
-    if (reservation.reservationId && this.editButtonClicked.has(reservation.reservationId)) {
-      return;
-    }
-    // Mark this reservation's edit button as clicked
-    if (reservation.reservationId) {
-      this.editButtonClicked.add(reservation.reservationId);
-    }
+    if (reservation.reservationId && this.editButtonClicked.has(reservation.reservationId)) return;
+    if (reservation.reservationId) this.editButtonClicked.add(reservation.reservationId);
 
     this.editingReservationId = reservation.reservationId ?? null;
     this.showAddForm = true;
 
-    if (reservation.startTime) {
-      const startDateObj = new Date(reservation.startTime);
-      const year = startDateObj.getFullYear();
-      const month = (startDateObj.getMonth() + 1).toString().padStart(2, '0');
-      const day = startDateObj.getDate().toString().padStart(2, '0');
-      const hours = startDateObj.getHours();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      let hour12 = hours % 12;
-      if (hour12 === 0) hour12 = 12;
-      const startDateStr = `${year}-${month}-${day}`;
-      const startHourStr = `${hour12} ${ampm}`;
+    const startDateObj = new Date(reservation.startTime);
+    const startDate = startDateObj;
+    const startHourStr = this.extractHour(reservation.startTime); // e.g., "10:00"
 
-      this.reservationForm.setValue({
-        startDate: startDateStr,
-        startHour: startHourStr,
-        endTime: reservation.endTime ? this.toInputDateTimeLocal(reservation.endTime) : '',
-        fieldId: reservation.fieldId ?? ''
-      });
+    const endTimeLocal = reservation.endTime
+      ? this.toInputDateTimeLocal(reservation.endTime)
+      : '';
 
-      this.updateEndTime();
+    const participantIds: number[] = reservation.participants?.map(p => {
+      if (typeof p === 'object' && p.id != null) return p.id;
+      return null;
+    }).filter((id): id is number => id !== null) ?? [];
 
-      // Store original form data for change detection
-      this.originalReservationData = this.reservationForm.getRawValue();
-    } else {
-      this.reservationForm.setValue({
-        startDate: '',
-        startHour: '',
-        endTime: '',
-        fieldId: reservation.fieldId ?? ''
-      });
-      this.originalReservationData = null;
-    }
+    this.reservationForm.patchValue({
+      startDate: startDate,
+      startHour: startHourStr,
+      endTime: endTimeLocal,
+      fieldId: reservation.fieldId ?? '',
+      participantIds: participantIds
+    });
+
+    this.updateOccupiedHours();
+    this.updateEndTime();
+    this.originalReservationData = this.reservationForm.getRawValue();
   }
+
+
 
   private toInputDateTimeLocal(dateStr: string): string {
     const date = new Date(dateStr);

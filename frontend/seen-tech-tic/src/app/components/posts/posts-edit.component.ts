@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { PostService, Post } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
-import { ReservationService, Reservation } from '../../services/reservation.service';
+import { ReservationService, ReservationRequest } from '../../services/reservation.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
 import { BackButtonComponent } from '../back-button/back-button.component';
@@ -20,7 +20,7 @@ export class PostsEditComponent implements OnInit, OnChanges {
   currentUserId: number | null = null;
   postForm!: FormGroup;
   showEditForm = false;
-  reservations: Reservation[] = [];
+  reservations: ReservationRequest[] = [];
   selectedReservationId: number | null = null;
 
   userProfile?: UserProfile;
@@ -103,7 +103,7 @@ export class PostsEditComponent implements OnInit, OnChanges {
 
   loadReservations(): void {
     this.reservationService.getAllReservations().subscribe({
-      next: (data: Reservation[]) => {
+      next: (data: ReservationRequest[]) => {
         this.reservations = data;
       },
       error: err => console.error('Failed to load reservations', err)

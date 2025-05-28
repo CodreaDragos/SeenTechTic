@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface Reservation {
+export interface ReservationRequest {
   reservationId?: number;
   startTime: string;
   endTime: string;
@@ -26,14 +26,14 @@ export class ReservationService {
     });
   }
 
-  addReservation(reservation: any): Observable<Reservation> {
-    return this.http.post<Reservation>(this.apiUrl, reservation, { headers: this.getAuthHeaders() });
+  addReservation(reservation: any): Observable<ReservationRequest> {
+    return this.http.post<ReservationRequest>(this.apiUrl, reservation, { headers: this.getAuthHeaders() });
   }
 
-  getAllReservations(): Observable<Reservation[]> {
+  getAllReservations(): Observable<ReservationRequest[]> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-    return this.http.get<Reservation[]>(this.apiUrl, { headers });
+    return this.http.get<ReservationRequest[]>(this.apiUrl, { headers });
   }
 
   // New method to get occupied hours for a field and date
@@ -44,15 +44,15 @@ export class ReservationService {
     return this.http.get<string[]>(`${this.apiUrl}/occupied-hours`, { headers, params });
   }
 
-  getReservation(reservationId: number): Observable<Reservation> {
-    return this.http.get<Reservation>(`${this.apiUrl}/${reservationId}`, { headers: this.getAuthHeaders() });
+  getReservation(reservationId: number): Observable<ReservationRequest> {
+    return this.http.get<ReservationRequest>(`${this.apiUrl}/${reservationId}`, { headers: this.getAuthHeaders() });
   }
 
   deleteReservation(reservationId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${reservationId}`, { headers: this.getAuthHeaders() });
   }
 
-  updateReservation(reservationId: number, reservation: any): Observable<Reservation> {
-    return this.http.put<Reservation>(`${this.apiUrl}/${reservationId}`, reservation, { headers: this.getAuthHeaders() });
+  updateReservation(reservationId: number, reservation: any): Observable<ReservationRequest> {
+    return this.http.put<ReservationRequest>(`${this.apiUrl}/${reservationId}`, reservation, { headers: this.getAuthHeaders() });
   }
 }

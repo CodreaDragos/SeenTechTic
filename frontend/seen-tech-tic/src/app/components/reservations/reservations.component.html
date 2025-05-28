@@ -6,6 +6,8 @@
       <h1>Rezervări</h1>
     </div>
     <app-back-button></app-back-button>
+    
+   
 
     <button *ngIf="showAddForm" (click)="cancelAddReservation()" class="action-button toggle-btn">
       Anulează
@@ -54,6 +56,16 @@
         <input type="datetime-local" formControlName="endTime" required readonly />
       </label>
 
+      <mat-form-field appearance="fill">
+        <mat-label>Participanți</mat-label>
+        <mat-select formControlName="participantIds" multiple>
+          <mat-option *ngFor="let user of users" [value]="user.id">
+            {{ user.username }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
       <button type="submit" class="action-button save-btn" [disabled]="reservationForm.invalid">
         Salvează Rezervarea
       </button>
@@ -64,6 +76,14 @@
       <p><strong>End:</strong> {{ reservation.endTime | date:'dd/MM/yyyy HH:mm' }}</p>
       <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
       <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
+      <p><strong>Participants:</strong> {{ reservation.participants.join(', ') }}</p>
+
+
+
+
+
+
+
       <div class="btn-group">
         <button *ngIf="reservation.authorId === currentUserId" (click)="deleteReservation(reservation)" class="action-button delete-btn">Șterge</button>
         <button *ngIf="reservation.authorId === currentUserId" (click)="editReservation(reservation)" class="action-button edit-btn" [disabled]="reservation.reservationId !== undefined && editButtonClicked.has(reservation.reservationId)">Modifică</button>

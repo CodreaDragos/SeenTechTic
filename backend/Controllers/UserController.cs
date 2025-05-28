@@ -2,6 +2,7 @@
 using WebAPIDemo.Models;
 using WebAPIDemo.Services;
 using Microsoft.AspNetCore.Authorization;
+using WebAPIDemo.DTOs;
 
 namespace WebAPIDemo.Controllers
 {
@@ -135,6 +136,21 @@ namespace WebAPIDemo.Controllers
 
             return Ok(dto);
         }
+        [HttpGet("display")]
+        [AllowAnonymous] 
+        public ActionResult<List<UserDisplayDto>> GetUserDisplay()
+        {
+            var users = _service.getAll();
 
+            var result = users.Select(u => new UserDisplayDto
+            {
+                Username = u.Username,
+                PhotoUrl = string.IsNullOrEmpty(u.ProfilePicture)
+                    ? null
+                    : "data:image/png;base64," + u.ProfilePicture
+            }).ToList();
+
+            return Ok(result);
+        }
     }
 }
