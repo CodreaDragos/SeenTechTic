@@ -45,6 +45,12 @@ namespace WebAPIDemo.Services
             }
             reservation.Author = author;
 
+            // Ensure Participants is not null
+            if (reservation.Participants == null)
+            {
+                reservation.Participants = new List<User>();
+            }
+
             // Check if field is available
             if (!isFieldAvailable(reservation.FieldId, reservation.StartTime, reservation.EndTime))
             {
@@ -94,57 +100,38 @@ namespace WebAPIDemo.Services
 
         public Reservation update(UpdateReservationDto dto)
         {
-            // Încarcă rezervarea existentă cu participanți
             var reservation = _reservationRepository
                 .getAll()
                 .Include(r => r.Participants)
                 .FirstOrDefault(r => r.ReservationId == dto.ReservationId);
 
             if (reservation == null)
-            {
-                _loggerService.LogError($"No reservation found with id {dto.ReservationId}");
                 throw new Exception($"No reservation found with id {dto.ReservationId}");
-            }
 
-            // Validare timp
-            if (dto.StartTime >= dto.EndTime)
+            // Only update fields if they are provided
+            if (dto.StartTime.HasValue) reservation.StartTime = dto.StartTime.Value;
+            if (dto.EndTime.HasValue) reservation.EndTime = dto.EndTime.Value;
+            if (dto.FieldId.HasValue) reservation.FieldId = dto.FieldId.Value;
+            if (dto.AuthorId.HasValue) reservation.AuthorId = dto.AuthorId.Value;
+
+            // Only update participants if provided
+            if (dto.ParticipantIds != null)
             {
-                _loggerService.LogError("Start time must be before end time");
-                throw new Exception("Start time must be before end time");
-            }
-
-            // Verificare disponibilitate teren
-            if (!isFieldAvailable(dto.FieldId, dto.StartTime, dto.EndTime))
-            {
-                _loggerService.LogError("Field is not available in selected time range.");
-                throw new Exception("Field is not available in selected time range.");
-            }
-
-            // Actualizează câmpuri de bază
-            reservation.StartTime = dto.StartTime;
-            reservation.EndTime = dto.EndTime;
-            reservation.FieldId = dto.FieldId;
-            reservation.AuthorId = dto.AuthorId;
-
-            // Actualizează lista de participanți
-            reservation.Participants.Clear();
-            var participants = dto.ParticipantIds
-                .Select(id => _userRepository.getOne(id))
-                .Where(user => user != null)
-                .ToList();
-            foreach (var user in participants)
-            {
-                reservation.Participants.Add(user);
+                reservation.Participants.Clear();
+                var participants = dto.ParticipantIds
+                    .Select(id => _userRepository.getOne(id))
+                    .Where(user => user != null)
+                    .ToList();
+                foreach (var user in participants)
+                {
+                    reservation.Participants.Add(user);
+                }
             }
 
             var updatedReservation = _reservationRepository.update(reservation);
             if (updatedReservation == null)
-            {
-                _loggerService.LogError("Failed to update reservation");
                 throw new Exception("Failed to update reservation");
-            }
 
-            _loggerService.LogInfo($"Reservation {dto.ReservationId} updated successfully");
             return updatedReservation;
         }
 

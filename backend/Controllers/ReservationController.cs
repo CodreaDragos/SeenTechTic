@@ -3,6 +3,7 @@ using WebAPIDemo.Models;
 using WebAPIDemo.Services;
 using WebAPIDemo.DTOs.Reservation;
 using Microsoft.Extensions.Logging;
+using WebAPIDemo.Repositories;
 
 namespace WebAPIDemo.Controllers
 {
@@ -12,11 +13,13 @@ namespace WebAPIDemo.Controllers
     {
         private readonly IReservationService _reservationService;
         private readonly ILogger<ReservationController> _logger;
+        private readonly IUserRepository _userRepository;
 
-        public ReservationController(IReservationService reservationService, ILogger<ReservationController> logger)
+        public ReservationController(IReservationService reservationService, ILogger<ReservationController> logger, IUserRepository userRepository)
         {
             _reservationService = reservationService;
             _logger = logger;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -31,7 +34,8 @@ namespace WebAPIDemo.Controllers
                         StartTime = r.StartTime,
                         EndTime = r.EndTime,
                         AuthorId = r.AuthorId,
-                        FieldId = r.FieldId
+                        FieldId = r.FieldId,
+                        ParticipantIds = r.Participants?.Select(u => u.UserId).ToList() ?? new List<int>()
                     })
                     .ToList();
                 return Ok(reservations);
@@ -101,13 +105,18 @@ namespace WebAPIDemo.Controllers
         {
             try
             {
+                var participants = dto.ParticipantIds
+                    .Select(id => _userRepository.getOne(id))
+                    .Where(user => user != null)
+                    .ToList();
+
                 var reservation = new Reservation
                 {
                     StartTime = dto.StartTime,
                     EndTime = dto.EndTime,
                     AuthorId = dto.AuthorId,
                     FieldId = dto.FieldId,
-                    // Populează Participants dacă e nevoie
+                    Participants = participants
                 };
 
                 var created = _reservationService.create(reservation);
@@ -139,7 +148,8 @@ namespace WebAPIDemo.Controllers
                     StartTime = reservation.StartTime,
                     EndTime = reservation.EndTime,
                     AuthorId = reservation.AuthorId,
-                    FieldId = reservation.FieldId
+                    FieldId = reservation.FieldId,
+                    ParticipantIds = reservation.Participants?.Select(u => u.UserId).ToList() ?? new List<int>()
                 };
 
                 return Ok(reservationDto);

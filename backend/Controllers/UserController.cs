@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAPIDemo.Models;
 using WebAPIDemo.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPIDemo.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/users")]
     public class UserController : Controller
@@ -97,7 +95,6 @@ namespace WebAPIDemo.Controllers
         }
 
         [HttpPut("profile")]
-        [Authorize]
         public async Task<IActionResult> UpdateProfile([
             FromForm] string? username,
             [FromForm] string? password,
@@ -134,6 +131,15 @@ namespace WebAPIDemo.Controllers
             };
 
             return Ok(dto);
+        }
+
+        [HttpGet("search")]
+        public ActionResult<User> SearchByUsername([FromQuery] string username)
+        {
+            var user = _service.getAll().FirstOrDefault(u => u.Username == username);
+            if (user == null)
+                return NotFound();
+            return Ok(user);
         }
 
     }

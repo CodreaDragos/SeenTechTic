@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BackButtonComponent } from '../back-button/back-button.component';
+import { HttpClient } from '@angular/common/http';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -72,12 +73,20 @@ export class ReservationsComponent implements OnInit {
   // Track which reservation edit buttons have been clicked
   editButtonClicked: Set<number> = new Set();
 
+  searchUsername: string = '';
+  searchedUser: any = null;
+  participants: any[] = [];
+
+  allUsers: any[] = [];
+  userIdToUsername: { [key: number]: string } = {};
+
   constructor(
     private fb: FormBuilder,
     private reservationService: ReservationService,
     private authService: AuthService,
     private router: Router,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private http: HttpClient
   ) { }
 
   toggleAddForm(): void {
@@ -102,6 +111,7 @@ export class ReservationsComponent implements OnInit {
   ngOnInit(): void {
     this.authService.currentUserId$.subscribe(id => this.currentUserId = id);
     this.loadReservations();
+    this.loadAllUsers();
 
     // Initialize allHours with 6 AM to 10 PM in "X AM/PM" format
     this.allHours = [];
@@ -285,6 +295,30 @@ export class ReservationsComponent implements OnInit {
     return hour;
   }
 
+  onSearchUsername() {
+    if (this.searchUsername.trim().length === 0) {
+      this.searchedUser = null;
+      return;
+    }
+    this.http.get<any>(`http://localhost:5041/api/users/search?username=${this.searchUsername.trim()}`)
+      .subscribe({
+        next: user => this.searchedUser = user,
+        error: () => this.searchedUser = null
+      });
+  }
+
+  addParticipant(user: any) {
+    if (!this.participants.find(u => u.userId === user.userId)) {
+      this.participants.push(user);
+    }
+    this.searchedUser = null;
+    this.searchUsername = '';
+  }
+
+  removeParticipant(user: any) {
+    this.participants = this.participants.filter(u => u.userId !== user.userId);
+  }
+
   addReservation(): void {
     if (!this.currentUserId) {
       alert('Trebuie să fii logat pentru a face o rezervare.');
@@ -307,7 +341,12 @@ export class ReservationsComponent implements OnInit {
     // Check if editing and no changes made
     if (this.editingReservationId !== null && this.originalReservationData) {
       const currentData = this.reservationForm.getRawValue();
-      const isUnchanged = JSON.stringify(currentData) === JSON.stringify(this.originalReservationData);
+      // Compare participants as well
+      const currentParticipants = this.participants.map(u => u.userId).sort();
+      const originalParticipants = (this.originalReservationData.participants || []).sort();
+      const isUnchanged =
+        JSON.stringify(currentData) === JSON.stringify(this.originalReservationData) &&
+        JSON.stringify(currentParticipants) === JSON.stringify(originalParticipants);
       if (isUnchanged) {
         alert('Apasă pe anulare dacă nu vrei să modifici');
         return;
@@ -331,17 +370,18 @@ export class ReservationsComponent implements OnInit {
     const startIso = this.parseDateLocalToUTC(startTime);
     const endIso = this.parseDateLocalToUTC(endTime);
 
-    const reservationDto = {
-      startTime: startIso,
-      endTime: endIso,
-      authorId: this.currentUserId!,
-      fieldId: fieldId,
-      participantIds: [] // Send empty array to satisfy backend
+    const formValue = this.reservationForm.value;
+    const reservationData = {
+      startTime: formValue.startDate,
+      endTime: formValue.endTime,
+      fieldId: formValue.fieldId,
+      authorId: this.currentUserId,
+      participantIds: this.participants.map(u => u.userId)
     };
 
     if (this.editingReservationId) {
       this.reservationService.updateReservation(this.editingReservationId, {
-        ...reservationDto,
+        ...reservationData,
         ReservationId: this.editingReservationId
       }).subscribe({
         next: () => {
@@ -364,7 +404,7 @@ export class ReservationsComponent implements OnInit {
         }
       });
     } else {
-      this.reservationService.addReservation(reservationDto).subscribe({
+      this.reservationService.addReservation(reservationData).subscribe({
         next: () => {
           alert('Rezervare salvată cu succes!');
           this.resetForm();
@@ -521,5 +561,21 @@ export class ReservationsComponent implements OnInit {
     const offsetMs = localDate.getTimezoneOffset() * 60000;
     const utcDate = new Date(localDate.getTime() - offsetMs);
     return utcDate.toISOString();
+  }
+
+  loadAllUsers() {
+    this.http.get<any[]>('http://localhost:5041/api/users', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    }).subscribe(users => {
+      this.allUsers = users;
+      this.userIdToUsername = {};
+      for (const user of users) {
+        this.userIdToUsername[user.userId] = user.username;
+      }
+    });
+  }
+
+  getUsername(id: number): string {
+    return this.userIdToUsername[id] || `ID ${id}`;
   }
 }

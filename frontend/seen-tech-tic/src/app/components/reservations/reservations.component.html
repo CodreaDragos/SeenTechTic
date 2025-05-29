@@ -54,6 +54,38 @@
         <input type="datetime-local" formControlName="endTime" required readonly />
       </label>
 
+      <!-- Participants search and list -->
+      <div class="participants-section styled-box">
+        <label for="searchUsername" class="styled-label">Adaugă participanți:</label>
+        <div class="search-row">
+          <input
+            id="searchUsername"
+            type="text"
+            [(ngModel)]="searchUsername"
+            (input)="onSearchUsername()"
+            placeholder="Caută username"
+            name="searchUsername"
+            [ngModelOptions]="{standalone: true}"
+            class="styled-input"
+          />
+          <button
+            *ngIf="searchedUser"
+            type="button"
+            (click)="addParticipant(searchedUser)"
+            class="action-button add-btn"
+          >
+            Adaugă
+          </button>
+        </div>
+        <div class="participants-list">
+          <span *ngFor="let user of participants" class="participant-chip">
+            {{ user.username }}
+            <button type="button" (click)="removeParticipant(user)" class="remove-btn">×</button>
+          </span>
+        </div>
+      </div>
+      <!-- End participants search and list -->
+
       <button type="submit" class="action-button save-btn" [disabled]="reservationForm.invalid">
         Salvează Rezervarea
       </button>
@@ -64,6 +96,12 @@
       <p><strong>End:</strong> {{ reservation.endTime | date:'dd/MM/yyyy HH:mm' }}</p>
       <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
       <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
+      <p *ngIf="reservation.participantIds && reservation.participantIds.length">
+        <strong>Participanți:</strong>
+        <span *ngFor="let id of reservation.participantIds; let last = last">
+          {{ getUsername(id) }}<span *ngIf="!last">, </span>
+        </span>
+      </p>
       <div class="btn-group">
         <button *ngIf="reservation.authorId === currentUserId" (click)="deleteReservation(reservation)" class="action-button delete-btn">Șterge</button>
         <button *ngIf="reservation.authorId === currentUserId" (click)="editReservation(reservation)" class="action-button edit-btn" [disabled]="reservation.reservationId !== undefined && editButtonClicked.has(reservation.reservationId)">Modifică</button>
