@@ -55,4 +55,12 @@ export class ReservationService {
   updateReservation(reservationId: number, reservation: any): Observable<Reservation> {
     return this.http.put<Reservation>(`${this.apiUrl}/${reservationId}`, reservation, { headers: this.getAuthHeaders() });
   }
+
+  joinReservation(reservationId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${reservationId}/join`, {}, { headers: this.getAuthHeaders() });
+  }
+
+  leaveReservation(reservationId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${reservationId}/leave`, { headers: this.getAuthHeaders() });
+  }
 }

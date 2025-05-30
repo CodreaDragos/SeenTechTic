@@ -5,25 +5,24 @@
 namespace WebAPIDemo.Migrations
 {
     /// <inheritdoc />
-    public partial class AddProfilePictureToUser : Migration
+    public partial class AddMaxParticipantsToPost : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "profile_picture",
-                table: "Users",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+            migrationBuilder.AddColumn<int>(
+                name: "MaxParticipants",
+                table: "posts",
+                type: "int",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "profile_picture",
-                table: "Users");
+                name: "MaxParticipants",
+                table: "posts");
         }
     }
 }

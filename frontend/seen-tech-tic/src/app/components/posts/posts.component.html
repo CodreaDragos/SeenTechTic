@@ -25,6 +25,11 @@
             <span class="reservation-label">{{ post.reservation.startTime | date:'mediumDate' }}</span>
             <span class="reservation-value">{{ post.reservation.startTime | date:'shortTime' }} - {{ post.reservation.endTime | date:'shortTime' }}</span>
           </div>
+          <div class="reservation-participants">
+            <span class="reservation-label">Participanți:</span>
+            <span class="reservation-value">{{ post.reservation.participantIds?.length || 0 }}/{{ getMaxParticipants(post.reservation) }}</span>
+            <button *ngIf="canJoinReservation(post.reservation)" (click)="joinReservation(post.reservation.reservationId)" class="action-button join-btn">Join</button>
+          </div>
         </div>
         <div class="comments-section comments-section-dark">
           <h4 class="comments-title">

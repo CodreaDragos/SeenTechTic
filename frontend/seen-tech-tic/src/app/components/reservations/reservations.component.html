@@ -54,6 +54,18 @@
         <input type="datetime-local" formControlName="endTime" required readonly />
       </label>
 
+      <label>
+        Număr maxim de jucători:
+        <input
+          type="number"
+          min="1"
+          formControlName="maxParticipants"
+          class="styled-input"
+          required
+          placeholder="Ex: 12"
+        />
+      </label>
+
       <!-- Participants search and list -->
       <div class="participants-section styled-box">
         <label for="searchUsername" class="styled-label">Adaugă participanți:</label>
@@ -95,7 +107,12 @@
       <p><strong>Start:</strong> {{ reservation.startTime | date:'dd/MM/yyyy HH:mm' }}</p>
       <p><strong>End:</strong> {{ reservation.endTime | date:'dd/MM/yyyy HH:mm' }}</p>
       <p><strong>Field ID:</strong> {{ reservation.fieldId }}</p>
-      <p><strong>Author ID:</strong> {{ reservation.authorId }}</p>
+      <p><strong>Author:</strong> {{ getUsername(reservation.authorId) }}</p>
+      <p class="max-participants-line">
+        <span class="max-participants-label">Max participanți:</span>
+        <span class="max-participants-value">{{ getMaxParticipants(reservation) }}</span>
+        <span class="current-participants-ratio"> ({{ reservation.participantIds?.length || 0 }}/{{ getMaxParticipants(reservation) }})</span>
+      </p>
       <p *ngIf="reservation.participantIds && reservation.participantIds.length">
         <strong>Participanți:</strong>
         <span *ngFor="let id of reservation.participantIds; let last = last">
@@ -105,6 +122,8 @@
       <div class="btn-group">
         <button *ngIf="reservation.authorId === currentUserId" (click)="deleteReservation(reservation)" class="action-button delete-btn">Șterge</button>
         <button *ngIf="reservation.authorId === currentUserId" (click)="editReservation(reservation)" class="action-button edit-btn" [disabled]="reservation.reservationId !== undefined && editButtonClicked.has(reservation.reservationId)">Modifică</button>
+        <button *ngIf="reservation.authorId !== currentUserId && currentUserId !== null && !isParticipant(reservation)" (click)="joinReservation(reservation)" class="action-button join-btn">Join</button>
+        <button *ngIf="reservation.authorId !== currentUserId && currentUserId !== null && isParticipant(reservation)" (click)="leaveReservation(reservation)" class="action-button leave-btn">Leave</button>
       </div>
     </div>
   </div>

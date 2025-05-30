@@ -161,6 +161,10 @@ namespace WebAPIDemo.Migrations
                         .HasColumnType("int")
                         .HasColumnName("field_id");
 
+                    b.Property<int?>("MaxParticipants")
+                        .HasColumnType("int")
+                        .HasColumnName("max_participants");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("start_time");

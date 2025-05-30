@@ -12,8 +12,8 @@ using WebAPIDemo.Data;
 namespace WebAPIDemo.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250529184824_AddUserReservationJoinTable")]
-    partial class AddUserReservationJoinTable
+    [Migration("20250529210845_AddMaxParticipantsToPost")]
+    partial class AddMaxParticipantsToPost
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,7 @@ namespace WebAPIDemo.Migrations
 
                     b.HasIndex("ParticipatingReservationsReservationId");
 
-                    b.ToTable("ReservationUser");
+                    b.ToTable("UserReservations", (string)null);
                 });
 
             modelBuilder.Entity("WebAPIDemo.Models.Comment", b =>
@@ -118,6 +118,9 @@ namespace WebAPIDemo.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
+
+                    b.Property<int?>("MaxParticipants")
+                        .HasColumnType("int");
 
                     b.Property<string>("PostDescription")
                         .IsRequired()
@@ -216,21 +219,6 @@ namespace WebAPIDemo.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WebAPIDemo.Models.UserReservation", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "ReservationId");
-
-                    b.HasIndex("ReservationId");
-
-                    b.ToTable("UserReservations");
-                });
-
             modelBuilder.Entity("ReservationUser", b =>
                 {
                     b.HasOne("WebAPIDemo.Models.User", null)
@@ -301,25 +289,6 @@ namespace WebAPIDemo.Migrations
                     b.Navigation("Field");
                 });
 
-            modelBuilder.Entity("WebAPIDemo.Models.UserReservation", b =>
-                {
-                    b.HasOne("WebAPIDemo.Models.Reservation", "Reservation")
-                        .WithMany("UserReservations")
-                        .HasForeignKey("ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebAPIDemo.Models.User", "User")
-                        .WithMany("UserReservations")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Reservation");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("WebAPIDemo.Models.Field", b =>
                 {
                     b.Navigation("Reservations");
@@ -333,8 +302,6 @@ namespace WebAPIDemo.Migrations
             modelBuilder.Entity("WebAPIDemo.Models.Reservation", b =>
                 {
                     b.Navigation("Post");
-
-                    b.Navigation("UserReservations");
                 });
 
             modelBuilder.Entity("WebAPIDemo.Models.User", b =>
@@ -344,8 +311,6 @@ namespace WebAPIDemo.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("UserReservations");
                 });
 #pragma warning restore 612, 618
         }

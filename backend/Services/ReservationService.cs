@@ -65,6 +65,13 @@ namespace WebAPIDemo.Services
                 throw new Exception("Start time must be before end time");
             }
 
+            // Validate max participants
+            if (reservation.MaxParticipants <= 0)
+            {
+                _loggerService.LogError("Max participants must be greater than 0");
+                throw new Exception("Max participants must be greater than 0");
+            }
+
             var createdReservation = _reservationRepository.create(reservation);
             if (createdReservation == null)
             {
@@ -113,10 +120,23 @@ namespace WebAPIDemo.Services
             if (dto.EndTime.HasValue) reservation.EndTime = dto.EndTime.Value;
             if (dto.FieldId.HasValue) reservation.FieldId = dto.FieldId.Value;
             if (dto.AuthorId.HasValue) reservation.AuthorId = dto.AuthorId.Value;
+            if (dto.MaxParticipants.HasValue)
+            {
+                if (dto.MaxParticipants.Value <= 0)
+                {
+                    throw new Exception("Max participants must be greater than 0");
+                }
+                reservation.MaxParticipants = dto.MaxParticipants.Value;
+            }
 
             // Only update participants if provided
             if (dto.ParticipantIds != null)
             {
+                if (dto.ParticipantIds.Count > reservation.MaxParticipants)
+                {
+                    throw new Exception($"Cannot add more than {reservation.MaxParticipants} participants");
+                }
+
                 reservation.Participants.Clear();
                 var participants = dto.ParticipantIds
                     .Select(id => _userRepository.getOne(id))
@@ -125,6 +145,13 @@ namespace WebAPIDemo.Services
                 foreach (var user in participants)
                 {
                     reservation.Participants.Add(user);
+                }
+                // Ensure the author is always a participant
+                if (!reservation.Participants.Any(u => u.UserId == reservation.AuthorId))
+                {
+                    var authorUser = _userRepository.getOne(reservation.AuthorId);
+                    if (authorUser != null)
+                        reservation.Participants.Add(authorUser);
                 }
             }
 

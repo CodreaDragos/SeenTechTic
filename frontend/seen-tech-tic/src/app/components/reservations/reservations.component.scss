@@ -258,6 +258,31 @@ h1 {
   transform: none;
 }
 
+.join-btn {
+  background: transparent;
+  color: #ff1a1a;
+  border: 1.5px solid #ff1a1a;
+  flex: 1;
+}
+
+.join-btn:hover {
+  background: rgba(255,26,26,0.1);
+  transform: scale(1.03);
+}
+
+.leave-btn {
+  background: #ff1a1a;
+  color: #fff;
+  flex: 1;
+  box-shadow: 0 2px 8px #1a1a1a;
+  border: 1.5px solid #ff1a1a; /* Add red border */
+}
+
+.leave-btn:hover {
+  background: #d10c0c;
+  transform: scale(1.03);
+}
+
 /* Angular Material Overrides for Dark Theme */
 ::ng-deep {
 
@@ -505,4 +530,37 @@ h1 {
   font-size: 1.1em;
   margin-left: 0.5em;
   cursor: pointer;
+}
+
+.max-participants-line {
+  margin: 8px 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+}
+.max-participants-label {
+  color: #ff1a1a;
+  font-weight: 700;
+  margin-right: 4px;
+}
+.max-participants-value {
+  color: #fff;
+  background: #ff1a1a;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 1px 4px #1a1a1a;
+}
+
+.current-participants-ratio {
+  color: #ffb84d;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-left: 8px;
+  background: #222;
+  border-radius: 4px;
+  padding: 2px 8px;
+  box-shadow: 0 1px 2px #1a1a1a;
 }

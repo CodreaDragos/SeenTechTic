@@ -24,6 +24,9 @@ namespace WebAPIDemo.Models
         [Column("field_id")]
         public int FieldId { get; set; }
 
+        [Column("max_participants")]
+        public int MaxParticipants { get; set; }
+
         [ForeignKey("AuthorId")]
         public User? Author { get; set; }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // For ngModel
 import { PostService, Post, Comment } from '../../services/post.service';
@@ -42,7 +42,8 @@ export class PostsComponent implements OnInit {
     private commentService: CommentService,
     private reservationService: ReservationService,
     private router: Router,
-    private userService: UserService // Inject UserService
+    private userService: UserService, // Inject UserService
+    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -261,5 +262,36 @@ export class PostsComponent implements OnInit {
   onPostCreated() {
     this.showAddPostForm = false;
     this.loadPostsWithAuthorProfiles(); // Reload posts with new post included
+  }
+
+  canJoinReservation(reservation: Reservation | undefined): boolean {
+    if (!reservation || !this.currentUserId) return false;
+    const isParticipant = reservation.participantIds?.includes(this.currentUserId);
+    const isFull = (reservation.participantIds?.length || 0) >= ((reservation as any).maxParticipants || 1);
+    return !isParticipant && !isFull;
+  }
+
+  joinReservation(reservationId: number): void {
+    this.reservationService.joinReservation(reservationId).subscribe({
+      next: () => {
+        alert('You have joined the reservation!');
+        // Optimistically update the UI
+        const post = this.posts.find(p => p.reservation?.reservationId === reservationId);
+        if (post && post.reservation && this.currentUserId) {
+          if (!post.reservation.participantIds) post.reservation.participantIds = [];
+          if (!post.reservation.participantIds.includes(this.currentUserId)) {
+            post.reservation.participantIds.push(this.currentUserId);
+          }
+        }
+        this.cdr.detectChanges(); // Force template update
+      },
+      error: (err) => {
+        alert('Could not join: ' + (err?.error || err?.message));
+      }
+    });
+  }
+
+  getMaxParticipants(reservation: any): number {
+    return reservation && reservation.maxParticipants != null ? reservation.maxParticipants : 1;
   }
 }

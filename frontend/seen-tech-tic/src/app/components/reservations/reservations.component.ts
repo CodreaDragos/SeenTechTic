@@ -126,7 +126,8 @@ export class ReservationsComponent implements OnInit {
       startDate: ['', Validators.required],
       startHour: ['', [Validators.required, this.occupiedHourValidator.bind(this)]],
       endTime: ['', Validators.required],
-      fieldId: ['', [Validators.required, Validators.min(1)]]
+      fieldId: ['', [Validators.required, Validators.min(1)]],
+      maxParticipants: [1, [Validators.required, Validators.min(1)]]
     });
 
     // Watch for changes in fieldId, startDate, and startHour to update occupied hours and validation
@@ -171,27 +172,27 @@ export class ReservationsComponent implements OnInit {
     this.reservationService.getAllReservations().subscribe({
       next: (data: any) => {
         const allReservations = Array.isArray(data?.$values) ? data.$values : data ?? [];
-        const currentDate = new Date();
-        
-        // Filter reservations for current user and sort them
-        this.reservations = allReservations
-          .filter((reservation: Reservation) => reservation.authorId === this.currentUserId)
-          .sort((a: Reservation, b: Reservation) => {
-            const dateA = new Date(a.startTime);
-            const dateB = new Date(b.startTime);
-            
-            // Check if dates are in the past
-            const isAPast = dateA < currentDate;
-            const isBPast = dateB < currentDate;
-            
-            // If one is past and other isn't, prioritize the non-past one
-            if (isAPast !== isBPast) {
-              return isAPast ? 1 : -1;
-            }
-            
-            // If both are past or both are future, sort by date
-            return dateB.getTime() - dateA.getTime();
-          });
+
+        // Filter reservations to include only those where the current user is the author or a participant
+        this.reservations = allReservations.filter((reservation: Reservation) => {
+          // Check if the current user is the author
+          const isAuthor = reservation.authorId === this.currentUserId;
+
+          // Check if the current user is a participant (if participantIds is an array and includes the user ID)
+          const isParticipant = Array.isArray(reservation.participantIds) && this.currentUserId !== null && reservation.participantIds.includes(this.currentUserId);
+
+          // Include the reservation if the user is either the author or a participant
+          return isAuthor || isParticipant;
+        });
+
+        // Sort the filtered reservations
+        this.reservations.sort((a: Reservation, b: Reservation) => {
+          const dateA = new Date(a.startTime).getTime();
+          const dateB = new Date(b.startTime).getTime();
+          // Sort by date (most recent first)
+          return dateB - dateA;
+        });
+
       },
       error: (err: any) => console.error('Eroare la încărcare rezervări', err)
     });
@@ -341,9 +342,9 @@ export class ReservationsComponent implements OnInit {
     // Check if editing and no changes made
     if (this.editingReservationId !== null && this.originalReservationData) {
       const currentData = this.reservationForm.getRawValue();
-      // Compare participants as well
+      // Compare participants as well (sorted arrays)
       const currentParticipants = this.participants.map(u => u.userId).sort();
-      const originalParticipants = (this.originalReservationData.participants || []).sort();
+      const originalParticipants = (this.originalReservationData.participants || []).slice().sort();
       const isUnchanged =
         JSON.stringify(currentData) === JSON.stringify(this.originalReservationData) &&
         JSON.stringify(currentParticipants) === JSON.stringify(originalParticipants);
@@ -375,6 +376,7 @@ export class ReservationsComponent implements OnInit {
       startTime: formValue.startDate,
       endTime: formValue.endTime,
       fieldId: formValue.fieldId,
+      maxParticipants: formValue.maxParticipants,
       authorId: this.currentUserId,
       participantIds: this.participants.map(u => u.userId)
     };
@@ -518,19 +520,24 @@ export class ReservationsComponent implements OnInit {
         startDate: startDateStr,
         startHour: startHourStr,
         endTime: reservation.endTime ? this.toInputDateTimeLocal(reservation.endTime) : '',
-        fieldId: reservation.fieldId ?? ''
+        fieldId: reservation.fieldId ?? '',
+        maxParticipants: this.getMaxParticipants(reservation)
       });
 
       this.updateEndTime();
 
-      // Store original form data for change detection
-      this.originalReservationData = this.reservationForm.getRawValue();
+      // Store original form data for change detection, including participants
+      this.originalReservationData = {
+        ...this.reservationForm.getRawValue(),
+        participants: (reservation.participantIds || []).slice().sort()
+      };
     } else {
       this.reservationForm.setValue({
         startDate: '',
         startHour: '',
         endTime: '',
-        fieldId: reservation.fieldId ?? ''
+        fieldId: reservation.fieldId ?? '',
+        maxParticipants: 1
       });
       this.originalReservationData = null;
     }
@@ -577,5 +584,58 @@ export class ReservationsComponent implements OnInit {
 
   getUsername(id: number): string {
     return this.userIdToUsername[id] || `ID ${id}`;
+  }
+
+  getMaxParticipants(reservation: any): number {
+    return reservation && reservation.maxParticipants ? reservation.maxParticipants : 1;
+  }
+
+  isParticipant(reservation: Reservation): boolean {
+    if (!this.currentUserId || !reservation.participantIds) {
+      return false;
+    }
+    return reservation.participantIds.includes(this.currentUserId);
+  }
+
+  joinReservation(reservation: Reservation): void {
+    if (!reservation.reservationId || this.currentUserId === null) {
+      alert('Reservation ID missing or user not logged in.');
+      return;
+    }
+
+    this.reservationService.joinReservation(reservation.reservationId).subscribe({
+      next: () => {
+        alert('Joined reservation successfully!');
+        this.loadReservations(); // Refresh the list
+      },
+      error: (err) => {
+        console.error('Error joining reservation:', err);
+        const errorMsg = err?.error || err?.message || '';
+        alert('Error joining reservation: ' + errorMsg);
+      }
+    });
+  }
+
+  leaveReservation(reservation: Reservation): void {
+    if (!reservation.reservationId || this.currentUserId === null) {
+      alert('Reservation ID missing or user not logged in.');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to leave this reservation?')) {
+      return;
+    }
+
+    this.reservationService.leaveReservation(reservation.reservationId).subscribe({
+      next: () => {
+        alert('Left reservation successfully!');
+        this.loadReservations(); // Refresh the list
+      },
+      error: (err) => {
+        console.error('Error leaving reservation:', err);
+        const errorMsg = err?.error || err?.message || '';
+        alert('Error leaving reservation: ' + errorMsg);
+      }
+    });
   }
 }

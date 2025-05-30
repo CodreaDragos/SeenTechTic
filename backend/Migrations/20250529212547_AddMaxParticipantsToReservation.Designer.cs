@@ -12,8 +12,8 @@ using WebAPIDemo.Data;
 namespace WebAPIDemo.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250526111744_AddProfilePictureToUser")]
-    partial class AddProfilePictureToUser
+    [Migration("20250529212547_AddMaxParticipantsToReservation")]
+    partial class AddMaxParticipantsToReservation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -163,6 +163,10 @@ namespace WebAPIDemo.Migrations
                     b.Property<int>("FieldId")
                         .HasColumnType("int")
                         .HasColumnName("field_id");
+
+                    b.Property<int?>("MaxParticipants")
+                        .HasColumnType("int")
+                        .HasColumnName("max_participants");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2")

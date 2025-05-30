@@ -35,6 +35,7 @@ namespace WebAPIDemo.Controllers
                         EndTime = r.EndTime,
                         AuthorId = r.AuthorId,
                         FieldId = r.FieldId,
+                        MaxParticipants = r.MaxParticipants,
                         ParticipantIds = r.Participants?.Select(u => u.UserId).ToList() ?? new List<int>()
                     })
                     .ToList();
@@ -80,42 +81,60 @@ namespace WebAPIDemo.Controllers
 
 
         private int GetCurrentUserId()
+{
+    // Log all claims for debugging
+    foreach (var claim in HttpContext.User.Claims)
+    {
+        _logger.LogInformation($"CLAIM TYPE: {claim.Type} | VALUE: {claim.Value}");
+    }
+
+    // 1. Prefer the "id" claim if present and valid
+    var idClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "id");
+    if (idClaim != null && int.TryParse(idClaim.Value, out int idFromClaim))
+    {
+        _logger.LogInformation($"Extracted userId from 'id' claim: {idFromClaim}");
+        return idFromClaim;
+    }
+
+    // 2. Otherwise, try to find the first claim whose value is an integer (skip emails)
+    foreach (var claim in HttpContext.User.Claims)
+    {
+        if (int.TryParse(claim.Value, out int intValue))
         {
-            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)
-                              ?? HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub")
-                              ?? HttpContext.User.Claims.FirstOrDefault(c => c.Type == "userId");
-
-            if (userIdClaim == null)
-            {
-                _logger.LogWarning("UserId claim not found in token");
-                return 0;
-            }
-
-            if (!int.TryParse(userIdClaim.Value, out int userId))
-            {
-                _logger.LogWarning($"UserId claim value '{userIdClaim.Value}' is not a valid integer");
-                return 0;
-            }
-
-            _logger.LogInformation($"Extracted userId: {userId}");
-            return userId;
+            _logger.LogInformation($"Extracted userId from claim '{claim.Type}': {intValue}");
+            return intValue;
         }
+    }
+
+    _logger.LogWarning("UserId claim not found in token");
+    return 0;
+}
         [HttpPost]
         public IActionResult CreateReservation([FromBody] CreateReservationDto dto)
         {
             try
             {
+                var userId = GetCurrentUserId();
                 var participants = dto.ParticipantIds
                     .Select(id => _userRepository.getOne(id))
                     .Where(user => user != null)
                     .ToList();
 
+                // Ensure the author is a participant
+                if (!participants.Any(u => u.UserId == userId))
+                {
+                    var authorUser = _userRepository.getOne(userId);
+                    if (authorUser != null)
+                        participants.Add(authorUser);
+                }
+
                 var reservation = new Reservation
                 {
                     StartTime = dto.StartTime,
                     EndTime = dto.EndTime,
-                    AuthorId = dto.AuthorId,
+                    AuthorId = userId,
                     FieldId = dto.FieldId,
+                    MaxParticipants = dto.MaxParticipants,
                     Participants = participants
                 };
 
@@ -149,6 +168,7 @@ namespace WebAPIDemo.Controllers
                     EndTime = reservation.EndTime,
                     AuthorId = reservation.AuthorId,
                     FieldId = reservation.FieldId,
+                    MaxParticipants = reservation.MaxParticipants,
                     ParticipantIds = reservation.Participants?.Select(u => u.UserId).ToList() ?? new List<int>()
                 };
 
@@ -189,6 +209,94 @@ namespace WebAPIDemo.Controllers
             }
             catch (Exception ex)
             {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/join")]
+        public IActionResult JoinReservation(int id)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                var reservation = _reservationService.getOne(id);
+
+                if (reservation == null)
+                    return NotFound();
+
+                if (reservation.Participants.Any(u => u.UserId == userId))
+                    return BadRequest("You are already a participant.");
+
+                if (reservation.Participants.Count >= reservation.MaxParticipants)
+                    return BadRequest("Reservation is full.");
+
+                var user = _userRepository.getOne(userId);
+                if (user == null)
+                    return NotFound("User not found.");
+
+                reservation.Participants.Add(user);
+                _reservationService.update(new UpdateReservationDto
+                {
+                    ReservationId = reservation.ReservationId,
+                    ParticipantIds = reservation.Participants.Select(u => u.UserId).ToList()
+                });
+
+                return Ok("Joined reservation successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error joining reservation");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}/leave")]
+        public IActionResult LeaveReservation(int id)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                if (userId == 0) // Assuming 0 is an invalid user ID
+                {
+                    return Unauthorized("User not authenticated.");
+                }
+
+                var reservation = _reservationService.getOne(id);
+
+                if (reservation == null)
+                    return NotFound("Reservation not found.");
+
+                // Prevent author from leaving (they should delete)
+                if (reservation.AuthorId == userId)
+                {
+                    return BadRequest("Author cannot leave their own reservation. Use delete instead.");
+                }
+
+                var participantToRemove = reservation.Participants.FirstOrDefault(u => u.UserId == userId);
+
+                if (participantToRemove == null)
+                {
+                    return BadRequest("You are not a participant of this reservation.");
+                }
+
+                reservation.Participants.Remove(participantToRemove);
+
+                // Update the reservation
+                _reservationService.update(new UpdateReservationDto
+                {
+                    ReservationId = reservation.ReservationId,
+                    StartTime = reservation.StartTime, // Keep existing values
+                    EndTime = reservation.EndTime,     // Keep existing values
+                    FieldId = reservation.FieldId,     // Keep existing values
+                    MaxParticipants = reservation.MaxParticipants, // Keep existing values
+                    ParticipantIds = reservation.Participants.Select(u => u.UserId).ToList()
+                });
+
+                return Ok("Left reservation successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error leaving reservation");
                 return BadRequest(ex.Message);
             }
         }
