@@ -47,6 +47,7 @@ export class PostsNewComponent implements OnInit {
       next: (data: Reservation[]) => {
         // Filter reservations by current user
         this.reservations = data.filter(reservation => reservation.authorId === this.currentUserId);
+        console.log('Loaded and filtered user reservations:', this.reservations);
       },
       error: (err: any) => console.error('Failed to load reservations', err)
     });

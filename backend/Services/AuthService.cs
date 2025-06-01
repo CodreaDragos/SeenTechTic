@@ -65,6 +65,8 @@ namespace WebAPIDemo.Services
 
         public async Task<AuthResponseDto> Register(RegisterDto registerDto)
         {
+            // Backend validation check (redundant but good practice)
+            // These checks are already on RegisterDto, but explicit checks here can return specific messages
             if (registerDto.Password != registerDto.ConfirmPassword)
             {
                 return new AuthResponseDto
@@ -74,6 +76,17 @@ namespace WebAPIDemo.Services
                 };
             }
 
+            // Use the IsValidEmail logic with a specific message
+            if (!IsValidEmail(registerDto.Email))
+            {
+                return new AuthResponseDto
+                {
+                    Success = false,
+                    Message = "Invalid email format. Must be in the format user@domain.com"
+                };
+            }
+
+            // Check if email exists
             if (await _authRepository.EmailExists(registerDto.Email))
             {
                 return new AuthResponseDto
@@ -83,6 +96,7 @@ namespace WebAPIDemo.Services
                 };
             }
 
+            // Check if username exists
             if (await _authRepository.UsernameExists(registerDto.Username))
             {
                 return new AuthResponseDto
@@ -92,6 +106,7 @@ namespace WebAPIDemo.Services
                 };
             }
 
+            // Proceed with user creation if all checks pass
             var user = new User
             {
                 Username = registerDto.Username,
@@ -114,6 +129,21 @@ namespace WebAPIDemo.Services
                     Role = createdUser.Role
                 }
             };
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                // Check if the address object was successfully created and the address matches the input
+                // Also check for at least one dot after the @ symbol
+                return addr.Address == email && email.Contains(".") && email.IndexOf('.', email.IndexOf('@') + 1) > email.IndexOf('@');
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private string HashPassword(string password)

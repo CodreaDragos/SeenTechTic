@@ -13,6 +13,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   username: string;
+  confirmPassword: string;
 }
 
 export interface AuthResponse {
@@ -68,20 +69,20 @@ export class AuthService {
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
+    console.log('Sending registration request:', userData);
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData)
       .pipe(
-        catchError(this.handleError)
+        tap(response => console.log('Registration response:', response)),
+        catchError(error => {
+          console.error('Registration error:', error);
+          return this.handleError(error);
+        })
       );
   }
 
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An unknown error occurred';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
-    } else {
-      errorMessage = error.error?.message || `Error Code: ${error.status}\nMessage: ${error.message}`;
-    }
-    return throwError(() => new Error(errorMessage));
+    console.error('Auth service handleError:', error);
+    return throwError(() => error);
   }
 
   private loadUserIdFromToken() {

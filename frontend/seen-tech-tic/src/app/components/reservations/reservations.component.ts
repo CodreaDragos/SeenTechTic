@@ -172,7 +172,7 @@ export class ReservationsComponent implements OnInit {
     this.reservationService.getAllReservations().subscribe({
       next: (data: any) => {
         const allReservations = Array.isArray(data?.$values) ? data.$values : data ?? [];
-
+        
         // Filter reservations to include only those where the current user is the author or a participant
         this.reservations = allReservations.filter((reservation: Reservation) => {
           // Check if the current user is the author
@@ -180,7 +180,7 @@ export class ReservationsComponent implements OnInit {
 
           // Check if the current user is a participant (if participantIds is an array and includes the user ID)
           const isParticipant = Array.isArray(reservation.participantIds) && this.currentUserId !== null && reservation.participantIds.includes(this.currentUserId);
-
+            
           // Include the reservation if the user is either the author or a participant
           return isAuthor || isParticipant;
         });

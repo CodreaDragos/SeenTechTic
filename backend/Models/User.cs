@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebAPIDemo.Models
 {
@@ -15,12 +16,17 @@ namespace WebAPIDemo.Models
         [Column("user_id")]
         public int UserId { get; set; }
         [Column("username")]
+        [Required]
         public string Username { get; set; } = string.Empty;
         [Column("password")]
+        [Required]
         public string Password { get; set; } = string.Empty;
         [Column("role")]
         public string Role { get; set; } = string.Empty;
         [Column("email")]
+        [Required]
+        [EmailAddress(ErrorMessage = "Invalid email format. Must be in the format user@domain.com")]
+        [RegularExpression(@"^[^\s@]+@[^\s@]+\.[^\s@]+$", ErrorMessage = "Invalid email format. Must be in the format user@domain.com")]
         public string Email { get; set; } = string.Empty;
         [Column("profile_picture")]
         public string ProfilePicture { get; set; } = string.Empty;

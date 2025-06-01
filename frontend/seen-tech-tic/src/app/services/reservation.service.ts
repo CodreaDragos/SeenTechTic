@@ -2,6 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+// Define a basic interface for the Field, matching the backend structure
+export interface Field {
+  fieldId: number;
+  fieldName: string;
+  // Add other field properties if needed
+}
+
 export interface Reservation {
   reservationId?: number;
   startTime: string;
@@ -9,6 +16,12 @@ export interface Reservation {
   fieldId: number;
   authorId: number;
   participantIds: number[];
+  
+  // Add the field property to the Reservation interface
+  field?: Field;
+
+  // Add fieldName directly as received from the backend DTO
+  fieldName?: string;
 }
 
 @Injectable({

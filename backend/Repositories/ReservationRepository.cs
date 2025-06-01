@@ -22,7 +22,7 @@ namespace WebAPIDemo.Repositories
 
         public IQueryable<Reservation> getAll()
         {
-            return _context.Reservations.Include(r => r.Participants);
+            return _context.Reservations.Include(r => r.Participants).Include(r => r.Field);
         }
 
         // New method to get reservations by field and date

@@ -36,7 +36,8 @@ namespace WebAPIDemo.Controllers
                         AuthorId = r.AuthorId,
                         FieldId = r.FieldId,
                         MaxParticipants = r.MaxParticipants,
-                        ParticipantIds = r.Participants?.Select(u => u.UserId).ToList() ?? new List<int>()
+                        ParticipantIds = r.Participants?.Select(u => u.UserId).ToList() ?? new List<int>(),
+                        FieldName = r.Field?.FieldName
                     })
                     .ToList();
                 return Ok(reservations);
@@ -169,7 +170,8 @@ namespace WebAPIDemo.Controllers
                     AuthorId = reservation.AuthorId,
                     FieldId = reservation.FieldId,
                     MaxParticipants = reservation.MaxParticipants,
-                    ParticipantIds = reservation.Participants?.Select(u => u.UserId).ToList() ?? new List<int>()
+                    ParticipantIds = reservation.Participants?.Select(u => u.UserId).ToList() ?? new List<int>(),
+                    FieldName = reservation.Field?.FieldName
                 };
 
                 return Ok(reservationDto);

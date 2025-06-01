@@ -35,25 +35,41 @@
           </div>
           
           <div *ngIf="isEditing" class="edit-form">
-            <div class="form-group">
-              <label for="username">Username:</label>
-              <input type="text" id="username" [(ngModel)]="newUsername" class="form-control" />
-            </div>
-            
-            <div class="form-group">
-              <label for="password">New Password:</label>
-              <div class="password-input">
-                <input [type]="passwordVisible ? 'text' : 'password'" id="password" [(ngModel)]="newPassword" class="form-control" />
-                <button type="button" (click)="togglePasswordVisibility()" class="cancel-button">
-                  {{ passwordVisible ? 'Hide' : 'Show' }}
-                </button>
+            <form [formGroup]="profileForm">
+              <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" formControlName="username" class="form-control" />
+                 <div class="error-message" *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched">
+                  {{ getErrorMessage('username') }}
+                </div>
               </div>
-            </div>
-            
-            <div class="form-actions">
-              <button (click)="saveProfile()" class="submit-button">Save Changes</button>
-              <button (click)="toggleEdit()" class="cancel-button">Cancel</button>
-            </div>
+              
+              <div class="form-group">
+                <label for="newPassword">New Password:</label>
+                <div class="password-input">
+                  <input [type]="passwordVisible ? 'text' : 'password'" id="newPassword" formControlName="newPassword" class="form-control" />
+                  <button type="button" (click)="togglePasswordVisibility()" class="cancel-button">
+                    {{ passwordVisible ? 'Hide' : 'Show' }}
+                  </button>
+                </div>
+                 <div class="error-message" *ngIf="profileForm.get('newPassword')?.invalid && (profileForm.get('newPassword')?.dirty || profileForm.get('newPassword')?.touched)">
+                  {{ getErrorMessage('newPassword') }}
+                </div>
+              </div>
+
+               <div class="form-group">
+                <label for="confirmNewPassword">Confirm New Password:</label>
+                 <input type="password" id="confirmNewPassword" formControlName="confirmNewPassword" class="form-control" />
+                 <div class="error-message" *ngIf="profileForm.get('confirmNewPassword')?.invalid && (profileForm.get('confirmNewPassword')?.dirty || profileForm.get('confirmNewPassword')?.touched)">
+                  {{ getErrorMessage('confirmNewPassword') }}
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button (click)="saveProfile()" class="submit-button" [disabled]="!profileForm.valid">Save Changes</button>
+                <button (click)="toggleEdit()" class="cancel-button">Cancel</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

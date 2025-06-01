@@ -12,5 +12,6 @@ namespace WebAPIDemo.DTOs.Reservation
         public int MaxParticipants { get; set; }
         public List<int> ParticipantIds { get; set; } = new List<int>();
         public DateTime Date => StartTime.Date;
+        public string? FieldName { get; set; }
     }
 }

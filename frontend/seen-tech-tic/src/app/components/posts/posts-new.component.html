@@ -13,7 +13,7 @@
     <select id="reservationId" formControlName="reservationId" class="form-control">
       <option [ngValue]="null">No Reservation</option>
       <option *ngFor="let reservation of reservations" [ngValue]="reservation.reservationId">
-        Field {{ reservation.fieldId }} - {{ reservation.startTime | date:'medium' }} to {{ reservation.endTime | date:'shortTime' }}
+        {{ reservation.fieldName ? reservation.fieldName + ' - ' : '' }}{{ reservation.startTime | date:'mediumDate' }} {{ reservation.startTime | date:'shortTime' }} - {{ reservation.endTime | date:'shortTime' }}
       </option>
     </select>
   </div>

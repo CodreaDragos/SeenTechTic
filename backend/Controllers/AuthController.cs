@@ -29,6 +29,11 @@ namespace WebAPIDemo.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponseDto>> Register(RegisterDto registerDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _authService.Register(registerDto);
             if (!response.Success)
             {

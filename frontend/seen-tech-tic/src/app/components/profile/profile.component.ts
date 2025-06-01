@@ -5,14 +5,14 @@ import { PostService, Post } from '../../services/post.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { BackButtonComponent } from '../back-button/back-button.component';
 import { CommentService, Comment } from '../../services/comment.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, BackButtonComponent],
+  imports: [CommonModule, RouterModule, FormsModule, BackButtonComponent, ReactiveFormsModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
@@ -21,8 +21,7 @@ export class ProfileComponent implements OnInit {
   currentUserId: number | null = null;
   userProfile: UserProfile | null = null;
   isEditing = false;
-  newUsername = '';
-  newPassword = '';
+  profileForm!: FormGroup;
   selectedFile: File | null = null;
   passwordVisible = false;
   newCommentContent: { [postId: number]: string } = {};
@@ -32,7 +31,8 @@ export class ProfileComponent implements OnInit {
     private router: Router,
     private postService: PostService,
     private userService: UserService,
-    private commentService: CommentService
+    private commentService: CommentService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit() {
@@ -47,6 +47,14 @@ export class ProfileComponent implements OnInit {
         console.warn('User not authenticated.');
       }
     });
+
+    this.profileForm = this.fb.group({
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      newPassword: ['', [Validators.minLength(6), this.noTrailingOrMultipleSpacesValidator()]],
+      confirmNewPassword: ['', []]
+    }, { validator: this.passwordMatchValidator });
+
+    this.profileForm.disable();
   }
 
   loadUserPosts() {
@@ -68,7 +76,7 @@ export class ProfileComponent implements OnInit {
   loadUserProfile() {
     this.userService.getCurrentUserProfile().subscribe(profile => {
       this.userProfile = profile;
-      this.newUsername = profile.username;
+      this.profileForm.patchValue({ username: profile.username });
       console.log('User profile loaded:', profile);
     }, error => {
       console.error('Failed to load user profile:', error);
@@ -92,42 +100,81 @@ export class ProfileComponent implements OnInit {
 
   toggleEdit() {
     this.isEditing = !this.isEditing;
-    if (!this.isEditing) {
-      // Reset form when canceling edit
+    if (this.isEditing) {
+      this.profileForm.enable();
+      this.profileForm.patchValue({ newPassword: '', confirmNewPassword: '' });
+    } else {
+      this.profileForm.disable();
+      this.profileForm.reset();
       this.loadUserProfile();
+      this.selectedFile = null;
     }
   }
 
   saveProfile() {
-    if (!this.userProfile) return;
+    if (!this.userProfile || !this.profileForm.valid) return;
 
     const formData = new FormData();
+    const formValues = this.profileForm.value;
+
+    if (formValues.username !== this.userProfile.username) {
+      formData.append('username', formValues.username);
+    }
+
+    if (formValues.newPassword) {
+      formData.append('password', formValues.newPassword);
+    }
+
     if (this.selectedFile) {
       formData.append('profilePicture', this.selectedFile);
     }
-    if (this.newUsername !== this.userProfile.username) {
-      formData.append('username', this.newUsername);
-    }
-    if (this.newPassword) {
-      formData.append('password', this.newPassword);
-    }
 
-    this.userService.updateProfile(formData).subscribe({
-      next: (updatedProfile) => {
-        this.userProfile = updatedProfile;
-        // If profile picture is present, convert to data URL for preview
-        if (this.userProfile && this.userProfile.photoUrl && !this.userProfile.photoUrl.startsWith('data:image')) {
-          this.userProfile.photoUrl = 'data:image/png;base64,' + this.userProfile.photoUrl;
+    if (this.selectedFile || formData.has('username') || formData.has('password')) {
+      this.userService.updateProfile(formData).subscribe({
+        next: (updatedProfile) => {
+          this.userProfile = updatedProfile;
+          if (this.userProfile && this.userProfile.photoUrl && !this.userProfile.photoUrl.startsWith('data:image')) {
+            this.userProfile.photoUrl = 'data:image/png;base64,' + this.userProfile.photoUrl;
+          }
+          this.isEditing = false;
+          this.profileForm.disable();
+          this.profileForm.patchValue({ newPassword: '', confirmNewPassword: '' });
+          this.selectedFile = null;
+        },
+        error: (error) => {
+          console.error('Failed to update profile:', error);
+
+          let errorMessage = 'Failed to update profile. Please try again.'; // Default message
+
+          if (error.error && typeof error.error === 'object') {
+             // Check for a general message first (backend might return this for same password error)
+             if (error.error.message) {
+                errorMessage = error.error.message;
+             } else if (error.error.errors) {
+               // Handle ModelState errors for specific fields
+               const modelStateErrors = error.error.errors;
+               for (const key in modelStateErrors) {
+                 if (modelStateErrors.hasOwnProperty(key)) {
+                   const formControl = this.profileForm.get(key.toLowerCase());
+                   if (formControl) {
+                     const currentErrors = formControl.errors || {};
+                     formControl.setErrors({...currentErrors, backend: modelStateErrors[key].join(' ')});
+                   }
+                 }
+               }
+                // If there were specific field errors, don't show the general alert
+               errorMessage = '';
+            }
+          }
+
+          if (errorMessage) {
+            alert(errorMessage);
+          }
         }
-        this.isEditing = false;
-        this.newPassword = '';
-        this.selectedFile = null;
-      },
-      error: (error) => {
-        console.error('Failed to update profile:', error);
-        alert('Failed to update profile. Please try again.');
-      }
-    });
+      });
+    } else {
+      this.toggleEdit();
+    }
   }
 
   togglePasswordVisibility() {
@@ -194,5 +241,76 @@ export class ProfileComponent implements OnInit {
         alert('Failed to add comment. Please try again.');
       }
     });
+  }
+
+  passwordMatchValidator(formGroup: FormGroup) {
+    const newPasswordControl = formGroup.get('newPassword');
+    const confirmNewPasswordControl = formGroup.get('confirmNewPassword');
+
+    if (!newPasswordControl || !confirmNewPasswordControl) {
+      return null;
+    }
+
+    if (confirmNewPasswordControl.hasError('passwordMismatch') && newPasswordControl.value === confirmNewPasswordControl.value) {
+      confirmNewPasswordControl.setErrors(null);
+    }
+
+    if (newPasswordControl.value !== confirmNewPasswordControl.value && confirmNewPasswordControl.value) {
+      confirmNewPasswordControl.setErrors({ passwordMismatch: true });
+    } else if (!confirmNewPasswordControl.value && confirmNewPasswordControl.hasError('passwordMismatch')) {
+      confirmNewPasswordControl.setErrors(null);
+    }
+
+    if (!newPasswordControl.value && confirmNewPasswordControl.hasError('passwordMismatch')) {
+      confirmNewPasswordControl.setErrors(null);
+    }
+
+    return null;
+  }
+
+  noTrailingOrMultipleSpacesValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+
+      const value = control.value as string;
+
+      if (value.endsWith(' ')) {
+        return { trailingSpaces: true };
+      }
+
+      if (value.includes('  ')) {
+        return { multipleSpaces: true };
+      }
+
+      return null;
+    };
+  }
+
+  getErrorMessage(controlName: string): string {
+    const control = this.profileForm.get(controlName);
+    if (!control || !control.errors) {
+      return '';
+    }
+
+    if (control.hasError('required')) {
+      return 'This field is required';
+    }
+    if (control.hasError('minlength')) {
+      return `Must be at least ${control.errors['minlength']?.requiredLength} characters`;
+    }
+    if (control.hasError('trailingSpaces')) {
+      return 'Password cannot end with spaces';
+    }
+    if (control.hasError('multipleSpaces')) {
+      return 'Password cannot contain multiple consecutive spaces';
+    }
+    if (control.hasError('passwordMismatch')) {
+      return 'Passwords do not match';
+    }
+    if (control.hasError('backend')) {
+      return control.errors['backend'];
+    }
+
+    return '';
   }
 }
