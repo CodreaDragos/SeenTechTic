@@ -4,12 +4,11 @@
     "\\src",
     "\\src\\app",
     "\\src\\app\\components",
-    "\\src\\app\\components\\home",
-    "\\src\\app\\components\\profile",
+    "\\src\\app\\components\\back-button",
+    "\\src\\app\\components\\login",
     "\\src\\app\\components\\register",
-    "\\src\\app\\components\\reservations",
-    "\\src\\app\\services",
-    "\\src\\assets"
+    "\\src\\environments"
   ],
+  "SelectedNode": "\\src\\app\\components\\register\\register.component.scss",
   "PreviewInSolutionExplorer": false
 }

@@ -40,7 +40,7 @@ import { Router } from '@angular/router';
 export class BackButtonComponent {
   @Input() navigateUrl: string | undefined;
 
-  constructor(private location: Location, private router: Router) {}
+  constructor(private location: Location, private router: Router) { }
 
   goBack(): void {
     if (this.navigateUrl) {
@@ -49,4 +49,4 @@ export class BackButtonComponent {
       this.location.back();
     }
   }
-} 
+}

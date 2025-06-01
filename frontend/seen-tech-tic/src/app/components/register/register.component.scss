@@ -21,6 +21,26 @@
   max-width: 420px;
   box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
 }
+mat-error {
+  font-size: 13px;
+  color: #d32f2f; /* roșu intens */
+}
+.full-width {
+  width: 100%;
+}
+
+.error-msg {
+  color: #d32f2f; // roșu Material Design pentru erori
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.general-error {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 12px;
+}
 
 .auth-title {
   text-align: center;

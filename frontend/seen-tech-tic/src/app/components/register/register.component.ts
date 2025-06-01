@@ -53,14 +53,29 @@ export class RegisterComponent {
 
   onSubmit() {
     if (this.registerForm.valid) {
-      if (this.registerForm.value.password !== this.registerForm.value.confirmPassword) {
-        this.responseMessage = 'Passwords do not match.';
+      const { username, password, confirmPassword } = this.registerForm.value;
+
+      if (username.length < 3) {
+        this.responseMessage = 'Username invalid: trebuie să aibă cel puțin 3 caractere.';
+        this.isError = true;
+        return;
+      }
+
+      if (password.length < 6) {
+        this.responseMessage = 'Parola trebuie să aibă cel puțin 6 caractere.';
+        this.isError = true;
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        this.responseMessage = 'Parolele nu se potrivesc.';
         this.isError = true;
         return;
       }
 
       this.isLoading = true;
       this.responseMessage = '';
+      this.isError = false;
 
       this.authService.register(this.registerForm.value).subscribe({
         next: (response: AuthResponse) => {
@@ -69,16 +84,20 @@ export class RegisterComponent {
           this.isError = !response.success;
 
           if (response.success) {
-            // Optionally, redirect to login or dashboard
             this.router.navigate(['/login']);
           }
         },
         error: (error) => {
           this.isLoading = false;
-          this.responseMessage = error.message || 'Registration failed. Please try again.';
+          this.responseMessage = error.message || 'Înregistrarea a eșuat. Te rugăm să încerci din nou.';
           this.isError = true;
         }
       });
+    } else {
+      this.responseMessage = 'Te rugăm să completezi corect toate câmpurile.';
+      this.isError = true;
     }
   }
+
+
 }
