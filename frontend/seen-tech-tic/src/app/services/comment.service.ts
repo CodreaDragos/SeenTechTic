@@ -30,4 +30,8 @@ export class CommentService {
     };
     return this.http.post<Comment>(this.apiUrl, dto);
   }
+
+  deleteComment(commentId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${commentId}`);
+  }
 }

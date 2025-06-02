@@ -41,6 +41,12 @@
                 <img *ngIf="comment.author.photoUrl" [src]="comment.author.photoUrl" alt="Author Photo" class="comment-author-photo">
               </ng-container>
               <span class="comment-author">{{ comment.author?.username || 'Anonim' }}</span>
+              <button *ngIf="comment.authorId === currentUserId" 
+                      (click)="deleteComment(post, comment)" 
+                      class="delete-comment-btn">
+                <span class="x-line x-line-1"></span>
+                <span class="x-line x-line-2"></span>
+              </button>
             </div>
             <p class="comment-content">{{ comment.commentContent }}</p>
             <div class="comment-meta">

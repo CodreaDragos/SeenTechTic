@@ -220,6 +220,36 @@ export class PostsComponent implements OnInit {
     });
   }
 
+  deleteComment(post: Post, comment: Comment) {
+    if (!comment.commentId) {
+      console.error('Comment ID is missing');
+      return;
+    }
+
+    this.commentService.deleteComment(comment.commentId).subscribe({
+      next: () => {
+        if (post.comments) {
+          post.comments = post.comments.filter(c => c.commentId !== comment.commentId);
+        }
+        this.snackBar.open('Comentariul a fost șters cu succes', 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+      },
+      error: (err) => {
+        console.error('Failed to delete comment:', err);
+        this.snackBar.open('Eroare la ștergerea comentariului', 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
   openEditPost(post: Post) {
     if (!this.currentUserId) {
       alert('You must be logged in to edit a post.');

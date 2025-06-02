@@ -113,6 +113,53 @@ body {
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
+  position: relative;
+}
+
+.delete-comment-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.1em;
+  opacity: 1;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  .x-line {
+    position: absolute;
+    width: 14px;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 1px;
+  }
+
+  .x-line-1 {
+    transform: rotate(45deg);
+  }
+
+  .x-line-2 {
+    transform: rotate(-45deg);
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+    border-color: rgba(255, 255, 255, 0.4);
+
+    .x-line {
+      background-color: #fff;
+    }
+  }
 }
 
 .comment-author-photo {
