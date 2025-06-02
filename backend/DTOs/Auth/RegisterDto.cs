@@ -10,7 +10,7 @@ namespace WebAPIDemo.DTOs.Auth
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email format")]
-        [RegularExpression(@"^[^\s@]+@[^\s@]+\.[^\s@]+$", ErrorMessage = "Invalid email format. Must be in the format user@domain.com")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email format. Must be in the format user@domain.com")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Password is required")]

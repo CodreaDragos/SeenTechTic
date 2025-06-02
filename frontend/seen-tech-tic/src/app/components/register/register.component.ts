@@ -42,7 +42,7 @@ export class RegisterComponent {
   ) {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validator: this.passwordMatchValidator });
@@ -106,7 +106,7 @@ export class RegisterComponent {
     if (control.hasError('minlength')) {
       return `Trebuie să aibă cel puțin ${control.errors?.['minlength']?.requiredLength} caractere.`;
     }
-    if (control.hasError('email')) {
+    if (controlName === 'email' && control.hasError('pattern')) {
       return 'Vă rugăm să introduceți o adresă de email validă.';
     }
     if (control.hasError('passwordMismatch')) {
