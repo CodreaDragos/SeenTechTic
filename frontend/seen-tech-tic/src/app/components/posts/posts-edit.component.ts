@@ -8,6 +8,7 @@ import { ReservationService, Reservation } from '../../services/reservation.serv
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService, UserProfile } from '../../services/user.service';
 import { BackButtonComponent } from '../back-button/back-button.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-posts-edit',
@@ -35,7 +36,8 @@ export class PostsEditComponent implements OnInit, OnChanges {
     private reservationService: ReservationService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -104,7 +106,8 @@ export class PostsEditComponent implements OnInit, OnChanges {
   loadReservations(): void {
     this.reservationService.getAllReservations().subscribe({
       next: (data: Reservation[]) => {
-        this.reservations = data;
+        this.reservations = data.filter(reservation => reservation.authorId === this.currentUserId);
+        console.log('Loaded and filtered user reservations:', this.reservations);
       },
       error: err => console.error('Failed to load reservations', err)
     });
@@ -138,14 +141,29 @@ export class PostsEditComponent implements OnInit, OnChanges {
 
     this.postService.updatePost(updatedPost).subscribe({
       next: (post: Post) => {
-        // alert('Postare modificată cu succes!');
         this.resetForm();
         this.postUpdated.emit(post);
+        this.snackBar.open('Postare modificată cu succes!', 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
         this.router.navigate(['/profile']);
       },
       error: err => {
         console.error('Eroare la modificarea postării:', err);
-        alert('A apărut o eroare la modificarea postării.');
+        if (err.error && err.error.includes('already exists')) {
+          this.postForm.get('reservationId')?.setErrors({ 'reservationExists': true });
+          this.snackBar.open('Există deja o postare pentru această rezervare!', 'Închide', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar']
+          });
+        } else {
+          alert('A apărut o eroare la modificarea postării.');
+        }
       }
     });
   }

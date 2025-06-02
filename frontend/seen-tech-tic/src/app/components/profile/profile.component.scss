@@ -513,3 +513,44 @@ body {
   font-size: 0.9rem;
   margin-bottom: 20px;
 }
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 0 10px;
+}
+
+.post-actions button {
+  flex: 1;
+  max-width: 120px;
+  margin: 0 5px;
+}
+
+.post-actions .submit-button {
+  margin-right: auto;
+}
+
+.post-actions .cancel-button {
+  margin-left: auto;
+}
+
+::ng-deep .success-snackbar {
+  background: #1a181b !important;
+  color: #fff !important;
+  border: 1.5px solid #ff1a1a !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 24px #1a1a1a !important;
+  font-family: 'Montserrat', 'Inter', Arial, sans-serif !important;
+  font-weight: 600 !important;
+  padding: 14px 24px !important;
+}
+
+::ng-deep .success-snackbar .mat-simple-snackbar-action {
+  color: #ff1a1a !important;
+  font-weight: 700 !important;
+}
+
+::ng-deep .success-snackbar .mat-simple-snackbar-action:hover {
+  background: rgba(255, 26, 26, 0.1) !important;
+}

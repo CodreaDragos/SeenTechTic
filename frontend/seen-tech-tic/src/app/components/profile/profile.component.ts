@@ -8,6 +8,7 @@ import { UserService, UserProfile } from '../../services/user.service';
 import { FormsModule, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { BackButtonComponent } from '../back-button/back-button.component';
 import { CommentService, Comment } from '../../services/comment.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-profile',
@@ -32,7 +33,8 @@ export class ProfileComponent implements OnInit {
     private postService: PostService,
     private userService: UserService,
     private commentService: CommentService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -197,6 +199,12 @@ export class ProfileComponent implements OnInit {
       next: () => {
         this.posts = this.posts.filter(post => post.postId !== postId);
         console.log(`Post ${postId} deleted`);
+        this.snackBar.open('Postare ștearsă cu succes!', 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
       },
       error: (err) => {
         alert('Failed to delete post');
