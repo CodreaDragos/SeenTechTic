@@ -71,10 +71,16 @@ export class ReservationService {
   }
 
   joinReservation(reservationId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${reservationId}/join`, {}, { headers: this.getAuthHeaders() });
+    return this.http.post(`${this.apiUrl}/${reservationId}/join`, {}, { 
+      headers: this.getAuthHeaders(),
+      responseType: 'text' // Expect a text response
+    });
   }
 
   leaveReservation(reservationId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${reservationId}/leave`, { headers: this.getAuthHeaders() });
+    return this.http.delete(`${this.apiUrl}/${reservationId}/leave`, {
+      headers: this.getAuthHeaders(),
+      responseType: 'text' // Expect a text response
+    });
   }
 }

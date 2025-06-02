@@ -11,6 +11,7 @@ import { UserService, UserProfile } from '../../services/user.service';
 import { forkJoin, of } from 'rxjs'; // Import forkJoin and of
 import { switchMap, catchError, map } from 'rxjs/operators'; // Import operators and map
 import { Observable } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { PostsNewComponent } from './posts-new.component';
 import { PostsEditComponent } from './posts-edit.component';
@@ -43,7 +44,8 @@ export class PostsComponent implements OnInit {
     private reservationService: ReservationService,
     private router: Router,
     private userService: UserService, // Inject UserService
-    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
+    private cdr: ChangeDetectorRef, // Inject ChangeDetectorRef
+    private snackBar: MatSnackBar // Inject MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -262,6 +264,13 @@ export class PostsComponent implements OnInit {
   onPostCreated() {
     this.showAddPostForm = false;
     this.loadPostsWithAuthorProfiles(); // Reload posts with new post included
+    // Add success snackbar
+    this.snackBar.open('Postare adaugata cu scucces!', 'Închide', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: ['success-snackbar']
+    });
   }
 
   canJoinReservation(reservation: Reservation | undefined): boolean {
@@ -273,20 +282,28 @@ export class PostsComponent implements OnInit {
 
   joinReservation(reservationId: number): void {
     this.reservationService.joinReservation(reservationId).subscribe({
-      next: () => {
-        alert('You have joined the reservation!');
-        // Optimistically update the UI
-        const post = this.posts.find(p => p.reservation?.reservationId === reservationId);
-        if (post && post.reservation && this.currentUserId) {
-          if (!post.reservation.participantIds) post.reservation.participantIds = [];
-          if (!post.reservation.participantIds.includes(this.currentUserId)) {
-            post.reservation.participantIds.push(this.currentUserId);
-          }
-        }
-        this.cdr.detectChanges(); // Force template update
+      next: (response) => {
+        // Check if the response is a string (success message) or an object
+        const successMessage = typeof response === 'string' ? response : 'Te-ai alăturat rezervării cu succes!';
+        this.snackBar.open(successMessage, 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        // Reload posts and reservations to update the UI
+        this.loadPostsWithAuthorProfiles();
+        this.loadAllReservationsAndMap();
       },
       error: (err) => {
-        alert('Could not join: ' + (err?.error || err?.message));
+        // Extract error message from the error response
+        const errorMessage = err?.error?.message || err?.error || err?.message || 'Nu s-a putut alătura';
+        this.snackBar.open(errorMessage, 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
       }
     });
   }

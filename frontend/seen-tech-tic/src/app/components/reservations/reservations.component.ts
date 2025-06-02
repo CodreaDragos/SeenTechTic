@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BackButtonComponent } from '../back-button/back-button.component';
 import { HttpClient } from '@angular/common/http';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +15,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-reservations',
@@ -28,7 +31,8 @@ import { MatOptionModule } from '@angular/material/core';
     MatNativeDateModule,
     MatSelectModule,
     MatOptionModule,
-    BackButtonComponent
+    BackButtonComponent,
+    ConfirmationDialogComponent
   ],
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.scss'],
@@ -114,7 +118,9 @@ export class ReservationsComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private datePipe: DatePipe,
-    private http: HttpClient
+    private http: HttpClient,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) { }
 
   toggleAddForm(): void {
@@ -419,31 +425,52 @@ export class ReservationsComponent implements OnInit {
                 ReservationId: this.editingReservationId
             }).subscribe({
                 next: () => {
-                    alert('Rezervarea a fost modificată cu succes!');
+                    this.snackBar.open('Rezervarea a fost modificată cu succes!', 'Închide', {
+                        duration: 3000,
+                        horizontalPosition: 'center',
+                        verticalPosition: 'top',
+                        panelClass: ['success-snackbar']
+                    });
                     const editedId = this.editingReservationId;
                     if (editedId !== null) {
                         this.editButtonClicked.delete(editedId);
                     }
                     this.resetForm();
                     this.loadReservations();
-                    this.calculateFreeIntervals(fieldId);
-                    this.updateOccupiedHours();
+                    const fieldId = Number(this.reservationForm.get('fieldId')?.value);
+                    if (fieldId) {
+                      this.calculateFreeIntervals(fieldId);
+                    }
                     this.updateOccupiedHours();
                     this.editingReservationId = null;
                     this.showAddForm = false;
                 },
                 error: (err: any) => {
                     console.error('Eroare la modificare rezervare:', err);
-                    alert('A apărut o eroare la modificare.');
+                    const errorMessage = err?.error?.message || err?.error || err?.message || 'A apărut o eroare la modificare.';
+                    this.snackBar.open('Eroare la modificare rezervare: ' + errorMessage, 'Închide', {
+                        duration: 3000,
+                        horizontalPosition: 'center',
+                        verticalPosition: 'top',
+                        panelClass: ['error-snackbar']
+                    });
                 }
             });
         } else {
             this.reservationService.addReservation(reservationData).subscribe({
                 next: () => {
-                    alert('Rezervare salvată cu succes!');
+                    this.snackBar.open('Rezervare salvată cu succes!', 'Închide', {
+                        duration: 3000,
+                        horizontalPosition: 'center',
+                        verticalPosition: 'top',
+                        panelClass: ['success-snackbar']
+                    });
                     this.resetForm();
                     this.loadReservations();
-                    this.calculateFreeIntervals(fieldId);
+                    const fieldId = Number(this.reservationForm.get('fieldId')?.value);
+                    if (fieldId) {
+                      this.calculateFreeIntervals(fieldId);
+                    }
                 },
                 error: (err: any) => {
                     console.error('Eroare la salvare rezervare:', err);
@@ -506,21 +533,48 @@ export class ReservationsComponent implements OnInit {
 
   deleteReservation(reservation: Reservation) {
     if (!reservation.reservationId) {
-      alert('Reservation ID missing!');
+      this.snackBar.open('Reservation ID missing!', 'Închide', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
       return;
     }
-    if (confirm('Ești sigur că vrei să ștergi această rezervare?')) {
-      this.reservationService.deleteReservation(reservation.reservationId).subscribe({
-        next: () => {
-          this.reservations = this.reservations.filter(r => r.reservationId !== reservation.reservationId);
-          alert('Rezervarea a fost ștearsă.');
-        },
-        error: (err) => {
-          console.error('Eroare la ștergere rezervare:', err);
-          alert('A apărut o eroare la ștergere.');
-        }
-      });
-    }
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Confirmare ștergere',
+        message: 'Ești sigur că vrei să ștergi această rezervare?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // User confirmed deletion
+        this.reservationService.deleteReservation(reservation.reservationId).subscribe({
+          next: () => {
+            this.reservations = this.reservations.filter(r => r.reservationId !== reservation.reservationId);
+            this.snackBar.open('Rezervarea a fost ștearsă.', 'Închide', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+              panelClass: ['success-snackbar']
+            });
+          },
+          error: (err) => {
+            console.error('Eroare la ștergere rezervare:', err);
+            const errorMessage = err?.error?.message || err?.error || err?.message || 'A apărut o eroare la ștergere.';
+            this.snackBar.open('Eroare la ștergere rezervare: ' + errorMessage, 'Închide', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
+      }
+    });
   }
 
   editReservation(reservation: Reservation) {
@@ -631,42 +685,70 @@ export class ReservationsComponent implements OnInit {
 
   joinReservation(reservation: Reservation): void {
     if (!reservation.reservationId || this.currentUserId === null) {
-      alert('Reservation ID missing or user not logged in.');
+      this.snackBar.open('ID-ul rezervării lipsește sau utilizatorul nu este autentificat.', 'Închide', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
       return;
     }
 
     this.reservationService.joinReservation(reservation.reservationId).subscribe({
-      next: () => {
-        alert('Joined reservation successfully!');
+      next: (response) => {
+        const successMessage = typeof response === 'string' ? response : 'Te-ai alăturat rezervării cu succes!';
+        this.snackBar.open(successMessage, 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
         this.loadReservations(); // Refresh the list
       },
       error: (err) => {
         console.error('Error joining reservation:', err);
-        const errorMsg = err?.error || err?.message || '';
-        alert('Error joining reservation: ' + errorMsg);
+        const errorMessage = err?.error?.message || err?.error || err?.message || 'Eroare la alăturarea la rezervare';
+        this.snackBar.open('Eroare la alăturarea la rezervare: ' + errorMessage, 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
       }
     });
   }
 
   leaveReservation(reservation: Reservation): void {
     if (!reservation.reservationId || this.currentUserId === null) {
-      alert('Reservation ID missing or user not logged in.');
-      return;
-    }
-
-    if (!confirm('Are you sure you want to leave this reservation?')) {
+      this.snackBar.open('ID-ul rezervării lipsește sau utilizatorul nu este autentificat.', 'Închide', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
       return;
     }
 
     this.reservationService.leaveReservation(reservation.reservationId).subscribe({
-      next: () => {
-        alert('Left reservation successfully!');
+      next: (response) => {
+        const successMessage = typeof response === 'string' ? response : 'Ai părăsit rezervarea cu succes!';
+        this.snackBar.open(successMessage, 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
         this.loadReservations(); // Refresh the list
       },
       error: (err) => {
         console.error('Error leaving reservation:', err);
-        const errorMsg = err?.error || err?.message || '';
-        alert('Error leaving reservation: ' + errorMsg);
+        const errorMessage = err?.error?.message || err?.error || err?.message || 'Eroare la părăsirea rezervării';
+        this.snackBar.open('Eroare la părăsirea rezervării: ' + errorMessage, 'Închide', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
       }
     });
   }
