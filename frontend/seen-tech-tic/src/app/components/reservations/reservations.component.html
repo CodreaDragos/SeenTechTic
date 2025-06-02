@@ -29,11 +29,11 @@
       <label *ngIf="reservationForm.get('fieldId')?.value">
         Data rezervării:
         <div class="date-hour-group">
-          <mat-form-field appearance="fill" class="date-picker-field">
-            <input matInput [matDatepicker]="picker" formControlName="startDate" required (dateChange)="updateOccupiedHours()" />
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
+            <mat-form-field appearance="fill" class="date-picker-field">
+              <input matInput [matDatepicker]="picker" formControlName="startDate" required (dateChange)="updateOccupiedHours()" [min]="minDate" />
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
 
           <mat-form-field appearance="fill" class="hour-select-field">
             <mat-label>Selectează o oră</mat-label>

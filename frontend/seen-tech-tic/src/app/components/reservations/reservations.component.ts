@@ -51,6 +51,8 @@ export class ReservationsComponent implements OnInit {
   occupiedHoursFormatted: string[] = [];
   freeIntervals: string[] = [];
 
+  minDate: Date = new Date(new Date().setHours(0, 0, 0, 0)); // Set minDate to today at midnight to disable past dates
+
   // New property for fields list
   fields: { id: number; name: string }[] = [
     { id: 1, name: 'Football Field 1' },
@@ -79,6 +81,32 @@ export class ReservationsComponent implements OnInit {
 
   allUsers: any[] = [];
   userIdToUsername: { [key: number]: string } = {};
+
+  disabledHours: string[] = [];
+
+  updateDisabledHours(): void {
+    const startDate = this.reservationForm.get('startDate')?.value;
+    if (!startDate) {
+      this.disabledHours = [];
+      return;
+    }
+    const selectedDate = new Date(startDate);
+    const today = new Date();
+    // Reset time components for comparison
+    selectedDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate.getTime() === today.getTime()) {
+      // If selected date is today, disable hours before current hour
+      const currentHour = new Date().getHours();
+      this.disabledHours = [];
+      for (let hour = 0; hour < currentHour; hour++) {
+        this.disabledHours.push(hour.toString().padStart(2, '0') + ':00');
+      }
+    } else {
+      this.disabledHours = [];
+    }
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -137,6 +165,7 @@ export class ReservationsComponent implements OnInit {
     });
     this.reservationForm.get('startDate')?.valueChanges.subscribe(() => {
       this.updateOccupiedHours();
+      this.updateDisabledHours();
     });
     this.reservationForm.get('startHour')?.valueChanges.subscribe((value) => {
       if (!value) return;
@@ -153,14 +182,16 @@ export class ReservationsComponent implements OnInit {
       console.log('Normalized hourStr:', hourStr);
       console.log('Occupied hours:', this.occupiedHours);
 
-      if (this.occupiedHours.includes(hourStr)) {
-        alert('Ora selectată este deja ocupată. Te rugăm să alegi o altă oră.');
+      if (this.occupiedHours.includes(hourStr) || this.disabledHours.includes(hourStr)) {
+        alert('Ora selectată este deja ocupată sau nu este disponibilă. Te rugăm să alegi o altă oră.');
         this.reservationForm.get('startHour')?.setValue('', { emitEvent: false });
       } else {
         this.updateOccupiedHours();
         this.updateEndTime();
       }
     });
+
+    this.updateDisabledHours(); // Initialize disabled hours on component load
   }
 
   logout() {
@@ -262,6 +293,7 @@ export class ReservationsComponent implements OnInit {
           const ampm = hourNum >= 12 ? 'PM' : 'AM';
           return `${displayHour} ${ampm}`;
         });
+        this.updateDisabledHours(); // Update disabled hours after fetching occupied hours
       },
       error: (err: any) => {
         console.error('Error fetching occupied hours:', err);
@@ -274,7 +306,7 @@ export class ReservationsComponent implements OnInit {
     if (!control.value) return null;
     const date = new Date(control.value);
     const hourStr = date.getHours().toString().padStart(2, '0') + ':00';
-    if (this.occupiedHours.includes(hourStr)) {
+    if (this.occupiedHours.includes(hourStr) || this.disabledHours.includes(hourStr)) {
       return { occupiedHour: true };
     }
     return null;
@@ -320,115 +352,115 @@ export class ReservationsComponent implements OnInit {
     this.participants = this.participants.filter(u => u.userId !== user.userId);
   }
 
-  addReservation(): void {
-    if (!this.currentUserId) {
-      alert('Trebuie să fii logat pentru a face o rezervare.');
-      return;
-    }
-
-    if (!this.reservationForm || this.reservationForm.invalid) {
-      alert('Completează toate câmpurile.');
-      this.reservationForm?.markAllAsTouched();
-      return;
-    }
-
-    const startDate: string = this.reservationForm.get('startDate')?.value;
-    const startHour: string = this.reservationForm.get('startHour')?.value;
-    if (!startDate || !startHour) {
-      alert('Completează toate câmpurile.');
-      return;
-    }
-
-    // Check if editing and no changes made
-    if (this.editingReservationId !== null && this.originalReservationData) {
-      const currentData = this.reservationForm.getRawValue();
-      // Compare participants as well (sorted arrays)
-      const currentParticipants = this.participants.map(u => u.userId).sort();
-      const originalParticipants = (this.originalReservationData.participants || []).slice().sort();
-      const isUnchanged =
-        JSON.stringify(currentData) === JSON.stringify(this.originalReservationData) &&
-        JSON.stringify(currentParticipants) === JSON.stringify(originalParticipants);
-      if (isUnchanged) {
-        alert('Apasă pe anulare dacă nu vrei să modifici');
-        return;
-      }
-    }
-
-    const hour = this.parse12HourTo24Hour(startHour);
-    const startDateObj = new Date(startDate);
-    startDateObj.setHours(hour, 0, 0, 0);
-    const startTime = startDateObj.toISOString();
-
-
-    const endTime: string = this.reservationForm.get('endTime')?.value;
-    const fieldId: number = Number(this.reservationForm.get('fieldId')?.value);
-
-    if (!startTime || !endTime || !fieldId) {
-      alert('Completează toate câmpurile.');
-      return;
-    }
-
-    const startIso = this.parseDateLocalToUTC(startTime);
-    const endIso = this.parseDateLocalToUTC(endTime);
-
-    const formValue = this.reservationForm.value;
-    const reservationData = {
-      startTime: formValue.startDate,
-      endTime: formValue.endTime,
-      fieldId: formValue.fieldId,
-      maxParticipants: formValue.maxParticipants,
-      authorId: this.currentUserId,
-      participantIds: this.participants.map(u => u.userId)
-    };
-
-    if (this.editingReservationId) {
-      this.reservationService.updateReservation(this.editingReservationId, {
-        ...reservationData,
-        ReservationId: this.editingReservationId
-      }).subscribe({
-        next: () => {
-          alert('Rezervarea a fost modificată cu succes!');
-        const editedId = this.editingReservationId;
-        if (editedId !== null) {
-          this.editButtonClicked.delete(editedId);
+    addReservation(): void {
+        if (!this.currentUserId) {
+            alert('Trebuie să fii logat pentru a face o rezervare.');
+            return;
         }
-        this.resetForm();
-        this.loadReservations();
-        this.calculateFreeIntervals(fieldId);
-        this.updateOccupiedHours();
-        this.updateOccupiedHours();
-        this.editingReservationId = null;
-        this.showAddForm = false;
-        },
-        error: (err: any) => {
-          console.error('Eroare la modificare rezervare:', err);
-          alert('A apărut o eroare la modificare.');
+
+        if (!this.reservationForm || this.reservationForm.invalid) {
+            alert('Completează toate câmpurile.');
+            this.reservationForm?.markAllAsTouched();
+            return;
         }
-      });
-    } else {
-      this.reservationService.addReservation(reservationData).subscribe({
-        next: () => {
-          alert('Rezervare salvată cu succes!');
-          this.resetForm();
-          this.loadReservations();
-          this.calculateFreeIntervals(fieldId);
-        },
-        error: (err: any) => {
-          console.error('Eroare la salvare rezervare:', err);
-          const errorMsg = err?.error || err?.message || '';
-          if (err.status === 400 && typeof errorMsg === 'string' && errorMsg.toLowerCase().includes('already booked')) {
-            alert('Terenul este deja rezervat în intervalul selectat.');
-            const fieldId = Number(this.reservationForm.get('fieldId')?.value);
-            if (fieldId) {
-              this.calculateFreeIntervals(fieldId);
+
+        const startDate: string = this.reservationForm.get('startDate')?.value;
+        const startHour: string = this.reservationForm.get('startHour')?.value;
+        if (!startDate || !startHour) {
+            alert('Completează toate câmpurile.');
+            return;
+        }
+
+        // Check if editing and no changes made
+        if (this.editingReservationId !== null && this.originalReservationData) {
+            const currentData = this.reservationForm.getRawValue();
+            // Compare participants as well (sorted arrays)
+            const currentParticipants = this.participants.map(u => u.userId).sort();
+            const originalParticipants = (this.originalReservationData.participants || []).slice().sort();
+            const isUnchanged =
+                JSON.stringify(currentData) === JSON.stringify(this.originalReservationData) &&
+                JSON.stringify(currentParticipants) === JSON.stringify(originalParticipants);
+            if (isUnchanged) {
+                alert('Apasă pe anulare dacă nu vrei să modifici');
+                return;
             }
-          } else {
-            alert('Eroare: ' + errorMsg);
-          }
         }
-      });
+
+        const hour = this.parse12HourTo24Hour(startHour);
+        const startDateObj = new Date(startDate);
+        startDateObj.setHours(hour, 0, 0, 0);
+        const startTime = startDateObj.toISOString();
+
+
+        const endTime: string = this.reservationForm.get('endTime')?.value;
+        const fieldId: number = Number(this.reservationForm.get('fieldId')?.value);
+
+        if (!startTime || !endTime || !fieldId) {
+            alert('Completează toate câmpurile.');
+            return;
+        }
+
+        const startIso = this.parseDateLocalToUTC(startTime);
+        const endIso = this.parseDateLocalToUTC(endTime);
+
+        const formValue = this.reservationForm.value;
+        const reservationData = {
+            startTime: startIso,
+            endTime: endIso,
+            fieldId: formValue.fieldId,
+            maxParticipants: formValue.maxParticipants,
+            authorId: this.currentUserId,
+            participantIds: this.participants.map(u => u.userId)
+        };
+
+        if (this.editingReservationId) {
+            this.reservationService.updateReservation(this.editingReservationId, {
+                ...reservationData,
+                ReservationId: this.editingReservationId
+            }).subscribe({
+                next: () => {
+                    alert('Rezervarea a fost modificată cu succes!');
+                    const editedId = this.editingReservationId;
+                    if (editedId !== null) {
+                        this.editButtonClicked.delete(editedId);
+                    }
+                    this.resetForm();
+                    this.loadReservations();
+                    this.calculateFreeIntervals(fieldId);
+                    this.updateOccupiedHours();
+                    this.updateOccupiedHours();
+                    this.editingReservationId = null;
+                    this.showAddForm = false;
+                },
+                error: (err: any) => {
+                    console.error('Eroare la modificare rezervare:', err);
+                    alert('A apărut o eroare la modificare.');
+                }
+            });
+        } else {
+            this.reservationService.addReservation(reservationData).subscribe({
+                next: () => {
+                    alert('Rezervare salvată cu succes!');
+                    this.resetForm();
+                    this.loadReservations();
+                    this.calculateFreeIntervals(fieldId);
+                },
+                error: (err: any) => {
+                    console.error('Eroare la salvare rezervare:', err);
+                    const errorMsg = err?.error || err?.message || '';
+                    if (err.status === 400 && typeof errorMsg === 'string' && errorMsg.toLowerCase().includes('already booked')) {
+                        alert('Terenul este deja rezervat în intervalul selectat.');
+                        const fieldId = Number(this.reservationForm.get('fieldId')?.value);
+                        if (fieldId) {
+                            this.calculateFreeIntervals(fieldId);
+                        }
+                    } else {
+                        alert('Eroare: ' + errorMsg);
+                    }
+                }
+            });
+        }
     }
-  }
 
   calculateFreeIntervals(fieldId: number): void {
     const reservationsForField = this.reservations.filter(r => r.fieldId === fieldId);

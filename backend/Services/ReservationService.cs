@@ -27,6 +27,10 @@ namespace WebAPIDemo.Services
 
         public Reservation create(Reservation reservation)
         {
+            // Convert StartTime and EndTime to UTC to ensure consistent storage
+            reservation.StartTime = reservation.StartTime.ToUniversalTime();
+            reservation.EndTime = reservation.EndTime.ToUniversalTime();
+
             // Load the field
             var field = _fieldRepository.getOne(reservation.FieldId);
             if (field == null)
@@ -63,6 +67,13 @@ namespace WebAPIDemo.Services
             {
                 _loggerService.LogError("Start time must be before end time");
                 throw new Exception("Start time must be before end time");
+            }
+
+            // Validate that end time is exactly start time + 1 hour
+            if ((reservation.EndTime - reservation.StartTime).TotalHours != 1)
+            {
+                _loggerService.LogError("End time must be exactly 1 hour after start time");
+                throw new Exception("End time must be exactly 1 hour after start time");
             }
 
             // Validate max participants
@@ -116,8 +127,8 @@ namespace WebAPIDemo.Services
                 throw new Exception($"No reservation found with id {dto.ReservationId}");
 
             // Only update fields if they are provided
-            if (dto.StartTime.HasValue) reservation.StartTime = dto.StartTime.Value;
-            if (dto.EndTime.HasValue) reservation.EndTime = dto.EndTime.Value;
+            if (dto.StartTime.HasValue) reservation.StartTime = dto.StartTime.Value.ToUniversalTime();
+            if (dto.EndTime.HasValue) reservation.EndTime = dto.EndTime.Value.ToUniversalTime();
             if (dto.FieldId.HasValue) reservation.FieldId = dto.FieldId.Value;
             if (dto.AuthorId.HasValue) reservation.AuthorId = dto.AuthorId.Value;
             if (dto.MaxParticipants.HasValue)
@@ -127,6 +138,12 @@ namespace WebAPIDemo.Services
                     throw new Exception("Max participants must be greater than 0");
                 }
                 reservation.MaxParticipants = dto.MaxParticipants.Value;
+            }
+
+            // Validate that end time is exactly start time + 1 hour
+            if ((reservation.EndTime - reservation.StartTime).TotalHours != 1)
+            {
+                throw new Exception("End time must be exactly 1 hour after start time");
             }
 
             // Only update participants if provided
