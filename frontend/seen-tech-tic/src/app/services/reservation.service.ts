@@ -10,18 +10,19 @@ export interface Field {
 }
 
 export interface Reservation {
-  reservationId?: number;
+  reservationId: number;
   startTime: string;
   endTime: string;
-  fieldId: number;
   authorId: number;
-  participantIds: number[];
-  
-  // Add the field property to the Reservation interface
-  field?: Field;
-
-  // Add fieldName directly as received from the backend DTO
+  fieldId: number;
+  maxParticipants: number;
+  participantIds?: number[];
   fieldName?: string;
+  post?: {
+    postId: number;
+    postTitle: string;
+    postDescription: string;
+  };
 }
 
 @Injectable({

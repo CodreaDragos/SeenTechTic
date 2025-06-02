@@ -68,7 +68,13 @@ export class PostsNewComponent implements OnInit {
         this.postForm.reset();
         this.postCreated.emit();
       },
-      error: (err: any) => console.error('Failed to create post', err)
+      error: (err: any) => {
+        if (err.error && err.error.includes('already exists')) {
+          this.postForm.get('reservationId')?.setErrors({ 'reservationExists': true });
+        } else {
+          console.error('Failed to create post', err);
+        }
+      }
     });
   }
 }

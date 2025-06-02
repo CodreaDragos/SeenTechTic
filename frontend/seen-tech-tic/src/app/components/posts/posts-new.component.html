@@ -16,6 +16,9 @@
         {{ reservation.fieldName ? reservation.fieldName + ' - ' : '' }}{{ reservation.startTime | date:'mediumDate' }} {{ reservation.startTime | date:'shortTime' }} - {{ reservation.endTime | date:'shortTime' }}
       </option>
     </select>
+    <div class="error" *ngIf="postForm.get('reservationId')?.hasError('reservationExists')">
+      Există deja o postare pentru această rezervare.
+    </div>
   </div>
   <button type="submit" [disabled]="postForm.invalid" class="submit-button">Create Post</button>
 </form>

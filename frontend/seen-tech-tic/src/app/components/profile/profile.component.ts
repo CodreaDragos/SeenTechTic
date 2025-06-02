@@ -147,23 +147,23 @@ export class ProfileComponent implements OnInit {
           let errorMessage = 'Failed to update profile. Please try again.'; // Default message
 
           if (error.error && typeof error.error === 'object') {
-             // Check for a general message first (backend might return this for same password error)
-             if (error.error.message) {
-                errorMessage = error.error.message;
-             } else if (error.error.errors) {
-               // Handle ModelState errors for specific fields
-               const modelStateErrors = error.error.errors;
-               for (const key in modelStateErrors) {
-                 if (modelStateErrors.hasOwnProperty(key)) {
-                   const formControl = this.profileForm.get(key.toLowerCase());
-                   if (formControl) {
-                     const currentErrors = formControl.errors || {};
-                     formControl.setErrors({...currentErrors, backend: modelStateErrors[key].join(' ')});
-                   }
-                 }
-               }
-                // If there were specific field errors, don't show the general alert
-               errorMessage = '';
+            // Check for a general message first (backend might return this for same password error)
+            if (error.error.message) {
+              errorMessage = error.error.message;
+            } else if (error.error.errors) {
+              // Handle ModelState errors for specific fields
+              const modelStateErrors = error.error.errors;
+              for (const key in modelStateErrors) {
+                if (modelStateErrors.hasOwnProperty(key)) {
+                  const formControl = this.profileForm.get(key.toLowerCase());
+                  if (formControl) {
+                    const currentErrors = formControl.errors || {};
+                    formControl.setErrors({...currentErrors, backend: modelStateErrors[key].join(' ')});
+                  }
+                }
+              }
+              // If there were specific field errors, don't show the general alert
+              errorMessage = '';
             }
           }
 

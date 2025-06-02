@@ -56,7 +56,10 @@ namespace WebAPIDemo.Repositories
 
         public int delete(int reservationId)
         {
-            var reservation = _context.Reservations.Find(reservationId);
+            var reservation = _context.Reservations
+                .Include(r => r.Post)  // Include the associated post
+                .FirstOrDefault(r => r.ReservationId == reservationId);
+                
             if (reservation != null)
             {
                 _context.Reservations.Remove(reservation);

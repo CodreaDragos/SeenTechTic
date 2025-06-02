@@ -373,8 +373,8 @@ export class ReservationsComponent implements OnInit {
 
     const formValue = this.reservationForm.value;
     const reservationData = {
-      startTime: formValue.startDate,
-      endTime: formValue.endTime,
+      startTime: startIso,
+      endTime: endIso,
       fieldId: formValue.fieldId,
       maxParticipants: formValue.maxParticipants,
       authorId: this.currentUserId,
@@ -388,17 +388,17 @@ export class ReservationsComponent implements OnInit {
       }).subscribe({
         next: () => {
           alert('Rezervarea a fost modificată cu succes!');
-        const editedId = this.editingReservationId;
-        if (editedId !== null) {
-          this.editButtonClicked.delete(editedId);
-        }
-        this.resetForm();
-        this.loadReservations();
-        this.calculateFreeIntervals(fieldId);
-        this.updateOccupiedHours();
-        this.updateOccupiedHours();
-        this.editingReservationId = null;
-        this.showAddForm = false;
+          const editedId = this.editingReservationId;
+          if (editedId !== null) {
+            this.editButtonClicked.delete(editedId);
+          }
+          this.resetForm();
+          this.loadReservations();
+          this.calculateFreeIntervals(fieldId);
+          this.updateOccupiedHours();
+          this.updateOccupiedHours();
+          this.editingReservationId = null;
+          this.showAddForm = false;
         },
         error: (err: any) => {
           console.error('Eroare la modificare rezervare:', err);
@@ -481,11 +481,19 @@ export class ReservationsComponent implements OnInit {
       this.reservationService.deleteReservation(reservation.reservationId).subscribe({
         next: () => {
           this.reservations = this.reservations.filter(r => r.reservationId !== reservation.reservationId);
-          alert('Rezervarea a fost ștearsă.');
+          const message = reservation.post ? 
+            'Rezervarea și postarea asociată au fost șterse.' : 
+            'Rezervarea a fost ștearsă.';
+          alert(message);
         },
         error: (err) => {
           console.error('Eroare la ștergere rezervare:', err);
-          alert('A apărut o eroare la ștergere.');
+          const errorMsg = err?.error?.message || err?.message || 'A apărut o eroare la ștergere.';
+          if (err.status === 400) {
+            alert('Nu se poate șterge rezervarea. Asigură-te că nu există postări asociate sau încearcă din nou.');
+          } else {
+            alert(errorMsg);
+          }
         }
       });
     }
@@ -519,7 +527,7 @@ export class ReservationsComponent implements OnInit {
       this.reservationForm.setValue({
         startDate: startDateStr,
         startHour: startHourStr,
-        endTime: reservation.endTime ? this.toInputDateTimeLocal(reservation.endTime) : '',
+        endTime: reservation.endTime,
         fieldId: reservation.fieldId ?? '',
         maxParticipants: this.getMaxParticipants(reservation)
       });

@@ -110,8 +110,16 @@ namespace WebAPIDemo.Controllers
 
             if (!string.IsNullOrEmpty(username))
                 user.Username = username;
+
             if (!string.IsNullOrEmpty(password))
-                user.Password = HashPassword(password); // Hash the password!
+            {
+                // Check if the new password is the same as the current password
+                if (HashPassword(password) == user.Password)
+                {
+                    return BadRequest(new { message = "Nu poți schimba cu parola pe care deja o ai" });
+                }
+                user.Password = HashPassword(password);
+            }
 
             if (profilePicture != null)
             {
@@ -141,6 +149,5 @@ namespace WebAPIDemo.Controllers
                 return NotFound();
             return Ok(user);
         }
-
     }
 }

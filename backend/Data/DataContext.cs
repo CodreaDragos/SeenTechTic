@@ -34,7 +34,8 @@ namespace WebAPIDemo.Data
             modelBuilder.Entity<Post>()
                 .HasOne(p => p.Reservation)
                 .WithOne(r => r.Post)
-                .HasForeignKey<Post>(p => p.ReservationId);
+                .HasForeignKey<Post>(p => p.ReservationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             //Configure Field entity
             modelBuilder.Entity<Field>()
